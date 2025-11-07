@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisión de Espacios - SiRABi</title>
+    <link rel="stylesheet" href="../../css/styles-admin/revision-espacios.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <h1>SiRABi</h1>
+            </div>
+            <div class="header-actions">
+                <a href="../admin/home-admin.html" class="home-btn">
+                    <span>Regresar</span>
+                </a>
+                <button class="logout-btn" onclick="cerrarSesion()">
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <div class="espacios-wrapper">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID DOMICILIO</th>
+                            <th>UBICACIÓN</th>
+                            <th>STATUS</th>
+                            <th>ASEO</th>
+                        </tr>
+                    </thead>
+                    <tbody id="espaciosBody">
+                        <tr>
+                            <td>1</td>
+                            <td>DIRECCIÓN</td>
+                            <td class="status-disponible">DISPONIBLE</td>
+                            <td class="aseo-finalizado">FINALIZADO</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>DIRECCIÓN</td>
+                            <td class="status-reservado">RESERVADO</td>
+                            <td class="aseo-finalizado">FINALIZADO</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>DIRECCIÓN</td>
+                            <td class="status-ocupado">OCUPADO</td>
+                            <td class="aseo-espera">EN ESPERA</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>DIRECCIÓN</td>
+                            <td class="status-disponible">DISPONIBLE</td>
+                            <td class="aseo-proceso">EN PROCESO</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/scripts-admin/revision-espacios.js"></script>
+</body>
+</html>

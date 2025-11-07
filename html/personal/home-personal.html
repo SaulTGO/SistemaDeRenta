@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Personal - SiRABi</title>
+    <link rel="stylesheet" href="../../css/styles-personal/home-personal.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <h1>SiRABi</h1>
+            </div>
+            <div class="header-actions">
+                <button class="logout-btn" onclick="cerrarSesion()">
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <!-- Título -->
+        <div class="page-title">
+            <h2>Domicilios asignados.</h2>
+        </div>
+
+        <!-- Tabla de domicilios -->
+        <div class="domicilios-wrapper">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Estado</th>
+                            <th>Ubicación</th>
+                        </tr>
+                    </thead>
+                    <tbody id="domiciliosBody">
+                        <tr class="completado">
+                            <td class="estado-cell">
+                                <input type="checkbox" class="estado-check" checked disabled>
+                            </td>
+                            <td>Calle de ejemplo 12</td>
+                        </tr>
+                        <tr class="completado">
+                            <td class="estado-cell">
+                                <input type="checkbox" class="estado-check" checked disabled>
+                            </td>
+                            <td>Otra calle</td>
+                        </tr>
+                        <tr>
+                            <td class="estado-cell">
+                                <input type="checkbox" class="estado-check" onclick="toggleEstado(this)">
+                            </td>
+                            <td>Aun mas calles</td>
+                        </tr>
+                        <tr>
+                            <td class="estado-cell">
+                                <input type="checkbox" class="estado-check" onclick="toggleEstado(this)">
+                            </td>
+                            <td>Otra dirección</td>
+                        </tr>
+                        <tr>
+                            <td class="estado-cell">
+                                <input type="checkbox" class="estado-check" onclick="toggleEstado(this)">
+                            </td>
+                            <td>Hola</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/scripts-personal/home-personal.js"></script>
+</body>
+</html>

@@ -1,0 +1,360 @@
+/* Reset y estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header */
+header {
+    background-color: #ffffff;
+    border-bottom: 3px solid #3b558f;
+    padding: 12px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    letter-spacing: 2px;
+}
+
+/* Layout principal */
+.main-content {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 30px;
+    padding: 20px 0;
+}
+
+/* Sidebar */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* Sección de fechas */
+.date-section {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.date-section h3 {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+/* Calendario */
+.calendar {
+    width: 100%;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 8px;
+    background-color: #e8ecf3;
+    border-radius: 5px;
+}
+
+.nav-btn {
+    background-color: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: #3b558f;
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    background-color: #3b558f;
+    color: white;
+    border-radius: 3px;
+}
+
+.current-month {
+    font-weight: 600;
+    color: #3b558f;
+    font-size: 0.9rem;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+}
+
+.day-name {
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #666;
+    padding: 5px 0;
+}
+
+.day {
+    text-align: center;
+    padding: 8px 5px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.day:hover {
+    background-color: #e8ecf3;
+}
+
+.day.selected {
+    background-color: #3b558f;
+    color: white;
+    font-weight: bold;
+}
+
+.day:empty {
+    cursor: default;
+}
+
+.day:empty:hover {
+    background-color: transparent;
+}
+
+/* Sección de huéspedes */
+.guests-section {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.guests-section label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.guests-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.guests-btn {
+    width: 35px;
+    height: 35px;
+    background-color: #3b558f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.guests-btn:hover {
+    background-color: #2a4070;
+    transform: scale(1.1);
+}
+
+#guests {
+    width: 60px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: 2px solid #3b558f;
+    border-radius: 5px;
+    padding: 8px;
+    color: #3b558f;
+}
+
+/* Botón Reservar */
+.btn-reservar {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background-color: #3b558f;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px rgba(59, 85, 143, 0.3);
+}
+
+.btn-reservar:hover {
+    background-color: #2a4070;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(59, 85, 143, 0.4);
+}
+
+/* Sección de espacios */
+.spaces-section {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.spaces-section h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 3px solid #3b558f;
+}
+
+.spaces-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+/* Tarjeta de espacio */
+.space-card {
+    border: 2px solid #3b558f;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #fff;
+}
+
+.space-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(59, 85, 143, 0.3);
+    border-color: #2a4070;
+}
+
+.space-card.selected {
+    border-color: #2a4070;
+    box-shadow: 0 0 0 3px rgba(59, 85, 143, 0.2);
+}
+
+.space-image {
+    position: relative;
+    height: 200px;
+    background-color: #e8ecf3;
+    overflow: hidden;
+}
+
+.space-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.space-card:hover .space-image img {
+    transform: scale(1.1);
+}
+
+.space-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: 600;
+    color: #3b558f;
+    font-size: 1.1rem;
+}
+
+.space-info {
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+
+.space-info p {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.space-info strong {
+    color: #3b558f;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .btn-reservar {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        grid-template-columns: 1fr;
+    }
+
+    .spaces-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .spaces-section {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .spaces-section h2 {
+        font-size: 1.4rem;
+    }
+
+    .calendar-grid {
+        gap: 2px;
+    }
+
+    .day {
+        padding: 6px 3px;
+        font-size: 0.75rem;
+    }
+}

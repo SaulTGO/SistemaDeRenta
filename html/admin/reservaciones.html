@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservaciones - SiRABi</title>
+    <link rel="stylesheet" href="../../css/styles-admin/reservaciones.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <h1>SiRABi</h1>
+            </div>
+            <div class="header-actions">
+                <a href="../admin/home-admin.html" class="home-btn">
+                    <span>Regresar</span>
+                </a>
+                <button class="logout-btn" onclick="cerrarSesion()">
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <div class="reservaciones-wrapper">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Reservación</th>
+                            <th>Número Huéspedes</th>
+                            <th>Fecha de inicio</th>
+                            <th>Fecha de salida</th>
+                            <th>Ocupación</th>
+                            <th>Huella registrada</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reservacionesBody">
+                        <tr>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>fecha1</td>
+                            <td>fecha2</td>
+                            <td class="estado-ocupado">OCUPADO</td>
+                            <td><input type="checkbox" class="huella-check" checked disabled></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>FECHA</td>
+                            <td>FECHA</td>
+                            <td class="estado-proceso">EN PROCESO</td>
+                            <td><input type="checkbox" class="huella-check" disabled></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>2</td>
+                            <td>FECHA</td>
+                            <td>FECHA</td>
+                            <td class="estado-verificado">VERIFICADO</td>
+                            <td><input type="checkbox" class="huella-check" checked disabled></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>2</td>
+                            <td>FECHA</td>
+                            <td>FECHA</td>
+                            <td class="estado-ocupado">OCUPADO</td>
+                            <td><input type="checkbox" class="huella-check" checked disabled></td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>2</td>
+                            <td>FECHA</td>
+                            <td>FECHA</td>
+                            <td class="estado-no-registrado">NO REGISTRADO</td>
+                            <td><input type="checkbox" class="huella-check" disabled></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/scripts-admin/reservaciones-script.js"></script>
+</body>
+</html>

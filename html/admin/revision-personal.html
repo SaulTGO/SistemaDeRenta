@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisión de Personal - SiRABi</title>
+    <link rel="stylesheet" href="../../css/styles-admin/revision-espacios.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <h1>SiRABi</h1>
+            </div>
+            <div class="header-actions">
+                <a href="../admin/home-admin.html" class="home-btn">
+                    <span>Regresar</span>
+                </a>
+                <button class="logout-btn" onclick="cerrarSesion()">
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <div class="personal-wrapper">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID PERSONAL</th>
+                            <th>NOMBRE</th>
+                            <th>DISPONIBILIDAD</th>
+                            <th>ASIGNACIONES PENDIENTES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="personalBody">
+                        <tr>
+                            <td>1</td>
+                            <td>PACO</td>
+                            <td class="disponibilidad-disponible">DISPONIBLE</td>
+                            <td>UBICACIÓN 1</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>JOSE</td>
+                            <td class="disponibilidad-funciones">EN FUNCIONES</td>
+                            <td>IDDOMICILIO</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>BENITO</td>
+                            <td class="disponibilidad-funciones">EN FUNCIONES</td>
+                            <td>IDDOMICILIO</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>CAESTE</td>
+                            <td class="disponibilidad-disponible">DISPONIBLE</td>
+                            <td>IDDOMICILIO</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>GRANDOTE</td>
+                            <td class="disponibilidad-ausente">AUSENTE</td>
+                            <td>SIN PENDIENTES</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/scripts-admin/revision-personal.js"></script>
+</body>
+</html>

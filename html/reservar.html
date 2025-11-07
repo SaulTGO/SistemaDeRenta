@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procesar Reserva - SiRABi</title>
+    <link rel="stylesheet" href="../css/reservar.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="../index.html">
+                        <h1>SiRABi</h1>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <!-- Método de pago -->
+            <div class="payment-section">
+                <h2>Método de pago</h2>
+                
+                <div class="payment-option">
+                    <input type="checkbox" id="creditCard" checked>
+                    <label for="creditCard">Tarjeta de crédito o débito</label>
+                </div>
+
+                <div class="card-logos">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
+                </div>
+
+                <form id="paymentForm">
+                    <div class="form-group">
+                        <label for="cardNumber">Número de tarjeta</label>
+                        <input type="text" id="cardNumber" placeholder="xxxx-xxxx-xxxx-xxxx" maxlength="19">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expiry">Caducidad</label>
+                            <input type="text" id="expiry" placeholder="mm/yy" maxlength="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="cvv">CVV</label>
+                            <input type="text" id="cvv" placeholder="###" maxlength="3">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="postalCode">Código Postal</label>
+                            <input type="text" id="postalCode" placeholder="mm/yy" maxlength="5">
+                        </div>
+                        <div class="form-group flag-group">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/f/fc/Flag_of_Mexico.svg" alt="México" class="flag-icon">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-confirm">Confirmar</button>
+                </form>
+            </div>
+
+            <!-- Información de la reservación -->
+            <div class="reservation-info">
+                <h2>Información de la reservación</h2>
+                
+                <div class="reservation-images">
+                    <div class="reservation-image">
+                        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop" alt="Espacio 1">
+                    </div>
+                    <div class="reservation-image">
+                        <img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=400&h=300&fit=crop" alt="Espacio 2">
+                    </div>
+                </div>
+
+                <div class="reservation-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Fecha de llegada</span>
+                        <span class="detail-value" id="checkInDate">15 Enero 2025</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Fecha de salida</span>
+                        <span class="detail-value" id="checkOutDate">20 Enero 2025</span>
+                    </div>
+                    <div class="detail-item total">
+                        <span class="detail-label">Total a pagar</span>
+                        <span class="detail-value" id="totalAmount">$2,500.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/reservar-script.js"></script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+    /* Reset y estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header */
+header {
+    background-color: #ffffff;
+    border-bottom: 3px solid #3b558f;
+    padding: 12px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    letter-spacing: 2px;
+}
+
+/* Layout principal */
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    padding: 20px 0;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Sección de pago */
+.payment-section {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid #e0e0e0;
+}
+
+.payment-section h2 {
+    font-size: 1.3rem;
+    color: #333;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #e8ecf3;
+    border-radius: 5px;
+}
+
+/* Opción de pago */
+.payment-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.payment-option input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #3b558f;
+}
+
+.payment-option label {
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+/* Logos de tarjetas */
+.card-logos {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.card-logos img {
+    height: 30px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* Formulario */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #d0d0d0;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #3b558f;
+    box-shadow: 0 0 0 3px rgba(59, 85, 143, 0.1);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.flag-group {
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 12px;
+}
+
+.flag-icon {
+    width: 50px;
+    height: auto;
+    border: 1px solid #d0d0d0;
+    border-radius: 3px;
+}
+
+/* Botón confirmar */
+.btn-confirm {
+    width: 100%;
+    padding: 15px;
+    background-color: #3b558f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-confirm:hover {
+    background-color: #2a4070;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(59, 85, 143, 0.4);
+}
+
+/* Información de la reservación */
+.reservation-info {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid #e0e0e0;
+}
+
+.reservation-info h2 {
+    font-size: 1.3rem;
+    color: #333;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #e8ecf3;
+    border-radius: 5px;
+}
+
+/* Imágenes de la reservación */
+.reservation-images {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.reservation-image {
+    height: 150px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #2a3f6b;
+}
+
+.reservation-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Detalles de la reservación */
+.reservation-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #555;
+}
+
+.detail-value {
+    color: #333;
+    font-weight: 500;
+}
+
+.detail-item.total {
+    background-color: #e8ecf3;
+    border: 2px solid #3b558f;
+    margin-top: 10px;
+}
+
+.detail-item.total .detail-label,
+.detail-item.total .detail-value {
+    color: #3b558f;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .payment-section,
+    .reservation-info {
+        padding: 20px;
+    }
+
+    .card-logos {
+        flex-wrap: wrap;
+    }
+
+    .reservation-images {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .payment-section h2,
+    .reservation-info h2 {
+        font-size: 1.1rem;
+    }
+
+    .card-logos img {
+        height: 25px;
+    }
+}
