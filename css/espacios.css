@@ -40,6 +40,11 @@ header {
     letter-spacing: 2px;
 }
 
+.logo a {
+    text-decoration: none;
+    color: inherit;
+}
+
 /* Layout principal */
 .main-content {
     display: grid;
@@ -148,6 +153,15 @@ header {
     background-color: transparent;
 }
 
+.day.disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+.day.disabled:hover {
+    background-color: transparent;
+}
+
 /* Sección de huéspedes */
 .guests-section {
     background-color: #ffffff;
@@ -224,6 +238,103 @@ header {
     box-shadow: 0 5px 15px rgba(59, 85, 143, 0.4);
 }
 
+.btn-reservar:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Sección de resumen */
+.summary-section {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
+    border-left: 4px solid #3b558f;
+}
+
+.summary-section h2 {
+    font-size: 1.2rem;
+    color: #3b558f;
+    margin-bottom: 15px;
+}
+
+.summary-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 15px;
+    align-items: center;
+}
+
+.summary-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.summary-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.summary-item strong {
+    color: #3b558f;
+    font-size: 0.8rem;
+    min-width: 70px;
+}
+
+.summary-item span {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.summary-space {
+    padding: 12px;
+    background-color: #e8ecf3;
+    border-radius: 5px;
+}
+
+.summary-space h3 {
+    color: #3b558f;
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+.summary-space p {
+    margin-bottom: 5px;
+    font-size: 0.85rem;
+}
+
+.summary-space strong {
+    color: #3b558f;
+}
+
+.summary-total {
+    padding: 15px 20px;
+    background-color: #3b558f;
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+    min-width: 150px;
+}
+
+.summary-total h3 {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.total-amount {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 0;
+}
+
 /* Sección de espacios */
 .spaces-section {
     background-color: #ffffff;
@@ -240,9 +351,10 @@ header {
     border-bottom: 3px solid #3b558f;
 }
 
+/* Grid modificado para mostrar exactamente 3 tarjetas por fila */
 .spaces-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 25px;
 }
 
@@ -265,6 +377,7 @@ header {
 .space-card.selected {
     border-color: #2a4070;
     box-shadow: 0 0 0 3px rgba(59, 85, 143, 0.2);
+    background-color: #f0f4ff;
 }
 
 .space-image {
@@ -282,20 +395,7 @@ header {
 }
 
 .space-card:hover .space-image img {
-    transform: scale(1.1);
-}
-
-.space-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-weight: 600;
-    color: #3b558f;
-    font-size: 1.1rem;
+    transform: scale(1.05);
 }
 
 .space-info {
@@ -313,6 +413,22 @@ header {
     color: #3b558f;
 }
 
+/* Alerta de validación */
+.date-alert {
+    background-color: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: #856404;
+    display: none;
+}
+
+.date-alert.show {
+    display: block;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
     .main-content {
@@ -328,6 +444,12 @@ header {
     .btn-reservar {
         grid-column: 1 / -1;
     }
+
+    /* 2 tarjetas por fila en tablets */
+    .spaces-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -335,6 +457,7 @@ header {
         grid-template-columns: 1fr;
     }
 
+    /* 1 tarjeta por fila en móviles */
     .spaces-grid {
         grid-template-columns: 1fr;
     }
@@ -342,11 +465,23 @@ header {
     .spaces-section {
         padding: 20px;
     }
+
+    .summary-content {
+        grid-template-columns: 1fr;
+    }
+
+    .total-amount {
+        font-size: 2rem;
+    }
 }
 
 @media (max-width: 480px) {
     .spaces-section h2 {
         font-size: 1.4rem;
+    }
+
+    .summary-section h2 {
+        font-size: 1.3rem;
     }
 
     .calendar-grid {
