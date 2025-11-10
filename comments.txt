@@ -1,0 +1,23 @@
+ En tus scripts, usar las funciones
+
+javascript// GET
+const data = await authGet('/api/espacios');
+
+// POST
+const nuevo = await authPost('/api/espacios', { data: {...} });
+
+// PUT
+const actualizado = await authPut(`/api/espacios/${id}`, { data: {...} });
+
+// DELETE
+await authDelete(`/api/espacios/${id}`);
+
+
+Para cualquier página protegida
+<!-- SIEMPRE este orden -->
+<script src="../../js/auth-utils.js"></script>
+<script>
+    requireAuth(); // Protege la página
+    displayUserInfo('#username'); // Opcional
+</script>
+<script src="../../js/tu-script.js"></script

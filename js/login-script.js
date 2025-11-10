@@ -1,33 +1,68 @@
 // Funcionalidad de inicio de sesión
 document.addEventListener('DOMContentLoaded', function() {
     
+    // ✅ NUEVO: Verificar si ya hay sesión activa
+    if (isAuthenticated()) {
+        window.location.href = '../index.html';
+        return;
+    }
+    
     const loginForm = document.getElementById('loginForm');
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
 
     // Manejar el envío del formulario
-    loginForm.addEventListener('submit', function(e) {
+    loginForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        // Obtener valores (sin validación por ahora)
-        const username = usernameInput.value;
+        // Obtener valores
+        const identifier = usernameInput.value;
         const password = passwordInput.value;
 
-        // Simular proceso de inicio de sesión
-        console.log('Iniciando sesión...');
-        console.log('Usuario:', username);
-        
         // Mostrar mensaje de carga
         const btnLogin = document.querySelector('.btn-login');
         const originalText = btnLogin.textContent;
         btnLogin.textContent = 'Iniciando sesión...';
         btnLogin.disabled = true;
 
-        // Simular delay de autenticación y redirigir
-        setTimeout(function() {
-            // Redirigir a la página de espacios (o dashboard)
-            window.location.href = '../html/admin/home-admin.html';
-        }, 1000);
+        try {
+            // ✅ MODIFICADO: Usar API_BASE_URL de auth-utils.js
+            const response = await fetch(`${API_BASE_URL}/api/auth/local`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    identifier: identifier,
+                    password: password
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.jwt) {
+                // ✅ MODIFICADO: Usar funciones de auth-utils.js
+                setJWT(data.jwt);
+                setUser(data.user);
+
+                console.log('Inicio de sesión exitoso');
+                
+                // Redirigir a la página de admin
+                window.location.href = '../index.html';
+            } else {
+                // Manejar error de autenticación
+                throw new Error(data.error?.message || 'Credenciales incorrectas');
+            }
+        } catch (error) {
+            console.error('Error al iniciar sesión:', error);
+            
+            // Mostrar mensaje de error al usuario
+            alert('Error al iniciar sesión: ' + error.message);
+            
+            // Restaurar botón
+            btnLogin.textContent = originalText;
+            btnLogin.disabled = false;
+        }
     });
 
     // Animación de entrada
