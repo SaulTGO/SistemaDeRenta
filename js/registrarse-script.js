@@ -19,9 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Manejar el envío del formulario
-    registerForm.addEventListener('submit', function(e) {
+    registerForm.addEventListener('submit', async function (e) {
         e.preventDefault();
-        
+
         // Obtener valores
         const firstName = document.getElementById('firstName').value;
         const lastName = document.getElementById('lastName').value;
@@ -31,6 +31,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const confirmPassword = document.getElementById('confirmPassword').value;
         const terms = document.getElementById('terms').checked;
 
+        const passField = document.getElementById('registerPassword');
+        const confPassField = document.getElementById('confirmPassword');
+        if (password !== confirmPassword) {
+            passField.style.backgroundColor = "pink";
+            passField.style.border = "2px solid red";
+
+            confPassField.style.backgroundColor = "pink";
+            confPassField.style.border = "2px solid red";
+            return;
+        } else {
+            passField.style = "";
+            confPassField.style = "";
+        }
         // Log para debugging (sin validación real)
         console.log('Registrando usuario...');
         console.log('Nombre:', firstName, lastName);
@@ -43,13 +56,39 @@ document.addEventListener('DOMContentLoaded', function() {
         btnRegister.textContent = 'Creando cuenta...';
         btnRegister.disabled = true;
 
-        // Simular delay de registro y redirigir
-        setTimeout(function() {
-            alert('¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.');
-            
-            // Redirigir a la página de inicio de sesión
-            window.location.href = '../html/login.html';
-        }, 1500);
+
+        try {
+            // ✅ MODIFICADO: Usar API_BASE_URL de auth-utils.js
+            const response = await fetch(`${API_BASE_URL}/api/auth/local/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: firstName,
+                    email: email,
+                    password: password
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.jwt) {
+                window.location.href = '../html/login.html';
+            } else {
+                // Manejar error de autenticación
+                throw new Error(data.error?.message || 'Credenciales incorrectas');
+            }
+        } catch (error) {
+            console.error('Error al iniciar sesión:', error);
+
+            // Mostrar mensaje de error al usuario
+            alert('Error al iniciar sesión: ' + error.message);
+
+            // Restaurar botón
+            btnLogin.textContent = originalText;
+            btnLogin.disabled = false;
+        }
     });
 
     // Animación de entrada

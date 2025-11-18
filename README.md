@@ -1,2 +1,2 @@
 # SistemaDeRenta
-Proyecto de sistema de rentas   
+Proyecto de sistema de rentas

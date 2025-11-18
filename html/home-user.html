@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Reservaciones - SiRABi</title>
+    <link rel="stylesheet" href="../css/home-user.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="../index.html">
+                        <h1>SiRABi</h1>
+                    </a>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-logout" id="logoutBtn">Cerrar Sesión</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- TÃ­tulo y botÃ³n de acciÃ³n -->
+        <div class="page-header">
+            <h2>Mis reservaciones</h2>
+            <button class="btn-new-reservation" id="newReservationBtn">Hacer otra reservación</button>
+        </div>
+
+        <!-- Grid de reservaciones -->
+        <div class="reservations-grid" id="reservationsGrid">
+            <!-- Las tarjetas se generarÃ¡n dinÃ¡micamente -->
+        </div>
+
+        <!-- Mensaje cuando no hay reservaciones -->
+        <div class="no-reservations" id="noReservations" style="display: none;">
+            <p>No tienes reservaciones activas</p>
+            <button class="btn-new-reservation">Hacer tu primera reservación</button>
+        </div>
+    </div>
+
+    <script src="../js/home-user-script.js"></script>
+</body>
+</html>

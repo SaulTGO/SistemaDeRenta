@@ -46,9 +46,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 setUser(data.user);
 
                 console.log('Inicio de sesión exitoso');
-                
-                // Redirigir a la página de admin
-                window.location.href = '../index.html';
+
+                const response = await fetch(`${API_BASE_URL}/api/users/me?populate=role`, {
+                    headers: {
+                        Authorization: `Bearer ${data.jwt}`,
+                    },
+                });
+                const user = await response.json();
+                try {
+                    user.role.name!==null;
+                    switch (user.role.name!==null ? user.role.name:'Usuario') {
+                        case 'Administrador':
+                            window.location.href = '../html/admin/home-admin.html';
+                            break;
+                        case 'Personal':
+                            window.location.href = '../html/personal/home-personal.html';
+                            break;
+                        case 'Usuario':
+                            window.location.href = '../html/reservar.html';
+                            break;
+                        case 'Authenticated':
+                            window.location.href = '../html/reservar.html';
+                            break;
+                        default:
+                            window.location.href = '../html/login.html';
+                    }
+                }catch{ window.location.href = '../index.html';}
+
             } else {
                 // Manejar error de autenticación
                 throw new Error(data.error?.message || 'Credenciales incorrectas');
