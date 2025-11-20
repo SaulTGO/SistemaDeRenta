@@ -46,8 +46,8 @@ function createReservationCard(reservation) {
     
     // Agregar evento click
     card.addEventListener('click', () => {
-        alert(`Ver detalles de la reservaciÃ³n #${reservation.id}`);
-        // AquÃ­ podrÃ­as redirigir a una pÃ¡gina de detalles
+        alert(`Ver detalles de la reservación #${reservation.id}`);
+        // Aquí podrías redirigir a una página de detalles
         // window.location.href = `detalles-reservacion.html?id=${reservation.id}`;
     });
     
@@ -77,9 +77,9 @@ function loadReservations() {
     }
 }
 
-// FunciÃ³n para cerrar sesiÃ³n
+// Función para cerrar sesión
 function logout() {
-    if (confirm('Â¿EstÃ¡s seguro de que deseas cerrar sesiÃ³n?')) {
+    if (confirm('¿Estas seguro de que deseas cerrar sesion?')) {
         // Limpiar datos de sesiÃ³n
         // localStorage.removeItem('user'); // Ejemplo
         
@@ -88,11 +88,11 @@ function logout() {
     }
 }
 
-// FunciÃ³n para ir a nueva reservaciÃ³n
+// Función para ir a nueva reservación
 function goToNewReservation() {
-    // Redirigir a la pÃ¡gina de nueva reservaciÃ³n
-    alert('Redirigiendo a hacer una nueva reservaciÃ³n...');
-    // window.location.href = '../html/nueva-reservacion.html';
+    // Redirigir a la página de nueva reservación
+    alert('Redirigiendo a hacer una nueva reservación...');
+    window.location.href = '../html/espacios.html';
 }
 
 // Event Listeners

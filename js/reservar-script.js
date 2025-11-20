@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Redirigir al index después de un pequeño delay
         setTimeout(function() {
             alert('¡Reserva confirmada exitosamente!');
-            window.location.href = '../index.html';
+            window.location.href = '../html/home-user.html';
         }, 1000);
     });
 
