@@ -24,7 +24,8 @@
                 <div class="logo">
                     <h1>SiRABi</h1>
                 </div>
-                <a href="html/login.html" class="btn-sesion">Iniciar Sesión</a>
+                <!-- Botón dinámico según estado de sesión -->
+                <a href="html/login.html" class="btn-sesion" id="auth-button">Iniciar Sesión</a>
             </div>
         </div>
     </header>
@@ -58,7 +59,6 @@
                     <h3><a href="html/espacios.html">Descubrir espacios en Toluca</a></h3>
                 </div>
                 <div class="feature-image">
-                    
                     <img src="https://blog.alamo.com.mx/blog/wp-content/uploads/2025/05/turismo-en-toluca-historia-atractivos-hoteles.jpg" alt="Espacios modernos de oficina">
                 </div>
             </div>
@@ -122,5 +122,25 @@
             <p>&copy; 2025 SiRABi. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+    <!-- Scripts -->
+    <script src="js/auth-utils.js"></script>
+    <script>
+        // Verificar si hay sesión activa y cambiar el botón
+        document.addEventListener('DOMContentLoaded', function() {
+            const authButton = document.getElementById('auth-button');
+            
+            if (isAuthenticated()) {
+                // Si hay sesión activa, cambiar a "Mi Cuenta"
+                const user = getUser();
+                authButton.textContent = user ? user.username || 'Mi Cuenta' : 'Mi Cuenta';
+                authButton.href = 'html/home-user.html';
+            } else {
+                // Si no hay sesión, mostrar "Iniciar Sesión"
+                authButton.textContent = 'Iniciar Sesión';
+                authButton.href = 'html/login.html';
+            }
+        });
+    </script>
 </body>
 </html>
