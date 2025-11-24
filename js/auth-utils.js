@@ -13,16 +13,16 @@ const API_BASE_URL = 'http://localhost:1337';
  * Obtiene el JWT almacenado en las cookies
  * @returns {string|null} El token JWT o null si no existe
  */
-function getJWT() {
-    const cookies = document.cookie.split(';');
-    for (let cookie of cookies) {
-        const [name, value] = cookie.trim().split('=');
-        if (name === 'jwt') {
-            return value;
-        }
-    }
-    return null;
-}
+// function getJWT() {
+//     const cookies = document.cookie.split(';');
+//     for (let cookie of cookies) {
+//         const [name, value] = cookie.trim().split('=');
+//         if (name === 'jwt') {
+//             return value;
+//         }
+//     }
+//     return null;
+// }
 
 /**
  * Guarda el JWT en las cookies
@@ -30,15 +30,24 @@ function getJWT() {
  * @param {number} maxAge - Tiempo de expiración en segundos (por defecto 24 horas)
  */
 function setJWT(jwt, maxAge = 86400) {
-    document.cookie = `jwt=${jwt}; path=/; max-age=${maxAge}`;
+    localStorage.setItem('jwt', jwt);
+    console.log('✅ JWT guardado en localStorage');
+}
+
+function getJWT() {
+    return localStorage.getItem('jwt');
+}
+
+function removeJWT() {
+    localStorage.removeItem('jwt');
 }
 
 /**
  * Elimina el JWT de las cookies
  */
-function removeJWT() {
-    document.cookie = 'jwt=; path=/; max-age=0';
-}
+// function removeJWT() {
+//     document.cookie = 'jwt=; path=/; max-age=0';
+// }
 
 // ============================================
 // GESTIÓN DE USUARIO
