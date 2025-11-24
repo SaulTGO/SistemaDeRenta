@@ -24,6 +24,9 @@ function createReservationCard(reservation) {
     card.className = 'reservation-card';
     const fechaLlegada = reservation.arriveDate;
     const fechaSalida = reservation.departureDate;
+    console.log(fechaLlegada)
+    console.log(fechaSalida)
+    console.log(fechaSalida-fechaLlegada)
     const total = Math.ceil((fechaSalida-fechaLlegada) / (1000 * 60 * 60 * 24))*reservation.site.pricePerNight;
     card.innerHTML = `
         <div class="reservation-image">
