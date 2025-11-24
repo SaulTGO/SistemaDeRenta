@@ -30,7 +30,6 @@ async function cargarReservaciones() {
         tbody.innerHTML = '';
 
         // Realizar petición a la API
-        // Ajusta el endpoint según tu API
         const response = await authGet('/api/reservaciones');
         
         // Verificar si hay datos
@@ -63,58 +62,42 @@ function renderizarReservaciones(reservaciones) {
     reservaciones.forEach(reservacion => {
         const row = tbody.insertRow();
         
-        // Extraer datos del objeto (ajusta según la estructura de tu API)
-        const id = reservacion.id || reservacion.attributes?.id || 'N/A';
-        const nombreUsuario = reservacion.attributes?.nombre_usuario || 
-                             reservacion.nombre_usuario || 'N/A';
-        const nombreDomicilio = reservacion.attributes?.nombre_domicilio || 
-                               reservacion.nombre_domicilio || 'N/A';
-        const fechaLlegada = formatearFecha(
-            reservacion.attributes?.fecha_llegada || 
-            reservacion.fecha_llegada
-        );
-        const fechaSalida = formatearFecha(
-            reservacion.attributes?.fecha_salida || 
-            reservacion.fecha_salida
-        );
-        const huellasRegistradas = reservacion.attributes?.huellas_registradas || 
-                                  reservacion.huellas_registradas || false;
+        // Extraer datos según la estructura del JSON proporcionado
+        const id = reservacion.id || 'N/A';
+        const nombreUsuario = reservacion.user?.username || 'N/A';
+        const nombreSitio = reservacion.site?.name || 'N/A';
+        const fechaLlegada = formatearFecha(reservacion.arriveDate);
+        const fechaSalida = formatearFecha(reservacion.departureDate);
 
         // Crear celdas
         row.innerHTML = `
             <td>${id}</td>
             <td>${nombreUsuario}</td>
-            <td>${nombreDomicilio}</td>
+            <td>${nombreSitio}</td>
             <td>${fechaLlegada}</td>
             <td>${fechaSalida}</td>
-            <td class="huella-status">
-                <input type="checkbox" class="huella-check" ${huellasRegistradas ? 'checked' : ''} disabled>
-                <span class="huella-text">${huellasRegistradas ? 'Sí' : 'No'}</span>
-            </td>
         `;
     });
 }
 
 /**
  * Formatea una fecha ISO a formato legible
- * @param {string} fechaISO - Fecha en formato ISO
+ * @param {string} fecha - Fecha en formato ISO o YYYY-MM-DD
  * @returns {string} Fecha formateada
  */
-function formatearFecha(fechaISO) {
-    if (!fechaISO) return 'N/A';
+function formatearFecha(fecha) {
+    if (!fecha) return 'N/A';
     
     try {
-        const fecha = new Date(fechaISO);
+        const fechaObj = new Date(fecha);
         const opciones = { 
             year: 'numeric', 
             month: '2-digit', 
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit'
+            day: '2-digit'
         };
-        return fecha.toLocaleDateString('es-MX', opciones);
+        return fechaObj.toLocaleDateString('es-MX', opciones);
     } catch (error) {
-        return fechaISO;
+        return fecha;
     }
 }
 
@@ -128,22 +111,20 @@ function formatearFecha(fechaISO) {
  */
 function filtrarPorUsuario(termino) {
     const filtradas = reservacionesData.filter(reservacion => {
-        const nombreUsuario = (reservacion.attributes?.nombre_usuario || 
-                              reservacion.nombre_usuario || '').toLowerCase();
+        const nombreUsuario = (reservacion.user?.username || '').toLowerCase();
         return nombreUsuario.includes(termino.toLowerCase());
     });
     renderizarReservaciones(filtradas);
 }
 
 /**
- * Filtra reservaciones por domicilio
+ * Filtra reservaciones por sitio
  * @param {string} termino - Término de búsqueda
  */
-function filtrarPorDomicilio(termino) {
+function filtrarPorSitio(termino) {
     const filtradas = reservacionesData.filter(reservacion => {
-        const nombreDomicilio = (reservacion.attributes?.nombre_domicilio || 
-                                reservacion.nombre_domicilio || '').toLowerCase();
-        return nombreDomicilio.includes(termino.toLowerCase());
+        const nombreSitio = (reservacion.site?.name || '').toLowerCase();
+        return nombreSitio.includes(termino.toLowerCase());
     });
     renderizarReservaciones(filtradas);
 }
@@ -188,14 +169,13 @@ function exportarACSV() {
         return;
     }
 
-    const headers = ['ID', 'Nombre Usuario', 'Domicilio', 'Fecha Llegada', 'Fecha Salida', 'Huellas Registradas'];
+    const headers = ['ID', 'Nombre Usuario', 'Sitio', 'Fecha Llegada', 'Fecha Salida'];
     const rows = reservacionesData.map(r => [
-        r.id || r.attributes?.id,
-        r.attributes?.nombre_usuario || r.nombre_usuario,
-        r.attributes?.nombre_domicilio || r.nombre_domicilio,
-        r.attributes?.fecha_llegada || r.fecha_llegada,
-        r.attributes?.fecha_salida || r.fecha_salida,
-        (r.attributes?.huellas_registradas || r.huellas_registradas) ? 'Sí' : 'No'
+        r.id,
+        r.user?.username || '',
+        r.site?.name || '',
+        r.arriveDate || '',
+        r.departureDate || ''
     ]);
 
     let csvContent = headers.join(',') + '\n';
