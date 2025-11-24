@@ -1,3 +1,5 @@
+const { removeJWT, removeUser } = require("./auth-utils");
+
 // Datos de ejemplo de reservaciones
 const sampleReservations = [
     {
@@ -80,10 +82,10 @@ function loadReservations() {
 // Función para cerrar sesión
 function logout() {
     if (confirm('¿Estas seguro de que deseas cerrar sesion?')) {
-        // Limpiar datos de sesiÃ³n
-        // localStorage.removeItem('user'); // Ejemplo
-        
-        // Redirigir al login
+
+        removeJWT();
+        removeUser
+
         window.location.href = '../html/login.html';
     }
 }
