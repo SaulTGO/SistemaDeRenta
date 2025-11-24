@@ -24,9 +24,9 @@ function createReservationCard(reservation) {
     card.className = 'reservation-card';
     const fechaLlegada = new Date(reservation.arriveDate);
     const fechaSalida = new Date(reservation.departureDate);
-    console.log(fechaLlegada)
+    /*console.log(fechaLlegada)
     console.log(fechaSalida)
-    console.log(fechaSalida-fechaLlegada)
+    console.log(fechaSalida-fechaLlegada)*/
     const total = Math.ceil((fechaSalida-fechaLlegada) / (1000 * 60 * 60 * 24))*reservation.site.pricePerNight;
     card.innerHTML = `
         <div class="reservation-image">
@@ -49,8 +49,9 @@ function createReservationCard(reservation) {
     `;
     
     // Agregar evento click
-    card.addEventListener('click', () => {
-        alert(`Ver detalles de la reservación #${reservation.id}`);
+    card.addEventListener('click', async () => {
+        const codigo = await authGet(`/api/posts/codigo/${reservation.id}`);
+        alert(`Codigo de acceso reservación #${reservation.id}: ${codigo}`);
         // Aquí podrías redirigir a una página de detalles
         // window.location.href = `detalles-reservacion.html?id=${reservation.id}`;
     });
