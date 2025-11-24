@@ -7,7 +7,7 @@
 // ============================================
 // VARIABLES GLOBALES
 // ============================================
-let personalData = []; // Renombrado de asignacionesData a personalData
+let personalData = [];
 
 // ============================================
 // FUNCIONES DE CARGA DE DATOS
@@ -16,7 +16,7 @@ let personalData = []; // Renombrado de asignacionesData a personalData
 /**
  * Carga el personal desde la API
  */
-async function cargarPersonal() { // Renombrada de cargarAsignaciones
+async function cargarPersonal() {
     const loadingIndicator = document.getElementById('loadingIndicator');
     const errorMessage = document.getElementById('errorMessage');
     const noDataMessage = document.getElementById('noDataMessage');
@@ -28,22 +28,35 @@ async function cargarPersonal() { // Renombrada de cargarAsignaciones
         loadingIndicator.style.display = 'block';
         errorMessage.style.display = 'none';
         noDataMessage.style.display = 'none';
-        estadisticasPanel.style.display = 'none'; // Ocultamos las estadísticas
+        estadisticasPanel.style.display = 'none';
         tbody.innerHTML = '';
 
         // Realizar petición a la API
-        // Endpoint ajustado para obtener personal/usuarios.
         const response = await authGet('/api/users?filters[role][name][$eq]=Personal&populate=role'); 
         
+        console.log('Respuesta de la API:', response);
+        
+        // La API devuelve directamente un array, no un objeto con propiedad 'data'
+        // Verificar si la respuesta es un array directamente
+        let data = null;
+        
+        if (Array.isArray(response)) {
+            // Si response es directamente un array
+            data = response;
+        } else if (response.data && Array.isArray(response.data)) {
+            // Si response tiene una propiedad data que es un array
+            data = response.data;
+        }
+        
         // Verificar si hay datos
-        if (response.data && response.data.length > 0) {
-            personalData = response.data; // Actualizado a personalData
-            renderizarPersonal(personalData); // Renombrado
-            // No se llama a actualizarEstadisticas ya que no son relevantes.
-            // estadisticasPanel.style.display = 'block';
+        if (data && data.length > 0) {
+            personalData = data;
+            renderizarPersonal(personalData);
+            console.log(`${personalData.length} registros de personal cargados`);
         } else {
             // No hay datos
             noDataMessage.style.display = 'block';
+            console.log('No se encontraron registros de personal');
         }
 
     } catch (error) {
@@ -60,20 +73,20 @@ async function cargarPersonal() { // Renombrada de cargarAsignaciones
  * Renderiza el personal en la tabla
  * @param {Array} personal - Array de objetos con datos del personal
  */
-function renderizarPersonal(personal) { // Renombrada de renderizarAsignaciones
+function renderizarPersonal(personal) {
     const tbody = document.getElementById('personalBody');
     tbody.innerHTML = '';
 
     personal.forEach(usuario => {
         const row = tbody.insertRow();
         
-        // Extraer y asignar los campos requeridos del JSON
+        // Extraer y asignar los campos del JSON
         const idPersonal = usuario.id || 'N/A';
-        // Usamos 'username' para el nombre y 'lastname' para los apellidos
         const nombre = usuario.username || 'N/A';
         const apellidos = usuario.lastname || 'N/A'; 
         const correo = usuario.email || 'N/A';
-        const telefono = usuario.phone || 'N/A';
+        // El teléfono viene como número, lo convertimos a string
+        const telefono = usuario.phone ? String(usuario.phone) : 'N/A';
 
         // Crear celdas
         row.innerHTML = `
@@ -88,8 +101,7 @@ function renderizarPersonal(personal) { // Renombrada de renderizarAsignaciones
 
 /**
  * Obtiene la información del estado según el valor booleano
- * NOTA: Esta función y el bloque de estadísticas ya no son relevantes para el personal, 
- * pero se dejan vacíos o comentados para evitar errores si otras partes del código los usan.
+ * NOTA: Esta función ya no es relevante para el personal
  */
 function obtenerEstado(estado) {
     return { texto: 'N/A', clase: '' };
@@ -108,7 +120,7 @@ function actualizarEstadisticas() {
 }
 
 // ============================================
-// FUNCIONES DE BÚSQUEDA Y FILTRADO (PENDIENTE DE IMPLEMENTACIÓN)
+// FUNCIONES DE BÚSQUEDA Y FILTRADO
 // ============================================
 
 /**
@@ -124,11 +136,9 @@ function buscarPorNombre(termino) {
     renderizarPersonal(filtradas);
 }
 
-// Las funciones de filtrado por Ubicación y Estado ya no son relevantes
-
-// /**
-//  * Restablece la vista mostrando todo el personal
-//  */
+/**
+ * Restablece la vista mostrando todo el personal
+ */
 function mostrarTodas() {
     renderizarPersonal(personalData);
 }
@@ -153,12 +163,12 @@ function cerrarSesion() {
 /**
  * Recarga el personal desde la API
  */
-async function recargarPersonal() { // Renombrada de recargarAsignaciones
+async function recargarPersonal() {
     await cargarPersonal();
 }
 
 /**
- * Exporta el personal a CSV (Ajustado)
+ * Exporta el personal a CSV
  */
 function exportarACSV() {
     if (personalData.length === 0) {
@@ -169,18 +179,18 @@ function exportarACSV() {
     const headers = ['ID Personal', 'Nombre', 'Apellidos', 'Correo', 'Teléfono'];
     const rows = personalData.map(u => {
         return [
-            u.id,
-            u.username,
-            u.lastname,
-            u.email,
-            u.phone
+            u.id || '',
+            u.username || '',
+            u.lastname || '',
+            u.email || '',
+            u.phone || ''
         ];
     });
 
     let csvContent = headers.join(',') + '\n';
     rows.forEach(row => {
-        // Asegurarse de que el teléfono no se trate como número si tiene caracteres especiales
-        csvContent += row.map(cell => `"${cell}"`).join(',') + '\n';
+        // Escapar comillas y envolver en comillas cada celda
+        csvContent += row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',') + '\n';
     });
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -210,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
     displayUserInfo('.user-name');
     
     // Cargar personal
-    cargarPersonal(); // Renombrada
+    cargarPersonal();
     
     // Configurar actualización automática cada 5 minutos (opcional)
     // setInterval(cargarPersonal, 300000);
