@@ -3,7 +3,7 @@ function cerrarSesion() {
     if (confirm('¿Está seguro que desea cerrar sesión?')) {
         // Aquí iría la lógica de cierre de sesión
         alert('Sesión cerrada exitosamente');
-        window.location.href = '../../index.html';
+        window.location.href = '../../../index.html';
     }
 }
 
