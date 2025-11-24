@@ -1,16 +1,6 @@
 // Funcionalidad de la página de reserva
 document.addEventListener('DOMContentLoaded', function() {
 
-            console.log(localStorage.getItem('fechaLlegada'));
-            console.log(localStorage.getItem('fechaSalida'));
-            console.log(localStorage.getItem('numHuespedes'));
-            console.log(localStorage.getItem('numNoches'));
-            console.log(localStorage.getItem('nombre'));
-            console.log(localStorage.getItem('ubicacion'));
-            console.log(localStorage.getItem('precio'));
-            console.log(localStorage.getItem('capacidad'));
-            console.log(localStorage.getItem('totalAmount'));
-
     
     // Formatear número de tarjeta automáticamente
     const cardNumberInput = document.getElementById('cardNumber');
