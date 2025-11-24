@@ -6,10 +6,10 @@
  * Mapeo de códigos numéricos a estados
  */
 const ESTADOS = {
-    1: { texto: 'DISPONIBLE', clase: 'estado-disponible' },
-    2: { texto: 'PENDIENTE DE ASEO', clase: 'estado-pendiente-aseo' },
-    3: { texto: 'OCUPADO', clase: 'estado-ocupado' },
-    4: { texto: 'ASEADO', clase: 'estado-aseado' }
+    1: { texto: 'OCUPADO', clase: 'estado-ocupado' },
+    2: { texto: 'DISPONIBLE', clase: 'estado-disponible' },
+    3: { texto: 'ASEADO', clase: 'estado-aseado' },
+    4: { texto: 'ASEO PENDIENTE', clase: 'estado-pendiente-aseo' }
 };
 
 /**
@@ -56,8 +56,7 @@ async function cargarEspacios() {
         tbody.innerHTML = '';
 
         // Realizar petición a la API
-        // Ajusta el endpoint según tu API
-        const response = await authGet('/api/espacios');
+        const response = await authGet('/api/sites?populate=*');
         
         // Verificar si hay datos
         if (response.data && response.data.length > 0) {
@@ -91,68 +90,23 @@ function renderizarEspacios(espacios) {
     espacios.forEach(espacio => {
         const row = tbody.insertRow();
         
-        // Extraer datos del objeto (ajusta según la estructura de tu API)
-        const nombreSitio = espacio.attributes?.nombre_sitio || 
-                           espacio.nombre_sitio || 'N/A';
-        const ubicacion = espacio.attributes?.ubicacion_sitio || 
-                         espacio.ubicacion_sitio || 
-                         espacio.attributes?.ubicacion || 
-                         espacio.ubicacion || 'N/A';
-        const codigoEstado = espacio.attributes?.estado || 
-                            espacio.estado || 0;
+        // Extraer datos según la estructura del JSON
+        const idSitio = espacio.id || 'N/A';
+        const nombreSitio = espacio.name || 'N/A';
+        const ubicacion = espacio.location || 'N/A';
+        const codigoEstado = espacio.state || 0;
 
         // Obtener información del estado
         const estadoInfo = obtenerEstado(codigoEstado);
 
         // Crear celdas
         row.innerHTML = `
+            <td>${idSitio}</td>
             <td>${nombreSitio}</td>
             <td>${ubicacion}</td>
             <td class="${estadoInfo.clase}">${estadoInfo.texto}</td>
         `;
     });
-}
-
-/**
- * Normaliza el valor de disponibilidad
- * @param {string|boolean} disponibilidad - Valor de disponibilidad
- * @returns {string} Valor normalizado
- */
-function normalizarDisponibilidad(disponibilidad) {
-    if (typeof disponibilidad === 'boolean') {
-        return disponibilidad ? 'DISPONIBLE' : 'RESERVADO';
-    }
-    
-    const valor = String(disponibilidad).toUpperCase().trim();
-    
-    // Mapeo de posibles valores
-    if (valor === 'TRUE' || valor === '1' || valor === 'DISPONIBLE' || valor === 'SI' || valor === 'SÍ') {
-        return 'DISPONIBLE';
-    } else if (valor === 'FALSE' || valor === '0' || valor === 'RESERVADO' || valor === 'NO') {
-        return 'RESERVADO';
-    }
-    
-    return valor || 'N/A';
-}
-
-/**
- * Normaliza el valor de estado de aseo
- * @param {string} estado - Valor de estado
- * @returns {string} Valor normalizado
- */
-function normalizarEstado(estado) {
-    const valor = String(estado).toUpperCase().trim();
-    
-    // Mapeo de posibles valores
-    if (valor === 'ASEADO' || valor === 'LIMPIO' || valor === 'FINALIZADO' || valor === 'COMPLETO') {
-        return 'ASEADO';
-    } else if (valor === 'ASEO PENDIENTE' || valor === 'PENDIENTE' || valor === 'EN ESPERA' || valor === 'SUCIO') {
-        return 'ASEO PENDIENTE';
-    } else if (valor === 'EN PROCESO') {
-        return 'EN PROCESO';
-    }
-    
-    return valor || 'N/A';
 }
 
 // ============================================
@@ -165,27 +119,27 @@ function normalizarEstado(estado) {
 function actualizarEstadisticas() {
     const stats = {
         total: espaciosData.length,
-        disponibles: 0,      // Estado 1
-        pendientes: 0,       // Estado 2
-        ocupados: 0,         // Estado 3
-        aseados: 0          // Estado 4
+        ocupados: 0,         // Estado 1
+        disponibles: 0,      // Estado 2
+        aseados: 0,          // Estado 3
+        pendientes: 0        // Estado 4
     };
 
     espaciosData.forEach(espacio => {
-        const codigoEstado = parseInt(espacio.attributes?.estado || espacio.estado || 0);
+        const codigoEstado = parseInt(espacio.state || 0);
         
         switch(codigoEstado) {
             case 1:
-                stats.disponibles++;
-                break;
-            case 2:
-                stats.pendientes++;
-                break;
-            case 3:
                 stats.ocupados++;
                 break;
-            case 4:
+            case 2:
+                stats.disponibles++;
+                break;
+            case 3:
                 stats.aseados++;
+                break;
+            case 4:
+                stats.pendientes++;
                 break;
         }
     });
@@ -210,12 +164,23 @@ function actualizarEstadisticas() {
  */
 function buscarEspacios(termino) {
     const filtrados = espaciosData.filter(espacio => {
-        const nombreSitio = (espacio.attributes?.nombre_sitio || espacio.nombre_sitio || '').toLowerCase();
-        const ubicacion = (espacio.attributes?.ubicacion_sitio || espacio.ubicacion_sitio || 
-                          espacio.attributes?.ubicacion || espacio.ubicacion || '').toLowerCase();
+        const nombreSitio = (espacio.name || '').toLowerCase();
+        const ubicacion = (espacio.location || '').toLowerCase();
         
         return nombreSitio.includes(termino.toLowerCase()) || 
                ubicacion.includes(termino.toLowerCase());
+    });
+
+    renderizarEspacios(filtrados);
+}
+
+/**
+ * Filtra espacios por estado
+ * @param {number} codigoEstado - Código del estado a filtrar
+ */
+function filtrarPorEstado(codigoEstado) {
+    const filtrados = espaciosData.filter(espacio => {
+        return parseInt(espacio.state) === parseInt(codigoEstado);
     });
 
     renderizarEspacios(filtrados);
@@ -261,14 +226,15 @@ function exportarACSV() {
         return;
     }
 
-    const headers = ['Nombre del Sitio', 'Ubicación', 'Estado'];
+    const headers = ['ID Sitio', 'Nombre del Sitio', 'Ubicación', 'Estado'];
     const rows = espaciosData.map(e => {
-        const codigoEstado = e.attributes?.estado || e.estado;
+        const codigoEstado = e.state;
         const estadoInfo = obtenerEstado(codigoEstado);
         
         return [
-            e.attributes?.nombre_sitio || e.nombre_sitio,
-            e.attributes?.ubicacion_sitio || e.ubicacion_sitio || e.attributes?.ubicacion || e.ubicacion,
+            e.id,
+            e.name,
+            e.location,
             estadoInfo.texto
         ];
     });
