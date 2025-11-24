@@ -22,8 +22,8 @@ const sampleReservations = [
 function createReservationCard(reservation) {
     const card = document.createElement('div');
     card.className = 'reservation-card';
-    const fechaLlegada = reservation.arriveDate;
-    const fechaSalida = reservation.departureDate;
+    const fechaLlegada = Date(reservation.arriveDate);
+    const fechaSalida = Date(reservation.departureDate);
     console.log(fechaLlegada)
     console.log(fechaSalida)
     console.log(fechaSalida-fechaLlegada)
