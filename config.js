@@ -1,3 +1,3 @@
-export const CONFIG = {
+window.APP_CONFIG = {
   backendUrl: "http://192.168.0.10:3000"
 };
