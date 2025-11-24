@@ -125,9 +125,13 @@ async function authenticatedFetch(endpoint, options = {}) {
     // Configurar headers por defecto
     const defaultHeaders = {
         'Authorization': `Bearer ${jwt}`
-        `,${options.method !== 'GET' ?  'Content-Type : application/json': null}`
     };
-    
+
+    if (options.method && options.method !== 'GET') {
+        defaultHeaders['Content-Type'] = 'application/json';
+    }
+
+
     // Combinar headers personalizados con los por defecto
     const headers = {
         ...defaultHeaders,
