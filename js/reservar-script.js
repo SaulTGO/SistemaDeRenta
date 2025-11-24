@@ -69,19 +69,25 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = '../html/login.html';
         }else{
             const sitio = await authGet(`/api/sites/${localStorage.getItem('siteId')}`)
-            const fecha = new Date(sitio.)
-            const year = today.getFullYear();
-            // getMonth() returns 0 for January, so add 1
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
+            const fecha = new Date(sitio.arriveDate)
+            const fecha2 = new Date(sitio.departureDate)
+            const year1 = fecha.getFullYear();
+            const month1 = String(fecha.getMonth() + 1).padStart(2, '0');
+            const day1 = String(fecha.getDate()).padStart(2, '0');
+            const year2 = fecha2.getFullYear();
+            const month2 = String(fecha2.getMonth() + 1).padStart(2, '0');
+            const day2 = String(fecha2.getDate()).padStart(2, '0');
             const response = await authPost(`/api/reservations`,{
-                arriveDate: new Date('')
-
+                arriveDate: `${year1}-${month1}-${day1}`,
+                departureDate: `${year2}-${month2}-${day2}`,
+                user:getUser().id ,
+                site:localStorage.getItem('siteId'),
+                codigo: Math.floor(10000000 + Math.random() * 90000000)
             })
             if(!response) return false;
             const asd = await authPost(`/api/posts/codigoUpdate`, {
                 id: localStorage.getItem('siteId'),
-                codigo: Math.floor(10000000 + Math.random() * 90000000)
+
             })
         }
 
