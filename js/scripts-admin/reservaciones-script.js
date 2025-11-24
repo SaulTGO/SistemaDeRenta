@@ -9,7 +9,7 @@
 // ============================================
 let reservacionesData = [];
 
-import { CONFIG } from "./config.js";
+import { CONFIG } from "config.js";
 // ============================================
 // FUNCIONES DE CARGA DE DATOS
 // ============================================
@@ -59,7 +59,6 @@ async function cargarReservaciones() {
 function renderizarReservaciones(reservaciones) {
     const tbody = document.getElementById('reservacionesBody');
     tbody.innerHTML = '';
-
     reservaciones.forEach(reservacion => {
         const row = tbody.insertRow();
         
