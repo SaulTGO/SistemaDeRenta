@@ -24,11 +24,11 @@ function createReservationCard(reservation) {
     card.className = 'reservation-card';
     const fechaLlegada = reservation.arriveDate;
     const fechaSalida = reservation.departureDate;
-    const total = (fechaSalida-fechaLlegada)*reservation.site.pricePerNight;
+    const total = Math.ceil((fechaSalida-fechaLlegada) / (1000 * 60 * 60 * 24))*reservation.site.pricePerNight;
     card.innerHTML = `
         <div class="reservation-image">
             ${reservation.site.image 
-                ? `<img src="${reservation.image}" alt="Espacio reservado">`
+                ? `<img src="${reservation.site.image}" alt="Espacio reservado">`
                 : `<div class="image-placeholder">
                     <svg viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect width="200" height="150" fill="#000000"/>
