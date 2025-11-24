@@ -31,7 +31,7 @@ async function cargarReservaciones() {
         tbody.innerHTML = '';
 
         // Realizar petición a la API
-        const response = await authGset(`/api/reservations?populate=*`);
+        const response = await authGet(`/api/reservations?populate=*`);
         
         // Verificar si hay datos
         if (response.data && response.data.length > 0) {
