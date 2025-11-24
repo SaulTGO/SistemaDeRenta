@@ -67,7 +67,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify({
                     username: firstName,
                     email: email,
-                    password: password
+                    password: password,
+                    phone: phone,
+                    lastName: lastName
                 })
             });
 
