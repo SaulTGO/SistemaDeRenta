@@ -9,6 +9,7 @@
 // ============================================
 let reservacionesData = [];
 
+import { CONFIG } from "./config.js";
 // ============================================
 // FUNCIONES DE CARGA DE DATOS
 // ============================================
@@ -30,7 +31,7 @@ async function cargarReservaciones() {
         tbody.innerHTML = '';
 
         // Realizar petición a la API
-        const response = await authGet(`${API_BASE_URL}/api/reservations?populate=*`);
+        const response = await authGset(`/api/reservations?populate=*`);
         
         // Verificar si hay datos
         if (response.data && response.data.length > 0) {
