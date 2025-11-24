@@ -41,12 +41,20 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
 
             if (response.ok && data.jwt) {
-                // ✅ MODIFICADO: Usar funciones de auth-utils.js
+                
+                console.log('=== DEBUG LOGIN ===');
+                console.log('1. JWT recibido del servidor:', data.jwt);
+                console.log('2. Usuario recibido del servidor:', data.user);
+                
                 setJWT(data.jwt);
                 setUser(data.user);
+                
+                console.log('3. JWT guardado en cookies:', getJWT());
+                console.log('4. Usuario guardado en localStorage:', getUser());
+                console.log('5. isAuthenticated():', isAuthenticated());
+                console.log('===================');
 
                 console.log('Inicio de sesión exitoso');
-
                 const response = await fetch(`${API_BASE_URL}/api/users/me?populate=role`, {
                     headers: {
                         Authorization: `Bearer ${data.jwt}`,

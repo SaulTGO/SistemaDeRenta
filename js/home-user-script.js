@@ -1,5 +1,3 @@
-const { removeJWT, removeUser } = require("./auth-utils");
-
 // Datos de ejemplo de reservaciones
 const sampleReservations = [
     {
@@ -20,7 +18,7 @@ const sampleReservations = [
     }
 ];
 
-// FunciÃ³n para crear una tarjeta de reservaciÃ³n
+// Funcion para crear una tarjeta de reservacion
 function createReservationCard(reservation) {
     const card = document.createElement('div');
     card.className = 'reservation-card';
@@ -84,7 +82,7 @@ function logout() {
     if (confirm('¿Estas seguro de que deseas cerrar sesion?')) {
 
         removeJWT();
-        removeUser
+        removeUser();
 
         window.location.href = '../html/login.html';
     }
