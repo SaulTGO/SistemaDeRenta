@@ -64,11 +64,11 @@ async function loadReservations() {
     // o usar datos de ejemplo
     const reservations = await authGet(`/api/users/${getUser().id}?populate=reservations`);
 
-    if (reservations.data && reservations.data.length > 0) {
+    if (reservations.reservations && reservations.reservations.length > 0) {
         grid.style.display = 'grid';
         noReservations.style.display = 'none';
 
-        reservations.data.forEach(reservation => {
+        reservations.reservations.forEach(reservation => {
             const card = createReservationCard(reservation);
             grid.appendChild(card);
         });
