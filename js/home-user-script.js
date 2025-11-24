@@ -91,7 +91,6 @@ function logout() {
 // Función para ir a nueva reservación
 function goToNewReservation() {
     // Redirigir a la página de nueva reservación
-    alert('Redirigiendo a hacer una nueva reservación...');
     window.location.href = '../html/espacios.html';
 }
 
