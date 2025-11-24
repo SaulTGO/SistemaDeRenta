@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="../../css/styles-admin/revision-espacios.css">
 </head>
 <body>
-    <!-- Header -->
     <header>
         <div class="header-content">
             <div class="logo">
@@ -24,45 +23,38 @@
         </div>
     </header>
 
-    <!-- Contenido principal -->
     <div class="container">
         <div class="personal-wrapper">
-            <!-- Indicador de carga -->
             <div id="loadingIndicator" class="loading-indicator" style="display: none;">
-                <p>Cargando asignaciones...</p>
+                <p>Cargando personal...</p>
             </div>
 
-            <!-- Mensaje de error -->
             <div id="errorMessage" class="error-message" style="display: none;"></div>
 
-            <!-- Botón de recarga -->
             <div class="actions-container" style="margin-bottom: 20px;">
-                <button onclick="recargarAsignaciones()" class="filter-btn">Recargar</button>
+                <button onclick="recargarPersonal()" class="filter-btn">Recargar</button>
             </div>
 
-            <!-- Tabla de asignaciones -->
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>ID Asignación</th>
-                            <th>Nombre Responsable</th>
-                            <th>Ubicación</th>
-                            <th>Estado</th>
+                            <th>ID Personal</th>
+                            <th>Nombre</th>
+                            <th>Apellidos</th>
+                            <th>Correo</th>
+                            <th>Teléfono</th>
                         </tr>
                     </thead>
                     <tbody id="personalBody">
-                        <!-- Los datos se cargarán dinámicamente -->
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
 
-            <!-- Mensaje cuando no hay datos -->
             <div id="noDataMessage" class="no-data-message" style="display: none;">
-                <p>No hay asignaciones disponibles</p>
+                <p>No hay personal disponible</p>
             </div>
 
-            <!-- Panel de estadísticas -->
             <div id="estadisticasPanel" class="estadisticas-panel" style="margin-top: 20px; display: none;">
                 <h3>Estadísticas</h3>
                 <div class="stats-grid">
@@ -83,7 +75,6 @@
         </div>
     </div>
 
-    <!-- Scripts -->
     <script src="../../js/auth-utils.js"></script>
     <script src="../../js/scripts-admin/revision-personal.js"></script>
 </body>

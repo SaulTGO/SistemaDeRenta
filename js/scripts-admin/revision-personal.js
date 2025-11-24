@@ -7,16 +7,16 @@
 // ============================================
 // VARIABLES GLOBALES
 // ============================================
-let asignacionesData = [];
+let personalData = []; // Renombrado de asignacionesData a personalData
 
 // ============================================
 // FUNCIONES DE CARGA DE DATOS
 // ============================================
 
 /**
- * Carga las asignaciones desde la API
+ * Carga el personal desde la API
  */
-async function cargarAsignaciones() {
+async function cargarPersonal() { // Renombrada de cargarAsignaciones
     const loadingIndicator = document.getElementById('loadingIndicator');
     const errorMessage = document.getElementById('errorMessage');
     const noDataMessage = document.getElementById('noDataMessage');
@@ -28,27 +28,27 @@ async function cargarAsignaciones() {
         loadingIndicator.style.display = 'block';
         errorMessage.style.display = 'none';
         noDataMessage.style.display = 'none';
-        estadisticasPanel.style.display = 'none';
+        estadisticasPanel.style.display = 'none'; // Ocultamos las estadísticas
         tbody.innerHTML = '';
 
         // Realizar petición a la API
-        // Ajusta el endpoint según tu API
-        const response = await authGet('/api/asignaciones');
+        // Endpoint ajustado para obtener personal/usuarios.
+        const response = await authGet('/api/users?filters[role][name][$eq]=Personal&populate=role'); 
         
         // Verificar si hay datos
         if (response.data && response.data.length > 0) {
-            asignacionesData = response.data;
-            renderizarAsignaciones(asignacionesData);
-            actualizarEstadisticas();
-            estadisticasPanel.style.display = 'block';
+            personalData = response.data; // Actualizado a personalData
+            renderizarPersonal(personalData); // Renombrado
+            // No se llama a actualizarEstadisticas ya que no son relevantes.
+            // estadisticasPanel.style.display = 'block';
         } else {
             // No hay datos
             noDataMessage.style.display = 'block';
         }
 
     } catch (error) {
-        console.error('Error al cargar asignaciones:', error);
-        errorMessage.textContent = 'Error al cargar las asignaciones. Por favor, intente nuevamente.';
+        console.error('Error al cargar personal:', error);
+        errorMessage.textContent = 'Error al cargar el personal. Por favor, intente nuevamente.';
         errorMessage.style.display = 'block';
     } finally {
         // Ocultar indicador de carga
@@ -57,154 +57,80 @@ async function cargarAsignaciones() {
 }
 
 /**
- * Renderiza las asignaciones en la tabla
- * @param {Array} asignaciones - Array de objetos con datos de asignaciones
+ * Renderiza el personal en la tabla
+ * @param {Array} personal - Array de objetos con datos del personal
  */
-function renderizarAsignaciones(asignaciones) {
+function renderizarPersonal(personal) { // Renombrada de renderizarAsignaciones
     const tbody = document.getElementById('personalBody');
     tbody.innerHTML = '';
 
-    asignaciones.forEach(asignacion => {
+    personal.forEach(usuario => {
         const row = tbody.insertRow();
         
-        // Extraer datos del objeto (ajusta según la estructura de tu API)
-        const idAsignacion = asignacion.id || asignacion.attributes?.id || 'N/A';
-        const nombreResponsable = asignacion.attributes?.nombre_responsable || 
-                                 asignacion.nombre_responsable || 'N/A';
-        const ubicacion = asignacion.attributes?.ubicacion || 
-                         asignacion.ubicacion || 'N/A';
-        const estadoBoolean = asignacion.attributes?.estado || 
-                             asignacion.estado;
-
-        // Convertir el estado booleano a texto
-        const estadoInfo = obtenerEstado(estadoBoolean);
+        // Extraer y asignar los campos requeridos del JSON
+        const idPersonal = usuario.id || 'N/A';
+        // Usamos 'username' para el nombre y 'lastname' para los apellidos
+        const nombre = usuario.username || 'N/A';
+        const apellidos = usuario.lastname || 'N/A'; 
+        const correo = usuario.email || 'N/A';
+        const telefono = usuario.phone || 'N/A';
 
         // Crear celdas
         row.innerHTML = `
-            <td>${idAsignacion}</td>
-            <td>${nombreResponsable}</td>
-            <td>${ubicacion}</td>
-            <td class="${estadoInfo.clase}">${estadoInfo.texto}</td>
+            <td>${idPersonal}</td>
+            <td>${nombre}</td>
+            <td>${apellidos}</td>
+            <td>${correo}</td>
+            <td>${telefono}</td>
         `;
     });
 }
 
 /**
  * Obtiene la información del estado según el valor booleano
- * @param {boolean|string} estado - Estado de la asignación (true/false)
- * @returns {object} Objeto con texto y clase CSS del estado
+ * NOTA: Esta función y el bloque de estadísticas ya no son relevantes para el personal, 
+ * pero se dejan vacíos o comentados para evitar errores si otras partes del código los usan.
  */
 function obtenerEstado(estado) {
-    // Convertir a booleano si viene como string
-    let estadoBool = estado;
-    if (typeof estado === 'string') {
-        estadoBool = estado.toLowerCase() === 'true' || estado === '1';
-    }
-
-    if (estadoBool === true) {
-        return { texto: 'ASEADO', clase: 'estado-aseado' };
-    } else if (estadoBool === false) {
-        return { texto: 'PENDIENTE', clase: 'estado-pendiente' };
-    } else {
-        return { texto: 'DESCONOCIDO', clase: 'estado-desconocido' };
-    }
+    return { texto: 'N/A', clase: '' };
 }
 
 // ============================================
-// FUNCIONES DE ESTADÍSTICAS
+// FUNCIONES DE ESTADÍSTICAS (NO USADAS)
 // ============================================
 
 /**
- * Calcula y actualiza las estadísticas de asignaciones
+ * Calcula y actualiza las estadísticas de personal
  */
 function actualizarEstadisticas() {
-    const stats = {
-        total: asignacionesData.length,
-        aseados: 0,
-        pendientes: 0
-    };
-
-    asignacionesData.forEach(asignacion => {
-        const estadoBoolean = asignacion.attributes?.estado || asignacion.estado;
-        
-        // Convertir a booleano si viene como string
-        let estadoBool = estadoBoolean;
-        if (typeof estadoBoolean === 'string') {
-            estadoBool = estadoBoolean.toLowerCase() === 'true' || estadoBoolean === '1';
-        }
-
-        if (estadoBool === true) {
-            stats.aseados++;
-        } else if (estadoBool === false) {
-            stats.pendientes++;
-        }
-    });
-
-    // Actualizar el DOM
-    document.getElementById('statTotal').textContent = stats.total;
-    document.getElementById('statAseados').textContent = stats.aseados;
-    document.getElementById('statPendientes').textContent = stats.pendientes;
-
-    return stats;
+    // Ya no es necesario calcular estadísticas de estado
+    return { total: 0, aseados: 0, pendientes: 0 };
 }
 
 // ============================================
-// FUNCIONES DE BÚSQUEDA Y FILTRADO
+// FUNCIONES DE BÚSQUEDA Y FILTRADO (PENDIENTE DE IMPLEMENTACIÓN)
 // ============================================
 
 /**
- * Filtra asignaciones por nombre de responsable
+ * Filtra personal por nombre
  * @param {string} termino - Término de búsqueda
  */
-function buscarPorResponsable(termino) {
-    const filtradas = asignacionesData.filter(asignacion => {
-        const nombreResponsable = (asignacion.attributes?.nombre_responsable || 
-                                  asignacion.nombre_responsable || '').toLowerCase();
-        return nombreResponsable.includes(termino.toLowerCase());
+function buscarPorNombre(termino) {
+    const filtradas = personalData.filter(usuario => {
+        const nombreCompleto = `${usuario.username || ''} ${usuario.lastname || ''}`.toLowerCase();
+        return nombreCompleto.includes(termino.toLowerCase());
     });
 
-    renderizarAsignaciones(filtradas);
+    renderizarPersonal(filtradas);
 }
 
-/**
- * Filtra asignaciones por ubicación
- * @param {string} termino - Término de búsqueda
- */
-function buscarPorUbicacion(termino) {
-    const filtradas = asignacionesData.filter(asignacion => {
-        const ubicacion = (asignacion.attributes?.ubicacion || 
-                          asignacion.ubicacion || '').toLowerCase();
-        return ubicacion.includes(termino.toLowerCase());
-    });
+// Las funciones de filtrado por Ubicación y Estado ya no son relevantes
 
-    renderizarAsignaciones(filtradas);
-}
-
-/**
- * Filtra asignaciones por estado
- * @param {boolean} estado - true para aseados, false para pendientes
- */
-function filtrarPorEstado(estado) {
-    const filtradas = asignacionesData.filter(asignacion => {
-        const estadoBoolean = asignacion.attributes?.estado || asignacion.estado;
-        
-        // Convertir a booleano si viene como string
-        let estadoBool = estadoBoolean;
-        if (typeof estadoBoolean === 'string') {
-            estadoBool = estadoBoolean.toLowerCase() === 'true' || estadoBoolean === '1';
-        }
-
-        return estadoBool === estado;
-    });
-
-    renderizarAsignaciones(filtradas);
-}
-
-/**
- * Restablece la vista mostrando todas las asignaciones
- */
+// /**
+//  * Restablece la vista mostrando todo el personal
+//  */
 function mostrarTodas() {
-    renderizarAsignaciones(asignacionesData);
+    renderizarPersonal(personalData);
 }
 
 // ============================================
@@ -225,36 +151,35 @@ function cerrarSesion() {
 // ============================================
 
 /**
- * Recarga las asignaciones desde la API
+ * Recarga el personal desde la API
  */
-async function recargarAsignaciones() {
-    await cargarAsignaciones();
+async function recargarPersonal() { // Renombrada de recargarAsignaciones
+    await cargarPersonal();
 }
 
 /**
- * Exporta las asignaciones a CSV
+ * Exporta el personal a CSV (Ajustado)
  */
 function exportarACSV() {
-    if (asignacionesData.length === 0) {
+    if (personalData.length === 0) {
         alert('No hay datos para exportar');
         return;
     }
 
-    const headers = ['ID Asignación', 'Nombre Responsable', 'Ubicación', 'Estado'];
-    const rows = asignacionesData.map(a => {
-        const estadoBoolean = a.attributes?.estado || a.estado;
-        const estadoInfo = obtenerEstado(estadoBoolean);
-        
+    const headers = ['ID Personal', 'Nombre', 'Apellidos', 'Correo', 'Teléfono'];
+    const rows = personalData.map(u => {
         return [
-            a.id || a.attributes?.id,
-            a.attributes?.nombre_responsable || a.nombre_responsable,
-            a.attributes?.ubicacion || a.ubicacion,
-            estadoInfo.texto
+            u.id,
+            u.username,
+            u.lastname,
+            u.email,
+            u.phone
         ];
     });
 
     let csvContent = headers.join(',') + '\n';
     rows.forEach(row => {
+        // Asegurarse de que el teléfono no se trate como número si tiene caracteres especiales
         csvContent += row.map(cell => `"${cell}"`).join(',') + '\n';
     });
 
@@ -263,7 +188,7 @@ function exportarACSV() {
     const url = URL.createObjectURL(blob);
     
     link.setAttribute('href', url);
-    link.setAttribute('download', `asignaciones_${new Date().getTime()}.csv`);
+    link.setAttribute('download', `personal_${new Date().getTime()}.csv`);
     link.style.visibility = 'hidden';
     
     document.body.appendChild(link);
@@ -284,9 +209,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mostrar información del usuario si es necesario
     displayUserInfo('.user-name');
     
-    // Cargar asignaciones
-    cargarAsignaciones();
+    // Cargar personal
+    cargarPersonal(); // Renombrada
     
     // Configurar actualización automática cada 5 minutos (opcional)
-    // setInterval(cargarAsignaciones, 300000);
+    // setInterval(cargarPersonal, 300000);
 });

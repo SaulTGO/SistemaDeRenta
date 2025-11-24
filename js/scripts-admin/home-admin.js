@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Simular cierre de sesión
             setTimeout(function() {
                 // Redirigir a la página de inicio de sesión
-                window.location.href = '../../index.html';
+                window.location.href = '../../html/login.html';
             }, 500);
         }
     });
