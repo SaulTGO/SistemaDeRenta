@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
         btnLogin.disabled = true;
 
         try {
-            // ✅ MODIFICADO: Usar API_BASE_URL de auth-utils.js
+            
             const response = await fetch(`${API_BASE_URL}/api/auth/local`, {
                 method: 'POST',
                 headers: {

@@ -27,47 +27,71 @@
     <!-- Contenido principal -->
     <div class="container">
         <div class="espacios-wrapper">
+            <!-- Indicador de carga -->
+            <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+                <p>Cargando espacios...</p>
+            </div>
+
+            <!-- Mensaje de error -->
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+            <!-- Botón de recarga -->
+            <div class="actions-container" style="margin-bottom: 20px;">
+                <button onclick="recargarEspacios()" class="filter-btn">Recargar</button>
+            </div>
+
+            <!-- Tabla de espacios -->
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>ID DOMICILIO</th>
-                            <th>UBICACIÓN</th>
-                            <th>STATUS</th>
-                            <th>ASEO</th>
+                            <th>Nombre del Sitio</th>
+                            <th>Ubicación</th>
+                            <th>Estado</th>
                         </tr>
                     </thead>
                     <tbody id="espaciosBody">
-                        <tr>
-                            <td>1</td>
-                            <td>DIRECCIÓN</td>
-                            <td class="status-disponible">DISPONIBLE</td>
-                            <td class="aseo-finalizado">FINALIZADO</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>DIRECCIÓN</td>
-                            <td class="status-reservado">RESERVADO</td>
-                            <td class="aseo-finalizado">FINALIZADO</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>DIRECCIÓN</td>
-                            <td class="status-ocupado">OCUPADO</td>
-                            <td class="aseo-espera">EN ESPERA</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>DIRECCIÓN</td>
-                            <td class="status-disponible">DISPONIBLE</td>
-                            <td class="aseo-proceso">EN PROCESO</td>
-                        </tr>
+                        <!-- Los datos se cargarán dinámicamente -->
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mensaje cuando no hay datos -->
+            <div id="noDataMessage" class="no-data-message" style="display: none;">
+                <p>No hay espacios disponibles</p>
+            </div>
+
+            <!-- Panel de estadísticas -->
+            <div id="estadisticasPanel" class="estadisticas-panel" style="margin-top: 20px; display: none;">
+                <h3>Estadísticas</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">Total:</span>
+                        <span id="statTotal" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Disponibles:</span>
+                        <span id="statDisponibles" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Pendientes de Aseo:</span>
+                        <span id="statPendientes" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Ocupados:</span>
+                        <span id="statOcupados" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Aseados:</span>
+                        <span id="statAseados" class="stat-value">0</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Scripts -->
+    <script src="../../js/auth-utils.js"></script>
     <script src="../../js/scripts-admin/revision-espacios.js"></script>
 </body>
 </html>

@@ -1,76 +1,237 @@
-// Función para cerrar sesión
-function cerrarSesion() {
-    if (confirm('¿Está seguro que desea cerrar sesión?')) {
-        // Aquí iría la lógica de cierre de sesión
-        alert('Sesión cerrada exitosamente');
-        window.location.href = '../../index.html';
+// ============================================
+// PROTECCIÓN DE PÁGINA
+// ============================================
+// Verificar autenticación al cargar la página
+// requireAuth();
+
+// ============================================
+// VARIABLES GLOBALES
+// ============================================
+let reservacionesData = [];
+
+// ============================================
+// FUNCIONES DE CARGA DE DATOS
+// ============================================
+
+/**
+ * Carga las reservaciones desde la API
+ */
+async function cargarReservaciones() {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const errorMessage = document.getElementById('errorMessage');
+    const noDataMessage = document.getElementById('noDataMessage');
+    const tbody = document.getElementById('reservacionesBody');
+
+    try {
+        // Mostrar indicador de carga
+        loadingIndicator.style.display = 'block';
+        errorMessage.style.display = 'none';
+        noDataMessage.style.display = 'none';
+        tbody.innerHTML = '';
+
+        // Realizar petición a la API
+        // Ajusta el endpoint según tu API
+        const response = await authGet('/api/reservaciones');
+        
+        // Verificar si hay datos
+        if (response.data && response.data.length > 0) {
+            reservacionesData = response.data;
+            renderizarReservaciones(reservacionesData);
+        } else {
+            // No hay datos
+            noDataMessage.style.display = 'block';
+        }
+
+    } catch (error) {
+        console.error('Error al cargar reservaciones:', error);
+        errorMessage.textContent = 'Error al cargar las reservaciones. Por favor, intente nuevamente.';
+        errorMessage.style.display = 'block';
+    } finally {
+        // Ocultar indicador de carga
+        loadingIndicator.style.display = 'none';
     }
 }
 
-// Función para aplicar estilos a los estados de ocupación
-function aplicarEstilos() {
-    const rows = document.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-        const ocupacionCell = row.cells[4];
-        const texto = ocupacionCell.textContent.trim();
-        
-        // Remover todas las clases de estado
-        ocupacionCell.classList.remove('estado-ocupado', 'estado-proceso', 'estado-verificado', 'estado-no-registrado');
-        
-        // Aplicar la clase correspondiente según el estado
-        if (texto === 'OCUPADO') {
-            ocupacionCell.classList.add('estado-ocupado');
-        } else if (texto === 'EN PROCESO') {
-            ocupacionCell.classList.add('estado-proceso');
-        } else if (texto === 'VERIFICADO') {
-            ocupacionCell.classList.add('estado-verificado');
-        } else if (texto === 'NO REGISTRADO') {
-            ocupacionCell.classList.add('estado-no-registrado');
-        }
-    });
-}
-
-// Función para agregar nuevas reservaciones dinámicamente
-function agregarReservacion(id, huespedes, fechaInicio, fechaSalida, ocupacion, huellaRegistrada) {
+/**
+ * Renderiza las reservaciones en la tabla
+ * @param {Array} reservaciones - Array de objetos con datos de reservaciones
+ */
+function renderizarReservaciones(reservaciones) {
     const tbody = document.getElementById('reservacionesBody');
-    const row = tbody.insertRow();
-    
-    row.innerHTML = `
-        <td>${id}</td>
-        <td>${huespedes}</td>
-        <td>${fechaInicio}</td>
-        <td>${fechaSalida}</td>
-        <td>${ocupacion}</td>
-        <td><input type="checkbox" class="huella-check" ${huellaRegistrada ? 'checked' : ''} disabled></td>
-    `;
-    
-    // Aplicar estilos a la nueva fila
-    aplicarEstilos();
-}
+    tbody.innerHTML = '';
 
-// Función para eliminar una reservación por ID
-function eliminarReservacion(id) {
-    const rows = document.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-        if (row.cells[0].textContent === id.toString()) {
-            row.remove();
-        }
+    reservaciones.forEach(reservacion => {
+        const row = tbody.insertRow();
+        
+        // Extraer datos del objeto (ajusta según la estructura de tu API)
+        const id = reservacion.id || reservacion.attributes?.id || 'N/A';
+        const nombreUsuario = reservacion.attributes?.nombre_usuario || 
+                             reservacion.nombre_usuario || 'N/A';
+        const nombreDomicilio = reservacion.attributes?.nombre_domicilio || 
+                               reservacion.nombre_domicilio || 'N/A';
+        const fechaLlegada = formatearFecha(
+            reservacion.attributes?.fecha_llegada || 
+            reservacion.fecha_llegada
+        );
+        const fechaSalida = formatearFecha(
+            reservacion.attributes?.fecha_salida || 
+            reservacion.fecha_salida
+        );
+        const huellasRegistradas = reservacion.attributes?.huellas_registradas || 
+                                  reservacion.huellas_registradas || false;
+
+        // Crear celdas
+        row.innerHTML = `
+            <td>${id}</td>
+            <td>${nombreUsuario}</td>
+            <td>${nombreDomicilio}</td>
+            <td>${fechaLlegada}</td>
+            <td>${fechaSalida}</td>
+            <td class="huella-status">
+                <input type="checkbox" class="huella-check" ${huellasRegistradas ? 'checked' : ''} disabled>
+                <span class="huella-text">${huellasRegistradas ? 'Sí' : 'No'}</span>
+            </td>
+        `;
     });
 }
 
-// Función para actualizar el estado de una reservación
-function actualizarEstado(id, nuevoEstado) {
-    const rows = document.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-        if (row.cells[0].textContent === id.toString()) {
-            row.cells[4].textContent = nuevoEstado;
-            aplicarEstilos();
-        }
-    });
+/**
+ * Formatea una fecha ISO a formato legible
+ * @param {string} fechaISO - Fecha en formato ISO
+ * @returns {string} Fecha formateada
+ */
+function formatearFecha(fechaISO) {
+    if (!fechaISO) return 'N/A';
+    
+    try {
+        const fecha = new Date(fechaISO);
+        const opciones = { 
+            year: 'numeric', 
+            month: '2-digit', 
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        };
+        return fecha.toLocaleDateString('es-MX', opciones);
+    } catch (error) {
+        return fechaISO;
+    }
 }
 
-// Aplicar estilos al cargar la página
+// ============================================
+// FUNCIONES DE BÚSQUEDA Y FILTRADO
+// ============================================
+
+/**
+ * Filtra reservaciones por nombre de usuario
+ * @param {string} termino - Término de búsqueda
+ */
+function filtrarPorUsuario(termino) {
+    const filtradas = reservacionesData.filter(reservacion => {
+        const nombreUsuario = (reservacion.attributes?.nombre_usuario || 
+                              reservacion.nombre_usuario || '').toLowerCase();
+        return nombreUsuario.includes(termino.toLowerCase());
+    });
+    renderizarReservaciones(filtradas);
+}
+
+/**
+ * Filtra reservaciones por domicilio
+ * @param {string} termino - Término de búsqueda
+ */
+function filtrarPorDomicilio(termino) {
+    const filtradas = reservacionesData.filter(reservacion => {
+        const nombreDomicilio = (reservacion.attributes?.nombre_domicilio || 
+                                reservacion.nombre_domicilio || '').toLowerCase();
+        return nombreDomicilio.includes(termino.toLowerCase());
+    });
+    renderizarReservaciones(filtradas);
+}
+
+/**
+ * Restablece la vista mostrando todas las reservaciones
+ */
+function mostrarTodas() {
+    renderizarReservaciones(reservacionesData);
+}
+
+// ============================================
+// FUNCIÓN DE CIERRE DE SESIÓN
+// ============================================
+
+/**
+ * Cierra la sesión del usuario
+ */
+function cerrarSesion() {
+    if (confirm('¿Está seguro que desea cerrar sesión?')) {
+        logout('../../index.html');
+    }
+}
+
+// ============================================
+// FUNCIONES DE ACTUALIZACIÓN MANUAL
+// ============================================
+
+/**
+ * Recarga las reservaciones desde la API
+ */
+async function recargarReservaciones() {
+    await cargarReservaciones();
+}
+
+/**
+ * Exporta las reservaciones a CSV
+ */
+function exportarACSV() {
+    if (reservacionesData.length === 0) {
+        alert('No hay datos para exportar');
+        return;
+    }
+
+    const headers = ['ID', 'Nombre Usuario', 'Domicilio', 'Fecha Llegada', 'Fecha Salida', 'Huellas Registradas'];
+    const rows = reservacionesData.map(r => [
+        r.id || r.attributes?.id,
+        r.attributes?.nombre_usuario || r.nombre_usuario,
+        r.attributes?.nombre_domicilio || r.nombre_domicilio,
+        r.attributes?.fecha_llegada || r.fecha_llegada,
+        r.attributes?.fecha_salida || r.fecha_salida,
+        (r.attributes?.huellas_registradas || r.huellas_registradas) ? 'Sí' : 'No'
+    ]);
+
+    let csvContent = headers.join(',') + '\n';
+    rows.forEach(row => {
+        csvContent += row.join(',') + '\n';
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `reservaciones_${new Date().getTime()}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// ============================================
+// INICIALIZACIÓN
+// ============================================
+
+/**
+ * Inicializa la página al cargar el DOM
+ */
 document.addEventListener('DOMContentLoaded', function() {
-    aplicarEstilos();
-    console.log('Página de reservaciones cargada correctamente');
+    console.log('Página de reservaciones cargada');
+    
+    // Mostrar información del usuario si es necesario
+    displayUserInfo('.user-name');
+    
+    // Cargar reservaciones
+    cargarReservaciones();
+    
+    // Configurar actualización automática cada 5 minutos (opcional)
+    // setInterval(cargarReservaciones, 300000);
 });

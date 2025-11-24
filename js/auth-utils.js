@@ -2,7 +2,7 @@
 // UTILIDADES DE AUTENTICACIÓN
 // ============================================
 
-// URL base de la API - Cambiar según tu configuración
+// URL base de la API
 const API_BASE_URL = 'http://10.42.0.1:1337';
 
 // ============================================
@@ -85,7 +85,7 @@ function isAuthenticated() {
  * Protege una página - redirige al login si no está autenticado
  * @param {string} loginUrl - URL de la página de login (opcional)
  */
-function requireAuth(loginUrl = '../html/login.html') {
+function requireAuth(loginUrl = '../../html/login.html') {
     if (!isAuthenticated()) {
         window.location.href = loginUrl;
     }

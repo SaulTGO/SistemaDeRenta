@@ -27,53 +27,64 @@
     <!-- Contenido principal -->
     <div class="container">
         <div class="personal-wrapper">
+            <!-- Indicador de carga -->
+            <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+                <p>Cargando asignaciones...</p>
+            </div>
+
+            <!-- Mensaje de error -->
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+            <!-- Botón de recarga -->
+            <div class="actions-container" style="margin-bottom: 20px;">
+                <button onclick="recargarAsignaciones()" class="filter-btn">Recargar</button>
+            </div>
+
+            <!-- Tabla de asignaciones -->
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>ID PERSONAL</th>
-                            <th>NOMBRE</th>
-                            <th>DISPONIBILIDAD</th>
-                            <th>ASIGNACIONES PENDIENTES</th>
+                            <th>ID Asignación</th>
+                            <th>Nombre Responsable</th>
+                            <th>Ubicación</th>
+                            <th>Estado</th>
                         </tr>
                     </thead>
                     <tbody id="personalBody">
-                        <tr>
-                            <td>1</td>
-                            <td>PACO</td>
-                            <td class="disponibilidad-disponible">DISPONIBLE</td>
-                            <td>UBICACIÓN 1</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>JOSE</td>
-                            <td class="disponibilidad-funciones">EN FUNCIONES</td>
-                            <td>IDDOMICILIO</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>BENITO</td>
-                            <td class="disponibilidad-funciones">EN FUNCIONES</td>
-                            <td>IDDOMICILIO</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>CAESTE</td>
-                            <td class="disponibilidad-disponible">DISPONIBLE</td>
-                            <td>IDDOMICILIO</td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>GRANDOTE</td>
-                            <td class="disponibilidad-ausente">AUSENTE</td>
-                            <td>SIN PENDIENTES</td>
-                        </tr>
+                        <!-- Los datos se cargarán dinámicamente -->
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mensaje cuando no hay datos -->
+            <div id="noDataMessage" class="no-data-message" style="display: none;">
+                <p>No hay asignaciones disponibles</p>
+            </div>
+
+            <!-- Panel de estadísticas -->
+            <div id="estadisticasPanel" class="estadisticas-panel" style="margin-top: 20px; display: none;">
+                <h3>Estadísticas</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">Total:</span>
+                        <span id="statTotal" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Aseados:</span>
+                        <span id="statAseados" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Pendientes:</span>
+                        <span id="statPendientes" class="stat-value">0</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Scripts -->
+    <script src="../../js/auth-utils.js"></script>
     <script src="../../js/scripts-admin/revision-personal.js"></script>
 </body>
 </html>

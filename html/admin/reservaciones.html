@@ -27,65 +27,42 @@
     <!-- Contenido principal -->
     <div class="container">
         <div class="reservaciones-wrapper">
+            <!-- Indicador de carga -->
+            <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+                <p>Cargando reservaciones...</p>
+            </div>
+
+            <!-- Mensaje de error -->
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+            <!-- Tabla de reservaciones -->
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>ID Reservación</th>
-                            <th>Número Huéspedes</th>
-                            <th>Fecha de inicio</th>
-                            <th>Fecha de salida</th>
-                            <th>Ocupación</th>
-                            <th>Huella registrada</th>
+                            <th>Nombre Usuario</th>
+                            <th>Domicilio</th>
+                            <th>Fecha de Llegada</th>
+                            <th>Fecha de Salida</th>
+                            <th>Huellas Registradas</th>
                         </tr>
                     </thead>
                     <tbody id="reservacionesBody">
-                        <tr>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>fecha1</td>
-                            <td>fecha2</td>
-                            <td class="estado-ocupado">OCUPADO</td>
-                            <td><input type="checkbox" class="huella-check" checked disabled></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>2</td>
-                            <td>FECHA</td>
-                            <td>FECHA</td>
-                            <td class="estado-proceso">EN PROCESO</td>
-                            <td><input type="checkbox" class="huella-check" disabled></td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>2</td>
-                            <td>FECHA</td>
-                            <td>FECHA</td>
-                            <td class="estado-verificado">VERIFICADO</td>
-                            <td><input type="checkbox" class="huella-check" checked disabled></td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>2</td>
-                            <td>FECHA</td>
-                            <td>FECHA</td>
-                            <td class="estado-ocupado">OCUPADO</td>
-                            <td><input type="checkbox" class="huella-check" checked disabled></td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>2</td>
-                            <td>FECHA</td>
-                            <td>FECHA</td>
-                            <td class="estado-no-registrado">NO REGISTRADO</td>
-                            <td><input type="checkbox" class="huella-check" disabled></td>
-                        </tr>
+                        <!-- Los datos se cargarán dinámicamente -->
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mensaje cuando no hay datos -->
+            <div id="noDataMessage" class="no-data-message" style="display: none;">
+                <p>No hay reservaciones disponibles</p>
             </div>
         </div>
     </div>
 
+    <!-- Scripts -->
+    <script src="../../js/auth-utils.js"></script>
     <script src="../../js/scripts-admin/reservaciones-script.js"></script>
 </body>
 </html>

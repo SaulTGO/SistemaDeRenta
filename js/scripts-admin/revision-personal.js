@@ -1,170 +1,292 @@
-// Función para cerrar sesión
-function cerrarSesion() {
-    if (confirm('¿Está seguro que desea cerrar sesión?')) {
-        // Aquí iría la lógica de cierre de sesión
-        alert('Sesión cerrada exitosamente');
-        window.location.href = '../../index.html';
+// ============================================
+// PROTECCIÓN DE PÁGINA
+// ============================================
+// Verificar autenticación al cargar la página
+// requireAuth();
+
+// ============================================
+// VARIABLES GLOBALES
+// ============================================
+let asignacionesData = [];
+
+// ============================================
+// FUNCIONES DE CARGA DE DATOS
+// ============================================
+
+/**
+ * Carga las asignaciones desde la API
+ */
+async function cargarAsignaciones() {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const errorMessage = document.getElementById('errorMessage');
+    const noDataMessage = document.getElementById('noDataMessage');
+    const tbody = document.getElementById('personalBody');
+    const estadisticasPanel = document.getElementById('estadisticasPanel');
+
+    try {
+        // Mostrar indicador de carga
+        loadingIndicator.style.display = 'block';
+        errorMessage.style.display = 'none';
+        noDataMessage.style.display = 'none';
+        estadisticasPanel.style.display = 'none';
+        tbody.innerHTML = '';
+
+        // Realizar petición a la API
+        // Ajusta el endpoint según tu API
+        const response = await authGet('/api/asignaciones');
+        
+        // Verificar si hay datos
+        if (response.data && response.data.length > 0) {
+            asignacionesData = response.data;
+            renderizarAsignaciones(asignacionesData);
+            actualizarEstadisticas();
+            estadisticasPanel.style.display = 'block';
+        } else {
+            // No hay datos
+            noDataMessage.style.display = 'block';
+        }
+
+    } catch (error) {
+        console.error('Error al cargar asignaciones:', error);
+        errorMessage.textContent = 'Error al cargar las asignaciones. Por favor, intente nuevamente.';
+        errorMessage.style.display = 'block';
+    } finally {
+        // Ocultar indicador de carga
+        loadingIndicator.style.display = 'none';
     }
 }
 
-// Función para aplicar estilos a los estados de disponibilidad
-function aplicarEstilos() {
-    const rows = document.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-        // Aplicar estilos a la columna DISPONIBILIDAD (columna 2)
-        const disponibilidadCell = row.cells[2];
-        const disponibilidadTexto = disponibilidadCell.textContent.trim();
-        
-        // Remover todas las clases de disponibilidad
-        disponibilidadCell.classList.remove('disponibilidad-disponible', 'disponibilidad-funciones', 'disponibilidad-ausente');
-        
-        // Aplicar la clase correspondiente según el estado
-        if (disponibilidadTexto === 'DISPONIBLE') {
-            disponibilidadCell.classList.add('disponibilidad-disponible');
-        } else if (disponibilidadTexto === 'EN FUNCIONES') {
-            disponibilidadCell.classList.add('disponibilidad-funciones');
-        } else if (disponibilidadTexto === 'AUSENTE') {
-            disponibilidadCell.classList.add('disponibilidad-ausente');
-        }
-    });
-}
-
-// Función para agregar nuevo personal dinámicamente
-function agregarPersonal(id, nombre, disponibilidad, asignaciones) {
+/**
+ * Renderiza las asignaciones en la tabla
+ * @param {Array} asignaciones - Array de objetos con datos de asignaciones
+ */
+function renderizarAsignaciones(asignaciones) {
     const tbody = document.getElementById('personalBody');
-    const row = tbody.insertRow();
-    
-    row.innerHTML = `
-        <td>${id}</td>
-        <td>${nombre}</td>
-        <td>${disponibilidad}</td>
-        <td>${asignaciones}</td>
-    `;
-    
-    // Aplicar estilos a la nueva fila
-    aplicarEstilos();
-}
+    tbody.innerHTML = '';
 
-// Función para eliminar personal por ID
-function eliminarPersonal(id) {
-    const rows = document.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-        if (row.cells[0].textContent === id.toString()) {
-            row.remove();
-        }
+    asignaciones.forEach(asignacion => {
+        const row = tbody.insertRow();
+        
+        // Extraer datos del objeto (ajusta según la estructura de tu API)
+        const idAsignacion = asignacion.id || asignacion.attributes?.id || 'N/A';
+        const nombreResponsable = asignacion.attributes?.nombre_responsable || 
+                                 asignacion.nombre_responsable || 'N/A';
+        const ubicacion = asignacion.attributes?.ubicacion || 
+                         asignacion.ubicacion || 'N/A';
+        const estadoBoolean = asignacion.attributes?.estado || 
+                             asignacion.estado;
+
+        // Convertir el estado booleano a texto
+        const estadoInfo = obtenerEstado(estadoBoolean);
+
+        // Crear celdas
+        row.innerHTML = `
+            <td>${idAsignacion}</td>
+            <td>${nombreResponsable}</td>
+            <td>${ubicacion}</td>
+            <td class="${estadoInfo.clase}">${estadoInfo.texto}</td>
+        `;
     });
 }
 
-// Función para actualizar la disponibilidad de un empleado
-function actualizarDisponibilidad(id, nuevaDisponibilidad) {
-    const rows = document.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-        if (row.cells[0].textContent === id.toString()) {
-            row.cells[2].textContent = nuevaDisponibilidad;
-            aplicarEstilos();
-        }
-    });
+/**
+ * Obtiene la información del estado según el valor booleano
+ * @param {boolean|string} estado - Estado de la asignación (true/false)
+ * @returns {object} Objeto con texto y clase CSS del estado
+ */
+function obtenerEstado(estado) {
+    // Convertir a booleano si viene como string
+    let estadoBool = estado;
+    if (typeof estado === 'string') {
+        estadoBool = estado.toLowerCase() === 'true' || estado === '1';
+    }
+
+    if (estadoBool === true) {
+        return { texto: 'ASEADO', clase: 'estado-aseado' };
+    } else if (estadoBool === false) {
+        return { texto: 'PENDIENTE', clase: 'estado-pendiente' };
+    } else {
+        return { texto: 'DESCONOCIDO', clase: 'estado-desconocido' };
+    }
 }
 
-// Función para actualizar las asignaciones pendientes
-function actualizarAsignaciones(id, nuevasAsignaciones) {
-    const rows = document.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-        if (row.cells[0].textContent === id.toString()) {
-            row.cells[3].textContent = nuevasAsignaciones;
-        }
-    });
-}
+// ============================================
+// FUNCIONES DE ESTADÍSTICAS
+// ============================================
 
-// Función para filtrar personal por disponibilidad
-function filtrarPorDisponibilidad(disponibilidad) {
-    const rows = document.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-        const disponibilidadCell = row.cells[2].textContent.trim();
-        if (disponibilidad === 'TODOS' || disponibilidadCell === disponibilidad) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
-}
-
-// Función para buscar personal por nombre
-function buscarPorNombre(nombre) {
-    const rows = document.querySelectorAll('tbody tr');
-    const nombreBusqueda = nombre.toLowerCase();
-    
-    rows.forEach(row => {
-        const nombreCell = row.cells[1].textContent.toLowerCase();
-        if (nombreBusqueda === '' || nombreCell.includes(nombreBusqueda)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
-}
-
-// Función para obtener estadísticas del personal
-function obtenerEstadisticas() {
-    const rows = document.querySelectorAll('tbody tr');
+/**
+ * Calcula y actualiza las estadísticas de asignaciones
+ */
+function actualizarEstadisticas() {
     const stats = {
-        total: rows.length,
-        disponibles: 0,
-        enFunciones: 0,
-        ausentes: 0,
-        conAsignaciones: 0,
-        sinPendientes: 0
+        total: asignacionesData.length,
+        aseados: 0,
+        pendientes: 0
     };
-    
-    rows.forEach(row => {
-        const disponibilidad = row.cells[2].textContent.trim();
-        const asignaciones = row.cells[3].textContent.trim();
+
+    asignacionesData.forEach(asignacion => {
+        const estadoBoolean = asignacion.attributes?.estado || asignacion.estado;
         
-        // Contar disponibilidad
-        if (disponibilidad === 'DISPONIBLE') stats.disponibles++;
-        else if (disponibilidad === 'EN FUNCIONES') stats.enFunciones++;
-        else if (disponibilidad === 'AUSENTE') stats.ausentes++;
-        
-        // Contar asignaciones
-        if (asignaciones === 'SIN PENDIENTES') {
-            stats.sinPendientes++;
-        } else {
-            stats.conAsignaciones++;
+        // Convertir a booleano si viene como string
+        let estadoBool = estadoBoolean;
+        if (typeof estadoBoolean === 'string') {
+            estadoBool = estadoBoolean.toLowerCase() === 'true' || estadoBoolean === '1';
+        }
+
+        if (estadoBool === true) {
+            stats.aseados++;
+        } else if (estadoBool === false) {
+            stats.pendientes++;
         }
     });
-    
+
+    // Actualizar el DOM
+    document.getElementById('statTotal').textContent = stats.total;
+    document.getElementById('statAseados').textContent = stats.aseados;
+    document.getElementById('statPendientes').textContent = stats.pendientes;
+
     return stats;
 }
 
-// Función para obtener lista de personal disponible
-function obtenerPersonalDisponible() {
-    const rows = document.querySelectorAll('tbody tr');
-    const disponibles = [];
-    
-    rows.forEach(row => {
-        const disponibilidad = row.cells[2].textContent.trim();
-        if (disponibilidad === 'DISPONIBLE') {
-            disponibles.push({
-                id: row.cells[0].textContent,
-                nombre: row.cells[1].textContent,
-                asignaciones: row.cells[3].textContent
-            });
-        }
+// ============================================
+// FUNCIONES DE BÚSQUEDA Y FILTRADO
+// ============================================
+
+/**
+ * Filtra asignaciones por nombre de responsable
+ * @param {string} termino - Término de búsqueda
+ */
+function buscarPorResponsable(termino) {
+    const filtradas = asignacionesData.filter(asignacion => {
+        const nombreResponsable = (asignacion.attributes?.nombre_responsable || 
+                                  asignacion.nombre_responsable || '').toLowerCase();
+        return nombreResponsable.includes(termino.toLowerCase());
     });
-    
-    return disponibles;
+
+    renderizarAsignaciones(filtradas);
 }
 
-// Aplicar estilos al cargar la página
+/**
+ * Filtra asignaciones por ubicación
+ * @param {string} termino - Término de búsqueda
+ */
+function buscarPorUbicacion(termino) {
+    const filtradas = asignacionesData.filter(asignacion => {
+        const ubicacion = (asignacion.attributes?.ubicacion || 
+                          asignacion.ubicacion || '').toLowerCase();
+        return ubicacion.includes(termino.toLowerCase());
+    });
+
+    renderizarAsignaciones(filtradas);
+}
+
+/**
+ * Filtra asignaciones por estado
+ * @param {boolean} estado - true para aseados, false para pendientes
+ */
+function filtrarPorEstado(estado) {
+    const filtradas = asignacionesData.filter(asignacion => {
+        const estadoBoolean = asignacion.attributes?.estado || asignacion.estado;
+        
+        // Convertir a booleano si viene como string
+        let estadoBool = estadoBoolean;
+        if (typeof estadoBoolean === 'string') {
+            estadoBool = estadoBoolean.toLowerCase() === 'true' || estadoBoolean === '1';
+        }
+
+        return estadoBool === estado;
+    });
+
+    renderizarAsignaciones(filtradas);
+}
+
+/**
+ * Restablece la vista mostrando todas las asignaciones
+ */
+function mostrarTodas() {
+    renderizarAsignaciones(asignacionesData);
+}
+
+// ============================================
+// FUNCIÓN DE CIERRE DE SESIÓN
+// ============================================
+
+/**
+ * Cierra la sesión del usuario
+ */
+function cerrarSesion() {
+    if (confirm('¿Está seguro que desea cerrar sesión?')) {
+        logout('../../index.html');
+    }
+}
+
+// ============================================
+// FUNCIONES DE ACTUALIZACIÓN
+// ============================================
+
+/**
+ * Recarga las asignaciones desde la API
+ */
+async function recargarAsignaciones() {
+    await cargarAsignaciones();
+}
+
+/**
+ * Exporta las asignaciones a CSV
+ */
+function exportarACSV() {
+    if (asignacionesData.length === 0) {
+        alert('No hay datos para exportar');
+        return;
+    }
+
+    const headers = ['ID Asignación', 'Nombre Responsable', 'Ubicación', 'Estado'];
+    const rows = asignacionesData.map(a => {
+        const estadoBoolean = a.attributes?.estado || a.estado;
+        const estadoInfo = obtenerEstado(estadoBoolean);
+        
+        return [
+            a.id || a.attributes?.id,
+            a.attributes?.nombre_responsable || a.nombre_responsable,
+            a.attributes?.ubicacion || a.ubicacion,
+            estadoInfo.texto
+        ];
+    });
+
+    let csvContent = headers.join(',') + '\n';
+    rows.forEach(row => {
+        csvContent += row.map(cell => `"${cell}"`).join(',') + '\n';
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `asignaciones_${new Date().getTime()}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// ============================================
+// INICIALIZACIÓN
+// ============================================
+
+/**
+ * Inicializa la página al cargar el DOM
+ */
 document.addEventListener('DOMContentLoaded', function() {
-    aplicarEstilos();
-    console.log('Página de revisión de personal cargada correctamente');
+    console.log('Página de revisión de personal cargada');
     
-    // Mostrar estadísticas en consola
-    const stats = obtenerEstadisticas();
-    console.log('Estadísticas de personal:', stats);
+    // Mostrar información del usuario si es necesario
+    displayUserInfo('.user-name');
     
-    // Mostrar personal disponible en consola
-    const disponibles = obtenerPersonalDisponible();
-    console.log('Personal disponible:', disponibles);
+    // Cargar asignaciones
+    cargarAsignaciones();
+    
+    // Configurar actualización automática cada 5 minutos (opcional)
+    // setInterval(cargarAsignaciones, 300000);
 });
