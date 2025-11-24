@@ -56,18 +56,18 @@ function createReservationCard(reservation) {
 }
 
 // FunciÃ³n para cargar las reservaciones
-function loadReservations() {
+async function loadReservations() {
     const grid = document.getElementById('reservationsGrid');
     const noReservations = document.getElementById('noReservations');
-    
+
     // Intentar cargar reservaciones del almacenamiento local
     // o usar datos de ejemplo
-    const reservations = authGet(`/api/reservations?filters[user][id][$eq]=${getUser().id}&populate=*`); // AquÃ­ cargarÃ­as desde tu backend
-    
+    const reservations = await authGet(`/api/reservations?filters[user][id][$eq]=${getUser().id}&populate=*`); // AquÃ­ cargarÃ­as desde tu backend
+
     if (reservations.data && reservations.data.length > 0) {
         grid.style.display = 'grid';
         noReservations.style.display = 'none';
-        
+
         reservations.data.forEach(reservation => {
             const card = createReservationCard(reservation);
             grid.appendChild(card);
