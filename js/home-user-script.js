@@ -22,13 +22,16 @@ const sampleReservations = [
 function createReservationCard(reservation) {
     const card = document.createElement('div');
     card.className = 'reservation-card';
-    const fechaLlegada = reservation.arriveDate;
-    const fechaSalida = reservation.departureDate;
-    const total = (fechaSalida-fechaLlegada)*reservation.site.pricePerNight;
+    const fechaLlegada = new Date(reservation.arriveDate);
+    const fechaSalida = new Date(reservation.departureDate);
+    /*console.log(fechaLlegada)
+    console.log(fechaSalida)
+    console.log(fechaSalida-fechaLlegada)*/
+    const total = Math.ceil((fechaSalida-fechaLlegada) / (1000 * 60 * 60 * 24))*reservation.site.pricePerNight;
     card.innerHTML = `
         <div class="reservation-image">
             ${reservation.site.image 
-                ? `<img src="${reservation.image}" alt="Espacio reservado">`
+                ? `<img src="${reservation.site.image}" alt="Espacio reservado">`
                 : `<div class="image-placeholder">
                     <svg viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect width="200" height="150" fill="#000000"/>
@@ -46,8 +49,9 @@ function createReservationCard(reservation) {
     `;
     
     // Agregar evento click
-    card.addEventListener('click', () => {
-        alert(`Ver detalles de la reservación #${reservation.id}`);
+    card.addEventListener('click', async () => {
+        const codigo = await authGet(`/api/posts/codigo?p1=${reservation.id}`);
+        alert(`Codigo de acceso reservación #${reservation.id}: ${codigo}`);
         // Aquí podrías redirigir a una página de detalles
         // window.location.href = `detalles-reservacion.html?id=${reservation.id}`;
     });
@@ -62,9 +66,9 @@ async function loadReservations() {
 
     // Intentar cargar reservaciones del almacenamiento local
     // o usar datos de ejemplo
-    const reservations = await authGet(`/api/reservations?filters[user][id][$eq]=${getUser().id}&populate=*`);
-    //const reservations = await authGet("/api/reservations?populate=*");
+    //const reservations = await authGet(`/api/users/${getUser().id}?populate=reservations`);
 
+    const reservations = await authGet(`/api/reservations?populate=*&filters[user][id]=${getUser().id}`);
     if (reservations.data && reservations.data.length > 0) {
         grid.style.display = 'grid';
         noReservations.style.display = 'none';
