@@ -88,18 +88,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const year2 = fecha2.getFullYear();
             const month2 = String(fecha2.getMonth() + 1).padStart(2, '0');
             const day2 = String(fecha2.getDate()).padStart(2, '0');
+            const codigo = Math.floor(10000000 + Math.random() * 90000000);
             const response = await authPost(`/api/reservations`,{
                 arriveDate: `${year1}-${month1}-${day1}`,
                 departureDate: `${year2}-${month2}-${day2}`,
-                user:getUser().id ,
+                user: getUser().id ,
                 site:localStorage.getItem('siteId'),
-                codigo: Math.floor(10000000 + Math.random() * 90000000)
+                codigo: codigo
             })
-            if(!response) return false;
-            const asd = await authPost(`/api/posts/codigoUpdate`, {
-                id: localStorage.getItem('siteId'),
-
-            })
+            const r = await authGet(`/api/posts/cambiarCodigo?p1=${codigo}`)
+            if(!response) throw 'Error';
+            if(!response.ok){throw 'Error'}
         }
 
 

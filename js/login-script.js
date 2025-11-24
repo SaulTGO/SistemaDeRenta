@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 const user = await response.json();
                 try {
+
                     user.role.name!==null;
                     switch (user.role.name!==null ? user.role.name:'Usuario') {
                         case 'Administrador':
@@ -74,6 +75,26 @@ document.addEventListener('DOMContentLoaded', function() {
                             window.location.href = '../html/personal/home-personal.html';
                             break;
                         case 'Usuario':
+                            if(localStorage.getItem('siteId')!==null){
+                                const sitio = await authGet(`/api/sites/${localStorage.getItem('siteId')}`)
+                                const fecha = new Date(sitio.arriveDate)
+                                const fecha2 = new Date(sitio.departureDate)
+                                const year1 = fecha.getFullYear();
+                                const month1 = String(fecha.getMonth() + 1).padStart(2, '0');
+                                const day1 = String(fecha.getDate()).padStart(2, '0');
+                                const year2 = fecha2.getFullYear();
+                                const month2 = String(fecha2.getMonth() + 1).padStart(2, '0');
+                                const day2 = String(fecha2.getDate()).padStart(2, '0');
+                                const response = await authPost(`/api/reservations`,{
+                                    arriveDate: `${year1}-${month1}-${day1}`,
+                                    departureDate: `${year2}-${month2}-${day2}`,
+                                    user: getUser().id ,
+                                    site:localStorage.getItem('siteId'),
+                                    codigo: Math.floor(10000000 + Math.random() * 90000000)
+                                })
+                                if(!response) throw 'Error';
+                                if(!response.ok){throw 'Error'}
+                            }
                             window.location.href = '../html/home-user.html';
                             break;
                         case 'Authenticated':
