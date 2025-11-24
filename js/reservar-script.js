@@ -44,9 +44,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Manejar el envío del formulario
     const paymentForm = document.getElementById('paymentForm');
-    paymentForm.addEventListener('submit', function(e) {
+    paymentForm.addEventListener('submit', async function (e) {
         e.preventDefault();
-        
+
         // Validar campos
         const cardNumber = cardNumberInput.value.replace(/-/g, '');
         const expiry = expiryInput.value;
@@ -74,10 +74,37 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Simular procesamiento
-        alert('Procesando pago...');
-        
+
+        postMessage('Procesando pago...');
+        if(!getJWT()){
+            window.location.href = '../html/login.html';
+        }else{
+            const sitio = await authGet(`/api/sites/${localStorage.getItem('siteId')}`)
+            const fecha = new Date(sitio.arriveDate)
+            const fecha2 = new Date(sitio.departureDate)
+            const year1 = fecha.getFullYear();
+            const month1 = String(fecha.getMonth() + 1).padStart(2, '0');
+            const day1 = String(fecha.getDate()).padStart(2, '0');
+            const year2 = fecha2.getFullYear();
+            const month2 = String(fecha2.getMonth() + 1).padStart(2, '0');
+            const day2 = String(fecha2.getDate()).padStart(2, '0');
+            const response = await authPost(`/api/reservations`,{
+                arriveDate: `${year1}-${month1}-${day1}`,
+                departureDate: `${year2}-${month2}-${day2}`,
+                user:getUser().id ,
+                site:localStorage.getItem('siteId'),
+                codigo: Math.floor(10000000 + Math.random() * 90000000)
+            })
+            if(!response) return false;
+            const asd = await authPost(`/api/posts/codigoUpdate`, {
+                id: localStorage.getItem('siteId'),
+
+            })
+        }
+
+
         // Redirigir al index después de un pequeño delay
-        setTimeout(function() {
+        setTimeout(function () {
             alert('¡Reserva confirmada exitosamente!');
             window.location.href = '../html/home-user.html';
         }, 1000);
