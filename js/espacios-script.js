@@ -499,6 +499,16 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('capacidad', `Máx ${espacioSeleccionado.maxHuespedes} huéspedes`);
             localStorage.setItem('totalAmount', `$${total.toFixed(2)}`);
 
+            console.log(localStorage.getItem('fechaLlegada'));
+            console.log(localStorage.getItem('fechaSalida'));
+            console.log(localStorage.getItem('numHuespedes'));
+            console.log(localStorage.getItem('numNoches'));
+            console.log(localStorage.getItem('nombre'));
+            console.log(localStorage.getItem('ubicacion'));
+            console.log(localStorage.getItem('precio'));
+            console.log(localStorage.getItem('capacidad'));
+            console.log(localStorage.getItem('totalAmount'));
+
         } else {
             summarySection.style.display = 'none';
         }
