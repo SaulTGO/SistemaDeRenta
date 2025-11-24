@@ -489,16 +489,16 @@ document.addEventListener('DOMContentLoaded', function() {
             
             document.getElementById('totalAmount').textContent = `$${total.toFixed(2)}`;
 
-            localStorage.setItem('fechaLlegada', formatearFecha(fechaLlegada));
-            localStorage.setItem('fechaSalida', formatearFecha(fechaSalida));
-            localStorage.setItem('numHuespedes', `${numHuespedes} ${numHuespedes === 1 ? 'huésped' : 'huéspedes'}`);
-            localStorage.setItem('numNoches', `${noches} ${noches === 1 ? 'noche' : 'noches'}`);
-            localStorage.setItem('nombre', espacioSeleccionado.nombre);
-            localStorage.setItem('ubicacion', espacioSeleccionado.ubicacion);
-            localStorage.setItem('precio', `$${espacioSeleccionado.precio.toFixed(2)}`);
-            localStorage.setItem('capacidad', `Máx ${espacioSeleccionado.maxHuespedes} huéspedes`);
-            localStorage.setItem('totalAmount', `$${total.toFixed(2)}`);
-
+            sessionStorage.setItem('fechaLlegada', formatearFecha(fechaLlegada));
+            sessionStorage.setItem('fechaSalida', formatearFecha(fechaSalida));
+            sessionStorage.setItem('numHuespedes', `${numHuespedes} ${numHuespedes === 1 ? 'huésped' : 'huéspedes'}`);
+            sessionStorage.setItem('numNoches', `${noches} ${noches === 1 ? 'noche' : 'noches'}`);
+            sessionStorage.setItem('nombre', espacioSeleccionado.nombre);
+            sessionStorage.setItem('ubicacion', espacioSeleccionado.ubicacion);
+            sessionStorage.setItem('precio', `$${espacioSeleccionado.precio.toFixed(2)}`);
+            sessionStorage.setItem('capacidad', `Máx ${espacioSeleccionado.maxHuespedes} huéspedes`);
+            sessionStorage.setItem('totalAmount', `$${total.toFixed(2)}`);
+            
         } else {
             summarySection.style.display = 'none';
         }
