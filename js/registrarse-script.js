@@ -1,6 +1,6 @@
 // Funcionalidad de registro
 document.addEventListener('DOMContentLoaded', function() {
-    
+
     const registerForm = document.getElementById('registerForm');
     const phoneInput = document.getElementById('phone');
 
@@ -8,13 +8,13 @@ document.addEventListener('DOMContentLoaded', function() {
     phoneInput.addEventListener('input', function(e) {
         let value = e.target.value.replace(/\D/g, '');
         if (value.length > 10) value = value.substring(0, 10);
-        
+
         if (value.length >= 6) {
             value = value.substring(0, 2) + ' ' + value.substring(2, 6) + ' ' + value.substring(6);
         } else if (value.length >= 2) {
             value = value.substring(0, 2) + ' ' + value.substring(2);
         }
-        
+
         e.target.value = value;
     });
 
@@ -72,8 +72,17 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             const data = await response.json();
+            console.log(data)
+            if (!response.ok) throw "Error inesperado";
+            const response2 = await fetch(`${API_BASE_URL}/api/posts/asignRole?p1=${data.user.id}&p2=Usuario`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
 
-            if (response.ok && data.jwt) {
+
+            if (response.ok && response2.ok && data.jwt) {
                 window.location.href = '../html/login.html';
             } else {
                 // Manejar error de autenticación
@@ -94,20 +103,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Animación de entrada
     const registerContainer = document.querySelector('.register-container');
     const registerImage = document.querySelector('.register-image');
-    
+
     setTimeout(() => {
         registerContainer.style.opacity = '0';
         registerContainer.style.transform = 'translateX(-20px)';
         registerContainer.style.transition = 'all 0.6s ease';
-        
+
         registerImage.style.opacity = '0';
         registerImage.style.transform = 'translateX(20px)';
         registerImage.style.transition = 'all 0.6s ease';
-        
+
         setTimeout(() => {
             registerContainer.style.opacity = '1';
             registerContainer.style.transform = 'translateX(0)';
-            
+
             registerImage.style.opacity = '1';
             registerImage.style.transform = 'translateX(0)';
         }, 100);
