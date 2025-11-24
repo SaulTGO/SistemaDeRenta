@@ -40,7 +40,6 @@ function createReservationCard(reservation) {
             <p><strong>Fecha de llegada</strong> ${reservation.fechaLlegada}</p>
             <p><strong>Fecha de salida</strong> ${reservation.fechaSalida}</p>
             <p><strong>Total a pagar</strong> ${reservation.total}</p>
-            <p><strong># Huespedes</strong> ${reservation.huespedes}</p>
         </div>
     `;
     
