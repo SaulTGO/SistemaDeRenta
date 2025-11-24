@@ -62,7 +62,7 @@ async function loadReservations() {
 
     // Intentar cargar reservaciones del almacenamiento local
     // o usar datos de ejemplo
-    const reservations = await authGet(`/api/reservations?filters[user][id][$eq]=${getUser().id}&populate=*`); // AquÃ­ cargarÃ­as desde tu backend
+    const reservations = await authGet(`/api/reservations?filters[user][id][$eq]=11&populate=*`);
 
     if (reservations.data && reservations.data.length > 0) {
         grid.style.display = 'grid';
