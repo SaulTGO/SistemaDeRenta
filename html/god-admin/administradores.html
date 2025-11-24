@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administradores - SiRABi</title>
+    <link rel="stylesheet" href="../../css/styles-god-admin/cuentas.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>SiRABi</h1>
+                </div>
+                <button class="btn-cerrar-sesion" id="btnCerrarSesion" onclick="logout()">Cerrar Sesión</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content-wrapper">
+            <h2 class="page-title">Administradores</h2>
+            
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID Personal</th>
+                            <th>Nombre</th>
+                            <th>Apellido(s)</th>
+                            <th>Correo</th>
+                            <th>Teléfono</th>
+                            <th>Contraseña</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ADM-001</td>
+                            <td>Roberto</td>
+                            <td>González Hernández</td>
+                            <td>roberto.gonzalez@sirabi.com</td>
+                            <td>555-1001</td>
+                            <td>********</td>
+                        </tr>
+                        <tr>
+                            <td>ADM-002</td>
+                            <td>Ana</td>
+                            <td>Martínez López</td>
+                            <td>ana.martinez@sirabi.com</td>
+                            <td>555-1002</td>
+                            <td>********</td>
+                        </tr>
+                        <tr>
+                            <td>ADM-003</td>
+                            <td>Luis</td>
+                            <td>Rodríguez Díaz</td>
+                            <td>luis.rodriguez@sirabi.com</td>
+                            <td>555-1003</td>
+                            <td>********</td>
+                        </tr>
+                        <tr>
+                            <td>ADM-004</td>
+                            <td>Patricia</td>
+                            <td>Fernández Morales</td>
+                            <td>patricia.fernandez@sirabi.com</td>
+                            <td>555-1004</td>
+                            <td>********</td>
+                        </tr>
+                        <tr>
+                            <td>ADM-005</td>
+                            <td>Miguel</td>
+                            <td>Torres Ramírez</td>
+                            <td>miguel.torres@sirabi.com</td>
+                            <td>555-1005</td>
+                            <td>********</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="actions-container">
+                <button class="btn-volver" onclick="window.location.href='home-admin.html'">Volver al Panel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function logout() {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                window.location.href = '../../index.html';
+            }
+        }
+    </script>
+    <script src="../../js/scripts-admin/administradores.js"></script>
+    <script src="../../js/auth-utils.js"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuentas del Personal - SiRABi</title>
+    <link rel="stylesheet" href="../../css/styles-god-admin/cuentas.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>SiRABi</h1>
+                </div>
+                <button class="btn-cerrar-sesion" id="btnCerrarSesion" onclick="logout()">Cerrar Sesión</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content-wrapper">
+            <h2 class="page-title">Cuentas del personal</h2>
+            
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID Personal</th>
+                            <th>Nombre</th>
+                            <th>Apellido(s)</th>
+                            <th>Correo</th>
+                            <th>Teléfono</th>
+                            <th>Contraseña</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>001</td>
+                            <td>Juan</td>
+                            <td>Pérez García</td>
+                            <td>juan.perez@sirabi.com</td>
+                            <td>555-0123</td>
+                            <td>********</td>
+                        </tr>
+                        <tr>
+                            <td>002</td>
+                            <td>María</td>
+                            <td>López Martínez</td>
+                            <td>maria.lopez@sirabi.com</td>
+                            <td>555-0456</td>
+                            <td>********</td>
+                        </tr>
+                        <tr>
+                            <td>003</td>
+                            <td>Carlos</td>
+                            <td>Sánchez Ruiz</td>
+                            <td>carlos.sanchez@sirabi.com</td>
+                            <td>555-0789</td>
+                            <td>********</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="actions-container">
+                <button class="btn-volver" onclick="window.location.href='home-admin.html'">Volver al Panel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/scripts-admin/cuentas-personal.js"></script>
+    <script src="../../js/auth-utils.js"></script>
+</body>
+</html>

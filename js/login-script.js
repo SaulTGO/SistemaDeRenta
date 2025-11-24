@@ -59,14 +59,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         case 'Administrador':
                             window.location.href = '../html/admin/home-admin.html';
                             break;
+                        case 'GodAdministrador':
+                            window.location.href = '../html/god-admin/home-god-admin.html';
+                            break;
                         case 'Personal':
                             window.location.href = '../html/personal/home-personal.html';
                             break;
                         case 'Usuario':
-                            window.location.href = '../html/reservar.html';
+                            window.location.href = '../html/home-user.html';
                             break;
                         case 'Authenticated':
-                            window.location.href = '../html/reservar.html';
+                            window.location.href = '../html/home-user.html';
                             break;
                         default:
                             window.location.href = '../html/login.html';

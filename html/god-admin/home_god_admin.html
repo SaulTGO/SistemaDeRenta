@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - SiRABi</title>
+    <link rel="stylesheet" href="../../css/styles-god-admin/home-god-admin.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>SiRABi</h1>
+                </div>
+                <button class="btn-cerrar-sesion" id="btnCerrarSesion" onclick="logout()">Cerrar Sesión</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="admin-panel">
+            <h2 class="panel-title">Panel de control del administrador</h2>
+            
+            <div class="main-menu-container">
+                <!-- Sección izquierda -->
+                <div class="menu-section">
+                    <h3 class="section-title">Detalles específicos</h3>
+                    <a href="../admin/reservaciones.html" class="menu-btn">
+                        <span>Reservaciones</span>
+                    </a>
+
+                    <a href="../admin/domicilios.html" class="menu-btn">
+                        <span>Domicilios</span>
+                    </a>
+
+                    <a href="../admin/personal.html" class="menu-btn">
+                        <span>Personal</span>
+                    </a>
+                </div>
+
+                <!-- Sección derecha -->
+                <div class="menu-section">
+                    <h3 class="section-title">Detalles de cuentas</h3>
+                    
+                    <a href="usuarios.html" class="menu-btn">
+                        <span>Usuarios</span>
+                    </a>
+
+                    <a href="administradores.html" class="menu-btn">
+                        <span>Administradores</span>
+                    </a>
+
+                    <a href="cuentas-personal.html" class="menu-btn">
+                        <span>Cuentas del Personal</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function logout() {
+            // Lógica para cerrar sesión
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                // Aquí irían las llamadas a auth-utils.js o lógica de cierre de sesión
+                window.location.href = '../../index.html';
+            }
+        }
+
+        // Agregar efecto visual al hacer clic en los botones
+        document.querySelectorAll('.menu-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                // Aquí puedes agregar lógica adicional si es necesario
+                console.log('Navegando a:', this.getAttribute('href'));
+            });
+        });
+    </script>
+</body>
+</html>
