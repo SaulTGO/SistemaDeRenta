@@ -22,10 +22,12 @@ const sampleReservations = [
 function createReservationCard(reservation) {
     const card = document.createElement('div');
     card.className = 'reservation-card';
-    
+    const fechaLlegada = reservation.arriveDate;
+    const fechaSalida = reservation.departureDate;
+    const total = (fechaSalida-fechaLlegada)*reservation.site.pricePerNight;
     card.innerHTML = `
         <div class="reservation-image">
-            ${reservation.image 
+            ${reservation.site.image 
                 ? `<img src="${reservation.image}" alt="Espacio reservado">`
                 : `<div class="image-placeholder">
                     <svg viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -37,9 +39,9 @@ function createReservationCard(reservation) {
             }
         </div>
         <div class="reservation-details">
-            <p><strong>Fecha de llegada</strong> ${reservation.fechaLlegada}</p>
-            <p><strong>Fecha de salida</strong> ${reservation.fechaSalida}</p>
-            <p><strong>Total a pagar</strong> ${reservation.total}</p>
+            <p><strong>Fecha de llegada</strong> ${fechaLlegada}</p>
+            <p><strong>Fecha de salida</strong> ${fechaSalida}</p>
+            <p><strong>Total a pagar</strong> ${total}</p>
         </div>
     `;
     
@@ -60,13 +62,13 @@ function loadReservations() {
     
     // Intentar cargar reservaciones del almacenamiento local
     // o usar datos de ejemplo
-    const reservations = sampleReservations; // AquÃ­ cargarÃ­as desde tu backend
+    const reservations = authGet(`/api/reservations?filters[user][id][$eq]=${getUser().id}`); // AquÃ­ cargarÃ­as desde tu backend
     
-    if (reservations && reservations.length > 0) {
+    if (reservations.data && reservations.data.length > 0) {
         grid.style.display = 'grid';
         noReservations.style.display = 'none';
         
-        reservations.forEach(reservation => {
+        reservations.data.forEach(reservation => {
             const card = createReservationCard(reservation);
             grid.appendChild(card);
         });
