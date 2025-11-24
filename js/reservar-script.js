@@ -33,9 +33,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Manejar el envío del formulario
     const paymentForm = document.getElementById('paymentForm');
-    paymentForm.addEventListener('submit', function(e) {
+    paymentForm.addEventListener('submit', async function (e) {
         e.preventDefault();
-        
+
         // Validar campos
         const cardNumber = cardNumberInput.value.replace(/-/g, '');
         const expiry = expiryInput.value;
@@ -63,10 +63,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Simular procesamiento
-        alert('Procesando pago...');
-        
+
+        postMessage('Procesando pago...');
+        if(!getJWT()){
+            window.location.href = '../html/login.html';
+        }else{
+            const sitio = await authGet(`/api/sites/${localStorage.getItem('siteId')}`)
+            const fecha = new Date(sitio.)
+            const year = today.getFullYear();
+            // getMonth() returns 0 for January, so add 1
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const response = await authPost(`/api/reservations`,{
+                arriveDate: new Date('')
+
+            })
+            if(!response) return false;
+            const asd = await authPost(`/api/posts/codigoUpdate`, {
+                id: localStorage.getItem('siteId'),
+                codigo: Math.floor(10000000 + Math.random() * 90000000)
+            })
+        }
+
+
         // Redirigir al index después de un pequeño delay
-        setTimeout(function() {
+        setTimeout(function () {
             alert('¡Reserva confirmada exitosamente!');
             window.location.href = '../html/home-user.html';
         }, 1000);
