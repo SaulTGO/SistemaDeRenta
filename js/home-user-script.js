@@ -65,11 +65,11 @@ async function loadReservations() {
     //const reservations = await authGet(`/api/users/${getUser().id}?populate=reservations`);
 
     const reservations = await authGet(`/api/reservations?populate=*&filters[user][id]=${getUser().id}`);
-    if (reservations.reservations && reservations.reservations.length > 0) {
+    if (reservations.data && reservations.data.length > 0) {
         grid.style.display = 'grid';
         noReservations.style.display = 'none';
 
-        reservations.reservations.forEach(reservation => {
+        reservations.data.forEach(reservation => {
             const card = createReservationCard(reservation);
             grid.appendChild(card);
         });
