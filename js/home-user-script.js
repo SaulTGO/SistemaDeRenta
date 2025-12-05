@@ -22,12 +22,27 @@ const sampleReservations = [
 function createReservationCard(reservation) {
     const card = document.createElement('div');
     card.className = 'reservation-card';
-    const fechaLlegada = new Date(reservation.arriveDate);
-    const fechaSalida = new Date(reservation.departureDate);
+
+    const fechaLlegadaObj = new Date(reservation.arriveDate);
+    fechaLlegadaObj.setHours(12, 0, 0, 0);
+    const fechaSalidaObj = new Date(reservation.departureDate);
+    fechaSalidaObj.setHours(12, 0, 0, 0);
+
+    const formatoFecha = (dateObj) => {
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // getMonth() es 0-indexado
+        const year = dateObj.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
+    const fechaLlegadaFormato = formatoFecha(fechaLlegadaObj);
+    const fechaSalidaFormato = formatoFecha(fechaSalidaObj);
+    // **Fin de nuevas líneas de formato**
+
     /*console.log(fechaLlegada)
     console.log(fechaSalida)
     console.log(fechaSalida-fechaLlegada)*/
-    const total = Math.ceil((fechaSalida-fechaLlegada) / (1000 * 60 * 60 * 24))*reservation.site.pricePerNight;
+    const total = Math.ceil((fechaSalidaObj-fechaLlegadaObj) / (1000 * 60 * 60 * 24))*reservation.site.pricePerNight;
     card.innerHTML = `
         <div class="reservation-image">
             ${reservation.site.image 
@@ -42,8 +57,8 @@ function createReservationCard(reservation) {
             }
         </div>
         <div class="reservation-details">
-            <p><strong>Fecha de llegada</strong> ${fechaLlegada}</p>
-            <p><strong>Fecha de salida</strong> ${fechaSalida}</p>
+            <p><strong>Fecha de llegada</strong> ${fechaLlegadaFormato}</p>
+            <p><strong>Fecha de salida</strong> ${fechaSalidaFormato}</p>
             <p><strong>Total a pagar</strong> ${total}</p>
         </div>
     `;

@@ -1,4 +1,4 @@
-    /* Reset y estilos base */
+/* Reset y estilos base */
 * {
     margin: 0;
     padding: 0;
@@ -40,14 +40,149 @@ header {
     letter-spacing: 2px;
 }
 
-/* Layout principal */
+/* Layout principal - 2 columnas */
 .main-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 30px;
     padding: 20px 0;
-    max-width: 1000px;
+    max-width: 1400px;
     margin: 0 auto;
+}
+
+/* Columna derecha - Información de la reservación */
+.reservation-info {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid #e0e0e0;
+    height: fit-content;
+    order: 2; /* Mover a la derecha */
+}
+
+.reservation-info h2 {
+    font-size: 1.3rem;
+    color: #333;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #e8ecf3;
+    border-radius: 5px;
+}
+
+/* Imágenes de la reservación */
+.reservation-images {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.reservation-image {
+    height: 150px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #2a3f6b;
+}
+
+.reservation-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Detalles de la reservación */
+.reservation-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #555;
+}
+
+.detail-value {
+    color: #333;
+    font-weight: 500;
+}
+
+.detail-item.total {
+    background-color: #e8ecf3;
+    border: 2px solid #3b558f;
+    margin-top: 10px;
+}
+
+.detail-item.total .detail-label,
+.detail-item.total .detail-value {
+    color: #3b558f;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+/* Columna izquierda - Contenedor de registro y pago */
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    order: 1; /* Mover a la izquierda */
+}
+
+/* Sección de registro/autenticación */
+.register-wrapper {
+    width: 100%;
+}
+
+.register-container {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid #e0e0e0;
+}
+
+.register-container h2 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 10px;
+    padding: 8px;
+    background-color: #e8ecf3;
+    border-radius: 5px;
+}
+
+.subtitle {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Estado de sesión iniciada */
+.session-active {
+    padding: 20px;
+    background-color: #d4edda;
+    border: 2px solid #28a745;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.session-active h3 {
+    color: #155724;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.session-active p {
+    color: #155724;
+    font-size: 0.95rem;
 }
 
 /* Sección de pago */
@@ -172,95 +307,36 @@ header {
     box-shadow: 0 5px 15px rgba(59, 85, 143, 0.4);
 }
 
-/* Información de la reservación */
-.reservation-info {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border: 2px solid #e0e0e0;
+.btn-confirm:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    transform: none;
 }
 
-.reservation-info h2 {
-    font-size: 1.3rem;
-    color: #333;
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #e8ecf3;
-    border-radius: 5px;
-}
-
-/* Imágenes de la reservación */
-.reservation-images {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.reservation-image {
-    height: 150px;
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: #2a3f6b;
-}
-
-.reservation-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* Detalles de la reservación */
-.reservation-details {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.detail-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px;
-    background-color: #f8f9fa;
-    border-radius: 5px;
-}
-
-.detail-label {
-    font-weight: 600;
-    color: #555;
-}
-
-.detail-value {
-    color: #333;
-    font-weight: 500;
-}
-
-.detail-item.total {
-    background-color: #e8ecf3;
-    border: 2px solid #3b558f;
-    margin-top: 10px;
-}
-
-.detail-item.total .detail-label,
-.detail-item.total .detail-value {
-    color: #3b558f;
-    font-weight: 700;
-    font-size: 1.1rem;
+/* Ocultar secciones */
+.hidden {
+    display: none !important;
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
     .main-content {
         grid-template-columns: 1fr;
     }
 
+    .right-column {
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
     .form-row {
         grid-template-columns: 1fr;
     }
 
     .payment-section,
-    .reservation-info {
+    .reservation-info,
+    .register-container {
         padding: 20px;
     }
 
@@ -271,15 +347,28 @@ header {
     .reservation-images {
         grid-template-columns: 1fr;
     }
+
+    .right-column {
+        gap: 15px;
+    }
 }
 
 @media (max-width: 480px) {
     .payment-section h2,
-    .reservation-info h2 {
+    .reservation-info h2,
+    .register-container h2 {
         font-size: 1.1rem;
     }
 
     .card-logos img {
         height: 25px;
+    }
+
+    .register-container {
+        padding: 15px;
+    }
+
+    .payment-section {
+        padding: 15px;
     }
 }
