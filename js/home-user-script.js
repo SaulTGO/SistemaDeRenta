@@ -105,7 +105,7 @@ function logout() {
         removeJWT();
         removeUser();
 
-        window.location.href = '../html/login.html';
+        window.location.href = '../../index.html';
     }
 }
 
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cargar reservaciones
     loadReservations();
     
-    // BotÃ³n de cerrar sesion
+    // Boton de cerrar sesion
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', logout);

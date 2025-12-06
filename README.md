@@ -3,11 +3,16 @@ Proyecto de sistema de rentas
 
 TO DO
 
-* checar porque no se guardan los jwt tokens en las cookies
-* hacer que todos los botones de cerrar sesion cierren por completo la sesion (borrar cookies)
-* implementar la logica de registro de cuenta
-* crear una nueva pagina para usuarios con cuenta donde puedan revisar su informacion y la del sitio que estan rentando actualmente, donde cambia su cuenta para ser Personal o Anfitrion (si tambien se incluye este) y además tener su "botón para registrar huellas", tambien se podria hacer que la clave de acceso la despliegue en este lugar
-* que la pagina de inicio reemplaze el boton de inicio de sesion en caso de ya haber iniciado sesion y reemplazarlo por el acceso a la nueva pagina de cuenta de usuario
-* [acciones de mejora] no importantes pero mencionables:
-    - manejar confirmar contraseña en el registro
+- Entre la pantalla de espacios (donde se selecciona la reservacion) y la pagina del metodo de pago (reservar.html), manejar que los datos de la se envien desde los espacios hacia  el resumen de la reservacion en la ventana del metodo de pago.
+- COMPROBAR QUE: En la ventana del metodo de pago (reservar.html) ocultar la seccion de registarse cuando hay una sesion iniciada.
+- La reservacion debe asociarse a un usuario, y la informacion debe desplegarse en la ventana de home-user
+- Si no hay una sesion iniciada en la ventana del metodo de pago (reservar.html), despues de simular el pago, la cuenta debe guardarse correctamente, y la sesion debe inciarse y redirigerse a la seccion de home-user (REVISAR FLUJO)
+- Revisar el script de reservar-script.js, segun el ide, hay variables no inicializadas
+- Revisar despliegue de datos en las tablas del admin y superadmin (No se si actualemente funciona)
+- Recuperar el valor de la checkbox y de las observaciones en la tabla del home-personal, para que se guarden en la BD
+
+
+MODIFICACIONES A CONSIDERAR
+- En las tablas del admin, operaciones completas del CRUD. Por simplicidad, ahorita solo seria editar los valores o agregar alguno nuevo a la tabla
+- Graficas para reportes de nivel de uso en admin/reservaciones
 
