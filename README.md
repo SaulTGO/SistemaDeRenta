@@ -15,4 +15,5 @@ TO DO
 MODIFICACIONES A CONSIDERAR
 - En las tablas del admin, operaciones completas del CRUD. Por simplicidad, ahorita solo seria editar los valores o agregar alguno nuevo a la tabla
 - Graficas para reportes de nivel de uso en admin/reservaciones
+- La informacion de los domicilios que se muestra donde se hace la reservacion, deberia recuperarse desde la BD? Ahorita solo esta incluida dentro del script
 
