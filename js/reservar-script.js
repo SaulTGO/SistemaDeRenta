@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const isLoggedIn = getJWT() !== null;
 
         if (isLoggedIn) {
-            // Usuario autenticado - mostrar mensaje de sesión activa
+            // Usuario autenticado - ocultar formulario de registro
             const user = getUser();
             const userName = user ? (user.username || user.email || 'Usuario') : 'Usuario';
 
@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         } else {
             // Usuario NO autenticado - mantener formulario de registro visible
-            // El HTML ya tiene el formulario, solo aseguramos que esté visible
             registerContainer.classList.remove('hidden');
         }
     }
@@ -31,14 +30,12 @@ document.addEventListener('DOMContentLoaded', function() {
     checkAuthenticationStatus();
 
     // ============================================
-    // FUNCIONALIDAD DE REGISTRO
+    // FORMATEO DE CAMPOS DE REGISTRO
     // ============================================
 
-    const registerForm = document.getElementById('registerForm');
+    const phoneInput = document.getElementById('phone');
 
-    if (registerForm) {
-        const phoneInput = document.getElementById('phone');
-
+    if (phoneInput) {
         // Formatear teléfono automáticamente
         phoneInput.addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
@@ -51,80 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             e.target.value = value;
-        });
-
-        // Manejar el envío del formulario de registro
-        registerForm.addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            // Obtener valores
-            const firstName = document.getElementById('firstName').value;
-            const lastName = document.getElementById('lastName').value;
-            const email = document.getElementById('email').value;
-            const phone = phoneInput.value;
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-
-            const passField = document.getElementById('registerPassword');
-            const confPassField = document.getElementById('confirmPassword');
-
-            // Validar que las contraseñas coincidan
-            if (password !== confirmPassword) {
-                passField.style.backgroundColor = "pink";
-                passField.style.border = "2px solid red";
-                confPassField.style.backgroundColor = "pink";
-                confPassField.style.border = "2px solid red";
-                alert('Las contraseñas no coinciden');
-                return;
-            } else {
-                passField.style = "";
-                confPassField.style = "";
-            }
-
-            console.log('Registrando usuario...');
-
-            try {
-                // Registrar usuario
-                const response = await fetch(`${API_BASE_URL}/api/auth/local/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username: firstName,
-                        email: email,
-                        password: password,
-                        phone: phone,
-                        lastName: lastName
-                    })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) throw new Error("Error al registrar usuario");
-
-                // Asignar rol de usuario
-                const response2 = await fetch(`${API_BASE_URL}/api/posts/asignRole?p1=${data.user.id}&p2=Usuario`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (response.ok && response2.ok && data.jwt) {
-                    // Guardar JWT y usuario
-                    setJWT(data.jwt);
-                    setUser(data.user);
-
-                    alert('¡Registro exitoso! Ahora puedes continuar con tu reserva.');
-
-                    // Actualizar la interfaz para mostrar sesión activa
-                    checkAuthenticationStatus();
-                }
-            } catch (error) {
-                console.error('Error al registrarse:', error);
-                alert('Error al registrarse: ' + error.message);
-            }
         });
     }
 
@@ -163,18 +86,162 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ============================================
-    // MANEJAR CONFIRMACIÓN DE RESERVA
+    // FUNCIÓN AUXILIAR: PARSEAR FECHAS SIN ZONA HORARIA
+    // ============================================
+
+    function parseFechaSinZonaHoraria(dateString) {
+        const [year, month, day] = dateString.split('T')[0].split('-');
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    }
+
+    // ============================================
+    // FUNCIÓN AUXILIAR: REGISTRAR USUARIO
+    // ============================================
+
+    async function registrarUsuario() {
+        // Obtener valores del formulario de registro
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = phoneInput.value.trim();
+        const password = document.getElementById('registerPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        const passField = document.getElementById('registerPassword');
+        const confPassField = document.getElementById('confirmPassword');
+
+        // Validar que los campos estén completos
+        if (!firstName || !lastName || !email || !phone || !password) {
+            throw new Error('Por favor completa todos los campos de registro');
+        }
+
+        // Validar que las contraseñas coincidan
+        if (password !== confirmPassword) {
+            passField.style.backgroundColor = "pink";
+            passField.style.border = "2px solid red";
+            confPassField.style.backgroundColor = "pink";
+            confPassField.style.border = "2px solid red";
+            throw new Error('Las contraseñas no coinciden');
+        } else {
+            passField.style = "";
+            confPassField.style = "";
+        }
+
+        console.log('Registrando usuario...');
+
+        // Registrar usuario
+        const response = await fetch(`${API_BASE_URL}/api/auth/local/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: firstName,
+                email: email,
+                password: password,
+                phone: phone,
+                lastName: lastName
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error?.message || "Error al registrar usuario");
+        }
+
+        // Asignar rol de usuario
+        const response2 = await fetch(`${API_BASE_URL}/api/posts/asignRole?p1=${data.user.id}&p2=Usuario`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response2.ok) {
+            console.warn('No se pudo asignar el rol, pero el usuario fue creado');
+        }
+
+        if (data.jwt) {
+            // Guardar JWT y usuario
+            setJWT(data.jwt);
+            setUser(data.user);
+
+            console.log('✓ Usuario registrado e iniciado sesión exitosamente');
+
+            // Actualizar la interfaz para mostrar sesión activa
+            checkAuthenticationStatus();
+
+            return true;
+        } else {
+            throw new Error('No se recibió el token de autenticación');
+        }
+    }
+
+    // ============================================
+    // FUNCIÓN AUXILIAR: PROCESAR RESERVA
+    // ============================================
+
+    async function procesarReserva() {
+        // Obtener información del sitio desde localStorage
+        const siteId = localStorage.getItem('siteId');
+
+        if (!siteId) {
+            throw new Error('No se encontró información del sitio a reservar');
+        }
+
+        // Obtener detalles del sitio
+        const sitio = await authGet(`/api/sites/${siteId}`);
+
+        if (!sitio) {
+            throw new Error('No se pudo obtener la información del sitio');
+        }
+
+        // Formatear fechas SIN zona horaria
+        const fecha = parseFechaSinZonaHoraria(sitio.arriveDate);
+        const fecha2 = parseFechaSinZonaHoraria(sitio.departureDate);
+
+        const year1 = fecha.getFullYear();
+        const month1 = String(fecha.getMonth() + 1).padStart(2, '0');
+        const day1 = String(fecha.getDate()).padStart(2, '0');
+
+        const year2 = fecha2.getFullYear();
+        const month2 = String(fecha2.getMonth() + 1).padStart(2, '0');
+        const day2 = String(fecha2.getDate()).padStart(2, '0');
+
+        // Generar código de reserva
+        const codigo = Math.floor(10000000 + Math.random() * 90000000);
+
+        // Crear la reserva
+        const response = await authPost(`/api/reservations`, {
+            arriveDate: `${year1}-${month1}-${day1}`,
+            departureDate: `${year2}-${month2}-${day2}`,
+            user: getUser().id,
+            site: siteId,
+            codigo: codigo
+        });
+
+        if (!response) {
+            throw new Error('Error al crear la reserva');
+        }
+
+        // Actualizar código en el backend
+        const r = await authGet(`/api/posts/cambiarCodigo?p1=${codigo}`);
+
+        if (!r) {
+            console.warn('No se pudo actualizar el código, pero la reserva fue creada');
+        }
+
+        return codigo;
+    }
+
+    // ============================================
+    // MANEJAR CONFIRMACIÓN DE RESERVA (UNIFICADO)
     // ============================================
 
     const paymentForm = document.getElementById('paymentForm');
     paymentForm.addEventListener('submit', async function (e) {
         e.preventDefault();
-
-        // Verificar que el usuario esté autenticado
-        if (!getJWT()) {
-            alert('Por favor, inicia sesión o regístrate antes de continuar con la reserva.');
-            return;
-        }
 
         // Validar campos de pago
         const cardNumber = cardNumberInput.value.replace(/-/g, '');
@@ -205,60 +272,22 @@ document.addEventListener('DOMContentLoaded', function() {
         // Cambiar texto del botón
         const btnConfirm = document.querySelector('.btn-confirm');
         const originalText = btnConfirm.textContent;
-        btnConfirm.textContent = 'Procesando pago...';
+        btnConfirm.textContent = 'Procesando...';
         btnConfirm.disabled = true;
 
         try {
-            // Obtener información del sitio desde localStorage
-            const siteId = localStorage.getItem('siteId');
-
-            if (!siteId) {
-                throw new Error('No se encontró información del sitio a reservar');
+            // PASO 1: Si el usuario NO está autenticado, registrarlo primero
+            if (!getJWT()) {
+                btnConfirm.textContent = 'Registrando usuario...';
+                await registrarUsuario();
+                btnConfirm.textContent = 'Procesando pago...';
             }
 
-            // Obtener detalles del sitio
-            const sitio = await authGet(`/api/sites/${siteId}`);
+            // PASO 2: Procesar la reserva
+            btnConfirm.textContent = 'Confirmando reserva...';
+            const codigo = await procesarReserva();
 
-            if (!sitio) {
-                throw new Error('No se pudo obtener la información del sitio');
-            }
-
-            // Formatear fechas
-            const fecha = new Date(sitio.arriveDate);
-            const fecha2 = new Date(sitio.departureDate);
-
-            const year1 = fecha.getFullYear();
-            const month1 = String(fecha.getMonth() + 1).padStart(2, '0');
-            const day1 = String(fecha.getDate()).padStart(2, '0');
-
-            const year2 = fecha2.getFullYear();
-            const month2 = String(fecha2.getMonth() + 1).padStart(2, '0');
-            const day2 = String(fecha2.getDate()).padStart(2, '0');
-
-            // Generar código de reserva
-            const codigo = Math.floor(10000000 + Math.random() * 90000000);
-
-            // Crear la reserva
-            const response = await authPost(`/api/reservations`, {
-                arriveDate: `${year1}-${month1}-${day1}`,
-                departureDate: `${year2}-${month2}-${day2}`,
-                user: getUser().id,
-                site: siteId,
-                codigo: codigo
-            });
-
-            if (!response) {
-                throw new Error('Error al crear la reserva');
-            }
-
-            // Actualizar código en el backend
-            const r = await authGet(`/api/posts/cambiarCodigo?p1=${codigo}`);
-
-            if (!r) {
-                console.warn('No se pudo actualizar el código, pero la reserva fue creada');
-            }
-
-            // Éxito - redirigir
+            // PASO 3: Éxito - redirigir
             alert('¡Reserva confirmada exitosamente! Código de reserva: ' + codigo);
 
             // Limpiar localStorage
@@ -270,8 +299,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 1000);
 
         } catch (error) {
-            console.error('Error al procesar la reserva:', error);
-            alert('Error al procesar la reserva: ' + error.message);
+            console.error('Error al procesar:', error);
+            alert('Error: ' + error.message);
 
             // Restaurar botón
             btnConfirm.textContent = originalText;
@@ -295,9 +324,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const sitio = await authGet(`/api/sites/${siteId}`);
 
             if (sitio) {
-                // Actualizar fechas
-                const arriveDate = new Date(sitio.arriveDate);
-                const departureDate = new Date(sitio.departureDate);
+                // Actualizar fechas usando parseo sin zona horaria
+                const arriveDate = parseFechaSinZonaHoraria(sitio.arriveDate);
+                const departureDate = parseFechaSinZonaHoraria(sitio.departureDate);
 
                 const checkInEl = document.getElementById('checkInDate');
                 const checkOutEl = document.getElementById('checkOutDate');
@@ -336,10 +365,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Cargar información al iniciar
-    if (getJWT()) {
-        loadReservationInfo();
-    }
+    // Cargar información al iniciar (sin importar si está autenticado)
+    loadReservationInfo();
 
     // ============================================
     // ANIMACIONES DE ENTRADA

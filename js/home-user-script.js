@@ -120,13 +120,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cargar reservaciones
     loadReservations();
     
-    // BotÃ³n de cerrar sesiÃ³n
+    // BotÃ³n de cerrar sesion
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', logout);
     }
     
-    // Botones de nueva reservaciÃ³n
+    // Botones de nueva reservacion
     const newReservationBtns = document.querySelectorAll('.btn-new-reservation');
     newReservationBtns.forEach(btn => {
         btn.addEventListener('click', goToNewReservation);
