@@ -37,13 +37,7 @@ header {
     letter-spacing: 2px;
 }
 
-.header-actions {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
-
-.home-btn, .logout-btn {
+.btn-cerrar-sesion {
     padding: 8px 15px;
     border: 2px solid #ffffff;
     background-color: transparent;
@@ -52,13 +46,9 @@ header {
     cursor: pointer;
     font-weight: 600;
     transition: all 0.3s ease;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
 }
 
-.home-btn:hover, .logout-btn:hover {
+.btn-cerrar-sesion:hover {
     background-color: #ffffff;
     color: #3b558f;
     transform: translateY(-2px);
@@ -102,57 +92,34 @@ header {
     color: #3b558f;
 }
 
-.stat-disponibles {
-    border-left-color: #388e3c;
-}
-
-.stat-disponibles p {
-    color: #388e3c;
-}
-
-.stat-ocupados {
-    border-left-color: #d32f2f;
-}
-
-.stat-ocupados p {
-    color: #d32f2f;
-}
-
-.stat-aseados {
-    border-left-color: #1976d2;
-}
-
-.stat-aseados p {
-    color: #1976d2;
-}
-
-.stat-pendientes {
-    border-left-color: #f57c00;
-}
-
-.stat-pendientes p {
-    color: #f57c00;
-}
-
-/* Tabla de espacios */
-.espacios-wrapper {
+/* Content wrapper */
+.content-wrapper {
     background-color: #ffffff;
     border-radius: 8px;
+    padding: 30px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
     border: 2px solid #3b558f;
+}
+
+.page-title {
+    font-size: 1.8rem;
+    color: #3b558f;
+    margin-bottom: 25px;
+    text-align: center;
+    font-weight: bold;
 }
 
 /* Header de acciones */
 .actions-header {
-    padding: 20px;
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #3b558f;
+    padding: 20px 0;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
 }
 
-.btn-add {
+.btn-add, .btn-reload, .btn-export {
     padding: 10px 20px;
-    background-color: #28a745;
     color: white;
     border: none;
     border-radius: 5px;
@@ -162,27 +129,77 @@ header {
     transition: all 0.3s ease;
 }
 
+.btn-add {
+    background-color: #28a745;
+}
+
 .btn-add:hover {
     background-color: #218838;
     transform: translateY(-2px);
     box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
 }
 
+.btn-reload {
+    background-color: #17a2b8;
+}
+
+.btn-reload:hover {
+    background-color: #138496;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(23, 162, 184, 0.3);
+}
+
+.btn-export {
+    background-color: #6c757d;
+}
+
+.btn-export:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(108, 117, 125, 0.3);
+}
+
+/* Mensajes */
+.loading-indicator, .error-message, .no-data-message {
+    padding: 20px;
+    text-align: center;
+    font-size: 1rem;
+    margin: 20px 0;
+}
+
+.loading-indicator {
+    color: #3b558f;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+}
+
+.no-data-message {
+    color: #6c757d;
+}
+
+/* Tabla */
 .table-container {
     overflow-x: auto;
+    margin-bottom: 30px;
 }
 
-table {
+.data-table {
     width: 100%;
     border-collapse: collapse;
+    background-color: #ffffff;
 }
 
-thead {
-    background-color: #9a9a9a;
+.data-table thead {
+    background-color: #3b558f;
     color: white;
 }
 
-thead th {
+.data-table th {
     padding: 18px 15px;
     text-align: center;
     font-weight: 600;
@@ -190,25 +207,25 @@ thead th {
     border-right: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-thead th:last-child {
+.data-table th:last-child {
     border-right: none;
 }
 
-tbody tr {
+.data-table tbody tr {
     border-bottom: 2px solid #3b558f;
     background-color: #e8e8e8;
 }
 
-tbody tr:nth-child(even) {
+.data-table tbody tr:nth-child(even) {
     background-color: #f5f5f5;
 }
 
-tbody tr:hover {
+.data-table tbody tr:hover {
     background-color: #d5e3f0;
     transition: background-color 0.2s ease;
 }
 
-tbody td {
+.data-table td {
     padding: 20px 15px;
     text-align: center;
     font-size: 0.9rem;
@@ -216,34 +233,8 @@ tbody td {
     border-right: 1px solid #ccc;
 }
 
-tbody td:last-child {
+.data-table td:last-child {
     border-right: none;
-}
-
-/* Estados */
-.estado-ocupado {
-    color: #d32f2f;
-    font-weight: 600;
-}
-
-.estado-disponible {
-    color: #388e3c;
-    font-weight: 600;
-}
-
-.estado-aseado {
-    color: #1976d2;
-    font-weight: 600;
-}
-
-.estado-pendiente-aseo {
-    color: #f57c00;
-    font-weight: 600;
-}
-
-.estado-desconocido {
-    color: #757575;
-    font-weight: 600;
 }
 
 /* Botones de acción */
@@ -369,6 +360,14 @@ form {
     border-color: #3b558f;
 }
 
+.form-hint {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.8rem;
+    color: #666;
+    font-style: italic;
+}
+
 .modal-actions {
     display: flex;
     gap: 10px;
@@ -404,23 +403,28 @@ form {
     background-color: #218838;
 }
 
-/* Mensajes */
-.loading-indicator, .error-message, .no-data-message {
-    padding: 20px;
+/* Actions container */
+.actions-container {
+    margin-top: 30px;
     text-align: center;
-    font-size: 1rem;
 }
 
-.error-message {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+.btn-volver {
+    padding: 12px 30px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
     border-radius: 5px;
-    margin: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
 }
 
-.no-data-message {
-    color: #6c757d;
+.btn-volver:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(108, 117, 125, 0.3);
 }
 
 /* Responsive */
@@ -435,25 +439,28 @@ form {
     }
 
     .estadisticas-panel {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 15px;
+        grid-template-columns: 1fr;
     }
 
-    .stat-card {
-        padding: 15px;
+    .content-wrapper {
+        padding: 20px;
     }
 
-    .stat-card p {
+    .page-title {
         font-size: 1.5rem;
     }
 
-    thead th, tbody td {
-        padding: 12px 8px;
-        font-size: 0.85rem;
+    .actions-header {
+        flex-direction: column;
     }
 
-    .table-container {
-        font-size: 0.8rem;
+    .btn-add, .btn-reload, .btn-export {
+        width: 100%;
+    }
+
+    .data-table th, .data-table td {
+        padding: 12px 8px;
+        font-size: 0.85rem;
     }
 
     .action-buttons {
@@ -473,21 +480,17 @@ form {
 }
 
 @media (max-width: 480px) {
-    thead th, tbody td {
+    .data-table th, .data-table td {
         padding: 10px 5px;
         font-size: 0.75rem;
     }
 
-    .home-btn, .logout-btn {
+    .btn-cerrar-sesion {
         padding: 6px 10px;
         font-size: 0.85rem;
     }
 
-    .btn-add {
+    .btn-volver {
         width: 100%;
-    }
-
-    .estadisticas-panel {
-        grid-template-columns: 1fr;
     }
 }

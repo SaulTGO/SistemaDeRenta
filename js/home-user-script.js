@@ -23,26 +23,26 @@ function createReservationCard(reservation) {
     const card = document.createElement('div');
     card.className = 'reservation-card';
 
-    const fechaLlegadaObj = new Date(reservation.arriveDate);
-    fechaLlegadaObj.setHours(12, 0, 0, 0);
-    const fechaSalidaObj = new Date(reservation.departureDate);
-    fechaSalidaObj.setHours(12, 0, 0, 0);
+    const parseFechaSinZonaHoraria = (dateString) => {
+        const [year, month, day] = dateString.split('T')[0].split('-');
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    };
+
+    const fechaLlegadaObj = parseFechaSinZonaHoraria(reservation.arriveDate);
+    const fechaSalidaObj = parseFechaSinZonaHoraria(reservation.departureDate);
 
     const formatoFecha = (dateObj) => {
         const day = String(dateObj.getDate()).padStart(2, '0');
-        const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // getMonth() es 0-indexado
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
         const year = dateObj.getFullYear();
         return `${day}/${month}/${year}`;
     };
 
     const fechaLlegadaFormato = formatoFecha(fechaLlegadaObj);
     const fechaSalidaFormato = formatoFecha(fechaSalidaObj);
-    // **Fin de nuevas líneas de formato**
 
-    /*console.log(fechaLlegada)
-    console.log(fechaSalida)
-    console.log(fechaSalida-fechaLlegada)*/
-    const total = Math.ceil((fechaSalidaObj-fechaLlegadaObj) / (1000 * 60 * 60 * 24))*reservation.site.pricePerNight;
+    const diasEstancia = Math.ceil((fechaSalidaObj - fechaLlegadaObj) / (1000 * 60 * 60 * 24));
+    const total = diasEstancia * reservation.site.pricePerNight;
     card.innerHTML = `
         <div class="reservation-image">
             ${reservation.site.image 
@@ -105,7 +105,7 @@ function logout() {
         removeJWT();
         removeUser();
 
-        window.location.href = '../html/login.html';
+        window.location.href = '../../index.html';
     }
 }
 
@@ -120,13 +120,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cargar reservaciones
     loadReservations();
     
-    // BotÃ³n de cerrar sesiÃ³n
+    // Boton de cerrar sesion
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', logout);
     }
     
-    // Botones de nueva reservaciÃ³n
+    // Botones de nueva reservacion
     const newReservationBtns = document.querySelectorAll('.btn-new-reservation');
     newReservationBtns.forEach(btn => {
         btn.addEventListener('click', goToNewReservation);

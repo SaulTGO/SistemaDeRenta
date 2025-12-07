@@ -99,7 +99,7 @@ function requireAuth(loginUrl = '../../html/login.html') {
  * Cierra la sesión del usuario
  * @param {string} redirectUrl - URL a la que redirigir después del logout
  */
-function logout(redirectUrl = '../html/login.html') {
+function logout(redirectUrl = '../../index.html') {
     removeJWT();
     removeUser();
     window.location.href = redirectUrl;

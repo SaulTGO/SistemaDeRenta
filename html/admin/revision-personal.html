@@ -7,75 +7,124 @@
     <link rel="stylesheet" href="../../css/styles-admin/revision-personal.css">
 </head>
 <body>
-    <header>
-        <div class="header-content">
-            <div class="logo">
-                <h1>SiRABi</h1>
-            </div>
-            <div class="header-actions">
-                <a href="../admin/home-admin.html" class="home-btn">
-                    <span>Regresar</span>
-                </a>
-                <button class="logout-btn" onclick="cerrarSesion()">
-                    Cerrar Sesión
-                </button>
-            </div>
+<!-- Header -->
+<header>
+    <div class="header-content">
+        <div class="logo">
+            <h1>SiRABi</h1>
         </div>
-    </header>
+        <div class="header-actions">
+            <a href="../admin/home-admin.html" class="home-btn">
+                <span>Regresar</span>
+            </a>
+            <button class="logout-btn" onclick="logout()">
+                Cerrar Sesión
+            </button>
+        </div>
+    </div>
+</header>
 
-    <div class="container">
-        <div class="personal-wrapper">
-            <div id="loadingIndicator" class="loading-indicator" style="display: none;">
-                <p>Cargando personal...</p>
-            </div>
-
-            <div id="errorMessage" class="error-message" style="display: none;"></div>
-
-            <div class="actions-container" style="margin-bottom: 20px;">
-                <button onclick="recargarPersonal()" class="filter-btn">Recargar</button>
-            </div>
-
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID Personal</th>
-                            <th>Nombre</th>
-                            <th>Apellidos</th>
-                            <th>Correo</th>
-                            <th>Teléfono</th>
-                        </tr>
-                    </thead>
-                    <tbody id="personalBody">
-                        </tbody>
-                </table>
-            </div>
-
-            <div id="noDataMessage" class="no-data-message" style="display: none;">
-                <p>No hay personal disponible</p>
-            </div>
-
-            <div id="estadisticasPanel" class="estadisticas-panel" style="margin-top: 20px; display: none;">
-                <h3>Estadísticas</h3>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <span class="stat-label">Total:</span>
-                        <span id="statTotal" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Aseados:</span>
-                        <span id="statAseados" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Pendientes:</span>
-                        <span id="statPendientes" class="stat-value">0</span>
-                    </div>
-                </div>
-            </div>
+<!-- Contenido principal -->
+<div class="container">
+    <!-- Panel de estadísticas -->
+    <div id="estadisticasPanel" class="estadisticas-panel" style="display: none;">
+        <div class="stat-card">
+            <h3>Total Personal</h3>
+            <p id="statTotal">0</p>
         </div>
     </div>
 
-    <script src="../../js/auth-utils.js"></script>
-    <script src="../../js/scripts-admin/revision-personal.js"></script>
+    <div class="personal-wrapper">
+        <!-- Botón para agregar nuevo personal -->
+        <div class="actions-header">
+            <button class="btn-add" onclick="abrirModalNuevo()">
+                + Nuevo Personal
+            </button>
+            <button class="btn-reload" onclick="recargarPersonal()">
+                🔄 Recargar
+            </button>
+        </div>
+
+        <!-- Indicador de carga -->
+        <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+            <p>Cargando personal...</p>
+        </div>
+
+        <!-- Mensaje de error -->
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <!-- Tabla de personal -->
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID Personal</th>
+                    <th>Nombre</th>
+                    <th>Apellidos</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="personalBody">
+                <!-- Los datos se cargarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mensaje cuando no hay datos -->
+        <div id="noDataMessage" class="no-data-message" style="display: none;">
+            <p>No hay personal disponible</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear/editar personal -->
+<div id="modalPersonal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Nuevo Personal</h2>
+            <span class="close" onclick="cerrarModal()">&times;</span>
+        </div>
+        <form id="formPersonal" onsubmit="guardarPersonal(event)">
+            <input type="hidden" id="personalId">
+
+            <div class="form-group">
+                <label for="username">Nombre:</label>
+                <input type="text" id="username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="lastname">Apellidos:</label>
+                <input type="text" id="lastname" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Correo Electrónico:</label>
+                <input type="email" id="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Teléfono:</label>
+                <input type="tel" id="phone" required>
+            </div>
+
+            <div class="form-group" id="passwordGroup">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" minlength="6">
+                <small class="form-hint">Mínimo 6 caracteres. Dejar vacío para mantener la contraseña actual al editar.</small>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn-save">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="../../js/auth-utils.js"></script>
+<script src="../../js/scripts-admin/revision-personal.js"></script>
 </body>
 </html>

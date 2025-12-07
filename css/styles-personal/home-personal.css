@@ -1,4 +1,7 @@
-/* Reset y estilos base */
+.estado-check {
+    width: 20px;
+    height: 20px;
+}/* Reset y estilos base */
 * {
     margin: 0;
     padding: 0;
@@ -124,6 +127,11 @@ thead th:first-child {
     width: 120px;
 }
 
+thead th:nth-child(3) {
+    width: 35%;
+    min-width: 250px;
+}
+
 tbody tr {
     border-bottom: 2px solid #3b558f;
     background-color: #e8e8e8;
@@ -156,6 +164,9 @@ tbody td {
 
 tbody td:last-child {
     border-right: none;
+}
+
+tbody td:nth-child(2) {
     text-align: left;
     font-weight: 500;
 }
@@ -177,7 +188,58 @@ tbody td:last-child {
     opacity: 0.7;
 }
 
+/* Celda de observaciones */
+.observaciones-cell {
+    padding: 8px 10px;
+    vertical-align: middle;
+}
+
+.observaciones-input {
+    width: 100%;
+    max-width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    line-height: 1.4;
+    resize: none;
+    overflow: hidden;
+}
+
+.observaciones-input:focus {
+    outline: none;
+    border-color: #3b558f;
+    box-shadow: 0 0 0 3px rgba(59, 85, 143, 0.1);
+}
+
+.observaciones-input:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    color: #666;
+}
+
+.observaciones-input::placeholder {
+    color: #999;
+    font-style: italic;
+}
+
 /* Responsive */
+@media (max-width: 1024px) {
+    thead th:nth-child(3) {
+        width: 30%;
+        min-width: 200px;
+    }
+
+    .observaciones-input {
+        font-size: 0.85rem;
+        padding: 5px 8px;
+    }
+}
+
 @media (max-width: 768px) {
     .header-content {
         flex-direction: column;
@@ -201,9 +263,18 @@ tbody td:last-child {
         width: 80px;
     }
 
-    .estado-check {
-        width: 20px;
-        height: 20px;
+    thead th:nth-child(3) {
+        width: 40%;
+        min-width: 180px;
+    }
+
+    .observaciones-input {
+        font-size: 0.8rem;
+        padding: 5px 8px;
+    }
+
+    .observaciones-cell {
+        padding: 6px 8px;
     }
 }
 
@@ -217,6 +288,11 @@ tbody td:last-child {
         font-size: 0.75rem;
     }
 
+    thead th:nth-child(3) {
+        width: 45%;
+        min-width: 120px;
+    }
+
     .home-btn, .logout-btn {
         padding: 6px 10px;
         font-size: 0.85rem;
@@ -225,5 +301,14 @@ tbody td:last-child {
     .estado-check {
         width: 18px;
         height: 18px;
+    }
+
+    .observaciones-input {
+        font-size: 0.7rem;
+        padding: 4px 6px;
+    }
+
+    .observaciones-cell {
+        padding: 5px 5px;
     }
 }
