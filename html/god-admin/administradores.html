@@ -4,96 +4,133 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administradores - SiRABi</title>
-    <link rel="stylesheet" href="../../css/styles-god-admin/cuentas.css">
+    <link rel="stylesheet" href="../../css/styles-god-admin/administradores.css">
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <h1>SiRABi</h1>
-                </div>
-                <button class="btn-cerrar-sesion" id="btnCerrarSesion" onclick="logout()">Cerrar Sesión</button>
-            </div>
+<!-- Header -->
+<header>
+    <div class="header-content">
+        <div class="logo">
+            <h1>SiRABi</h1>
         </div>
-    </header>
+        <div class="header-actions">
+            <a href="home_god_admin.html" class="home-btn">
+                <span>Regresar</span>
+            </a>
+            <button class="logout-btn" onclick="cerrarSesion()">
+                Cerrar Sesión
+            </button>
+        </div>
+    </div>
+</header>
 
-    <div class="container">
-        <div class="content-wrapper">
-            <h2 class="page-title">Administradores</h2>
-            
-            <div class="table-container">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>ID Personal</th>
-                            <th>Nombre</th>
-                            <th>Apellido(s)</th>
-                            <th>Correo</th>
-                            <th>Teléfono</th>
-                            <th>Contraseña</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>ADM-001</td>
-                            <td>Roberto</td>
-                            <td>González Hernández</td>
-                            <td>roberto.gonzalez@sirabi.com</td>
-                            <td>555-1001</td>
-                            <td>********</td>
-                        </tr>
-                        <tr>
-                            <td>ADM-002</td>
-                            <td>Ana</td>
-                            <td>Martínez López</td>
-                            <td>ana.martinez@sirabi.com</td>
-                            <td>555-1002</td>
-                            <td>********</td>
-                        </tr>
-                        <tr>
-                            <td>ADM-003</td>
-                            <td>Luis</td>
-                            <td>Rodríguez Díaz</td>
-                            <td>luis.rodriguez@sirabi.com</td>
-                            <td>555-1003</td>
-                            <td>********</td>
-                        </tr>
-                        <tr>
-                            <td>ADM-004</td>
-                            <td>Patricia</td>
-                            <td>Fernández Morales</td>
-                            <td>patricia.fernandez@sirabi.com</td>
-                            <td>555-1004</td>
-                            <td>********</td>
-                        </tr>
-                        <tr>
-                            <td>ADM-005</td>
-                            <td>Miguel</td>
-                            <td>Torres Ramírez</td>
-                            <td>miguel.torres@sirabi.com</td>
-                            <td>555-1005</td>
-                            <td>********</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="actions-container">
-                <button class="btn-volver" onclick="window.location.href='home-admin.html'">Volver al Panel</button>
-            </div>
+<!-- Contenido principal -->
+<div class="container">
+    <!-- Panel de estadísticas -->
+    <div id="estadisticasPanel" class="estadisticas-panel" style="display: none;">
+        <div class="stat-card">
+            <h3>Total Administradores</h3>
+            <p id="statTotal">0</p>
         </div>
     </div>
 
-    <script>
-        function logout() {
-            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-                window.location.href = '../../index.html';
-            }
-        }
-    </script>
-    <script src="../../js/scripts-admin/administradores.js"></script>
-    <script src="../../js/auth-utils.js"></script>
+    <div class="content-wrapper">
+        <h2 class="page-title">Administradores</h2>
+
+        <!-- Botón para agregar nuevo administrador -->
+        <div class="actions-header">
+            <button class="btn-add" onclick="abrirModalNuevo()">
+                + Nuevo Administrador
+            </button>
+            <button class="btn-reload" onclick="recargarAdministradores()">
+                🔄 Recargar
+            </button>
+        </div>
+
+        <!-- Indicador de carga -->
+        <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+            <p>Cargando administradores...</p>
+        </div>
+
+        <!-- Mensaje de error -->
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <!-- Tabla de administradores -->
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido(s)</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="adminBody">
+                <!-- Los datos se cargarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mensaje cuando no hay datos -->
+        <div id="noDataMessage" class="no-data-message" style="display: none;">
+            <p>No hay administradores disponibles</p>
+        </div>
+
+        <div class="actions-container">
+            <button class="btn-volver" onclick="window.location.href='home-admin.html'">Volver al Panel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear/editar administrador -->
+<div id="modalAdmin" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Nuevo Administrador</h2>
+            <span class="close" onclick="cerrarModal()">&times;</span>
+        </div>
+        <form id="formAdmin" onsubmit="guardarAdministrador(event)">
+            <input type="hidden" id="adminId">
+
+            <div class="form-group">
+                <label for="username">Nombre:</label>
+                <input type="text" id="username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="lastname">Apellido(s):</label>
+                <input type="text" id="lastname" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Correo Electrónico:</label>
+                <input type="email" id="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Teléfono:</label>
+                <input type="tel" id="phone" required>
+            </div>
+
+            <div class="form-group" id="passwordGroup">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" minlength="6">
+                <small class="form-hint">Mínimo 6 caracteres. Dejar vacío para mantener la contraseña actual al editar.</small>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn-save">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="../../js/auth-utils.js"></script>
+<script src="../../js/scripts-god-admin/administradores.js"></script>
 </body>
 </html>
