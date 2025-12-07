@@ -7,61 +7,107 @@
     <link rel="stylesheet" href="../../css/styles-admin/reservaciones.css">
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="header-content">
-            <div class="logo">
-                <h1>SiRABi</h1>
-            </div>
-            <div class="header-actions">
-                <a href="../admin/home-admin.html" class="home-btn">
-                    <span>Regresar</span>
-                </a>
-                <button class="logout-btn" onclick="cerrarSesion()">
-                    Cerrar Sesión
-                </button>
-            </div>
+<!-- Header -->
+<header>
+    <div class="header-content">
+        <div class="logo">
+            <h1>SiRABi</h1>
         </div>
-    </header>
-
-    <!-- Contenido principal -->
-    <div class="container">
-        <div class="reservaciones-wrapper">
-            <!-- Indicador de carga -->
-            <div id="loadingIndicator" class="loading-indicator" style="display: none;">
-                <p>Cargando reservaciones...</p>
-            </div>
-
-            <!-- Mensaje de error -->
-            <div id="errorMessage" class="error-message" style="display: none;"></div>
-
-            <!-- Tabla de reservaciones -->
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID Reservación</th>
-                            <th>Nombre Usuario</th>
-                            <th>Nombre del Sitio</th>
-                            <th>Fecha de Llegada</th>
-                            <th>Fecha de Salida</th>
-                        </tr>
-                    </thead>
-                    <tbody id="reservacionesBody">
-                        <!-- Los datos se cargarán dinámicamente -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Mensaje cuando no hay datos -->
-            <div id="noDataMessage" class="no-data-message" style="display: none;">
-                <p>No hay reservaciones disponibles</p>
-            </div>
+        <div class="header-actions">
+            <a href="../admin/home-admin.html" class="home-btn">
+                <span>Regresar</span>
+            </a>
+            <button class="logout-btn" onclick="cerrarSesion()">
+                Cerrar Sesión
+            </button>
         </div>
     </div>
+</header>
 
-    <!-- Scripts -->
-    <script src="../../js/auth-utils.js"></script>
-    <script src="../../js/scripts-admin/reservaciones-script.js"></script>
+<!-- Contenido principal -->
+<div class="container">
+    <div class="reservaciones-wrapper">
+        <!-- Botón para agregar nueva reservación -->
+        <div class="actions-header">
+            <button class="btn-add" onclick="abrirModalNuevo()">
+                + Nueva Reservación
+            </button>
+        </div>
+
+        <!-- Indicador de carga -->
+        <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+            <p>Cargando reservaciones...</p>
+        </div>
+
+        <!-- Mensaje de error -->
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <!-- Tabla de reservaciones -->
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID Reservación</th>
+                    <th>Nombre Usuario</th>
+                    <th>Nombre del Sitio</th>
+                    <th>Fecha de Llegada</th>
+                    <th>Fecha de Salida</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="reservacionesBody">
+                <!-- Los datos se cargarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mensaje cuando no hay datos -->
+        <div id="noDataMessage" class="no-data-message" style="display: none;">
+            <p>No hay reservaciones disponibles</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear/editar reservación -->
+<div id="modalReservacion" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Nueva Reservación</h2>
+            <span class="close" onclick="cerrarModal()">&times;</span>
+        </div>
+        <form id="formReservacion" onsubmit="guardarReservacion(event)">
+            <input type="hidden" id="reservacionId">
+
+            <div class="form-group">
+                <label for="userId">Usuario ID:</label>
+                <input type="number" id="userId" required>
+            </div>
+
+            <div class="form-group">
+                <label for="siteId">Sitio ID:</label>
+                <input type="number" id="siteId" required>
+            </div>
+
+            <div class="form-group">
+                <label for="arriveDate">Fecha de Llegada:</label>
+                <input type="date" id="arriveDate" required>
+            </div>
+
+            <div class="form-group">
+                <label for="departureDate">Fecha de Salida:</label>
+                <input type="date" id="departureDate" required>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn-save">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="../../js/auth-utils.js"></script>
+<script src="../../js/scripts-admin/reservaciones-script.js"></script>
 </body>
 </html>

@@ -32,6 +32,8 @@ function obtenerEstado(codigo) {
 // VARIABLES GLOBALES
 // ============================================
 let espaciosData = [];
+let modoEdicion = false;
+let espacioActual = null;
 
 // ============================================
 // FUNCIONES DE CARGA DE DATOS
@@ -57,13 +59,13 @@ async function cargarEspacios() {
 
         // Realizar petición a la API
         const response = await authGet('/api/sites?populate=*');
-        
+
         // Verificar si hay datos
         if (response.data && response.data.length > 0) {
             espaciosData = response.data;
             renderizarEspacios(espaciosData);
             actualizarEstadisticas();
-            estadisticasPanel.style.display = 'block';
+            estadisticasPanel.style.display = 'grid';
         } else {
             // No hay datos
             noDataMessage.style.display = 'block';
@@ -89,7 +91,7 @@ function renderizarEspacios(espacios) {
 
     espacios.forEach(espacio => {
         const row = tbody.insertRow();
-        
+
         // Extraer datos según la estructura del JSON
         const idSitio = espacio.id || 'N/A';
         const nombreSitio = espacio.name || 'N/A';
@@ -105,6 +107,12 @@ function renderizarEspacios(espacios) {
             <td>${nombreSitio}</td>
             <td>${ubicacion}</td>
             <td class="${estadoInfo.clase}">${estadoInfo.texto}</td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn-edit" onclick="editarEspacio(${idSitio})">Editar</button>
+                    <button class="btn-delete" onclick="eliminarEspacio(${idSitio})">Eliminar</button>
+                </div>
+            </td>
         `;
     });
 }
@@ -127,7 +135,7 @@ function actualizarEstadisticas() {
 
     espaciosData.forEach(espacio => {
         const codigoEstado = parseInt(espacio.state || 0);
-        
+
         switch(codigoEstado) {
             case 1:
                 stats.ocupados++;
@@ -155,6 +163,131 @@ function actualizarEstadisticas() {
 }
 
 // ============================================
+// FUNCIONES DE MODAL
+// ============================================
+
+/**
+ * Abre el modal para crear un nuevo espacio
+ */
+function abrirModalNuevo() {
+    modoEdicion = false;
+    espacioActual = null;
+
+    document.getElementById('modalTitle').textContent = 'Nuevo Espacio';
+    document.getElementById('formEspacio').reset();
+    document.getElementById('espacioId').value = '';
+
+    document.getElementById('modalEspacio').style.display = 'block';
+}
+
+/**
+ * Abre el modal para editar un espacio existente
+ * @param {number} id - ID del espacio a editar
+ */
+async function editarEspacio(id) {
+    modoEdicion = true;
+
+    try {
+        // Buscar el espacio en los datos cargados
+        const espacio = espaciosData.find(e => e.id === id);
+
+        if (!espacio) {
+            alert('Espacio no encontrado');
+            return;
+        }
+
+        espacioActual = espacio;
+
+        // Llenar el formulario con los datos
+        document.getElementById('modalTitle').textContent = 'Editar Espacio';
+        document.getElementById('espacioId').value = espacio.id;
+        document.getElementById('name').value = espacio.name || '';
+        document.getElementById('location').value = espacio.location || '';
+        document.getElementById('state').value = espacio.state || '';
+
+        document.getElementById('modalEspacio').style.display = 'block';
+
+    } catch (error) {
+        console.error('Error al cargar datos para editar:', error);
+        alert('Error al cargar los datos del espacio');
+    }
+}
+
+/**
+ * Cierra el modal
+ */
+function cerrarModal() {
+    document.getElementById('modalEspacio').style.display = 'none';
+    document.getElementById('formEspacio').reset();
+    modoEdicion = false;
+    espacioActual = null;
+}
+
+// ============================================
+// FUNCIONES CRUD
+// ============================================
+
+/**
+ * Guarda un espacio (crear o actualizar)
+ * @param {Event} event - Evento del formulario
+ */
+async function guardarEspacio(event) {
+    event.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const location = document.getElementById('location').value;
+    const state = parseInt(document.getElementById('state').value);
+
+    const datos = {
+        data: {
+            name: name,
+            location: location,
+            state: state
+        }
+    };
+
+    try {
+        if (modoEdicion) {
+            // Actualizar espacio existente
+            const id = document.getElementById('espacioId').value;
+            await authPut(`/api/sites/${id}`, datos);
+            alert('Espacio actualizado exitosamente');
+        } else {
+            // Crear nuevo espacio
+            await authPost('/api/sites', datos);
+            alert('Espacio creado exitosamente');
+        }
+
+        cerrarModal();
+        await cargarEspacios();
+
+    } catch (error) {
+        console.error('Error al guardar espacio:', error);
+        alert('Error al guardar el espacio. Verifique los datos e intente nuevamente.');
+    }
+}
+
+/**
+ * Elimina un espacio
+ * @param {number} id - ID del espacio a eliminar
+ */
+async function eliminarEspacio(id) {
+    if (!confirm('¿Está seguro que desea eliminar este espacio?')) {
+        return;
+    }
+
+    try {
+        await authDelete(`/api/sites/${id}`);
+        alert('Espacio eliminado exitosamente');
+        await cargarEspacios();
+
+    } catch (error) {
+        console.error('Error al eliminar espacio:', error);
+        alert('Error al eliminar el espacio. Por favor, intente nuevamente.');
+    }
+}
+
+// ============================================
 // FUNCIONES DE BÚSQUEDA Y FILTRADO
 // ============================================
 
@@ -166,9 +299,9 @@ function buscarEspacios(termino) {
     const filtrados = espaciosData.filter(espacio => {
         const nombreSitio = (espacio.name || '').toLowerCase();
         const ubicacion = (espacio.location || '').toLowerCase();
-        
-        return nombreSitio.includes(termino.toLowerCase()) || 
-               ubicacion.includes(termino.toLowerCase());
+
+        return nombreSitio.includes(termino.toLowerCase()) ||
+            ubicacion.includes(termino.toLowerCase());
     });
 
     renderizarEspacios(filtrados);
@@ -230,7 +363,7 @@ function exportarACSV() {
     const rows = espaciosData.map(e => {
         const codigoEstado = e.state;
         const estadoInfo = obtenerEstado(codigoEstado);
-        
+
         return [
             e.id,
             e.name,
@@ -247,11 +380,11 @@ function exportarACSV() {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
-    
+
     link.setAttribute('href', url);
     link.setAttribute('download', `espacios_${new Date().getTime()}.csv`);
     link.style.visibility = 'hidden';
-    
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -267,13 +400,21 @@ function exportarACSV() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Página de revisión de espacios cargada');
     console.log('Mapeo de estados:', ESTADOS);
-    
+
     // Mostrar información del usuario si es necesario
     displayUserInfo('.user-name');
-    
+
     // Cargar espacios
     cargarEspacios();
-    
+
+    // Cerrar modal al hacer clic fuera de él
+    window.onclick = function(event) {
+        const modal = document.getElementById('modalEspacio');
+        if (event.target === modal) {
+            cerrarModal();
+        }
+    };
+
     // Configurar actualización automática cada 5 minutos (opcional)
     // setInterval(cargarEspacios, 300000);
 });

@@ -7,92 +7,131 @@
     <link rel="stylesheet" href="../../css/styles-admin/revision-espacios.css">
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="header-content">
-            <div class="logo">
-                <h1>SiRABi</h1>
-            </div>
-            <div class="header-actions">
-                <a href="../admin/home-admin.html" class="home-btn">
-                    <span>Regresar</span>
-                </a>
-                <button class="logout-btn" onclick="cerrarSesion()">
-                    Cerrar Sesión
-                </button>
-            </div>
+<!-- Header -->
+<header>
+    <div class="header-content">
+        <div class="logo">
+            <h1>SiRABi</h1>
         </div>
-    </header>
+        <div class="header-actions">
+            <a href="../admin/home-admin.html" class="home-btn">
+                <span>Regresar</span>
+            </a>
+            <button class="logout-btn" onclick="cerrarSesion()">
+                Cerrar Sesión
+            </button>
+        </div>
+    </div>
+</header>
 
-    <!-- Contenido principal -->
-    <div class="container">
-        <div class="espacios-wrapper">
-            <!-- Indicador de carga -->
-            <div id="loadingIndicator" class="loading-indicator" style="display: none;">
-                <p>Cargando espacios...</p>
-            </div>
-
-            <!-- Mensaje de error -->
-            <div id="errorMessage" class="error-message" style="display: none;"></div>
-
-            <!-- Botón de recarga -->
-            <div class="actions-container" style="margin-bottom: 20px;">
-                <button onclick="recargarEspacios()" class="filter-btn">Recargar</button>
-            </div>
-
-            <!-- Tabla de espacios -->
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID Sitio</th>
-                            <th>Nombre del Sitio</th>
-                            <th>Ubicación</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody id="espaciosBody">
-                        <!-- Los datos se cargarán dinámicamente -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Mensaje cuando no hay datos -->
-            <div id="noDataMessage" class="no-data-message" style="display: none;">
-                <p>No hay espacios disponibles</p>
-            </div>
-
-            <!-- Panel de estadísticas -->
-            <div id="estadisticasPanel" class="estadisticas-panel" style="margin-top: 20px; display: none;">
-                <h3>Estadísticas</h3>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <span class="stat-label">Total:</span>
-                        <span id="statTotal" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Disponibles:</span>
-                        <span id="statDisponibles" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Aseo Pendiente:</span>
-                        <span id="statPendientes" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Ocupados:</span>
-                        <span id="statOcupados" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Aseados:</span>
-                        <span id="statAseados" class="stat-value">0</span>
-                    </div>
-                </div>
-            </div>
+<!-- Contenido principal -->
+<div class="container">
+    <!-- Panel de estadísticas -->
+    <div id="estadisticasPanel" class="estadisticas-panel" style="display: none;">
+        <div class="stat-card">
+            <h3>Total</h3>
+            <p id="statTotal">0</p>
+        </div>
+        <div class="stat-card stat-disponibles">
+            <h3>Disponibles</h3>
+            <p id="statDisponibles">0</p>
+        </div>
+        <div class="stat-card stat-ocupados">
+            <h3>Ocupados</h3>
+            <p id="statOcupados">0</p>
+        </div>
+        <div class="stat-card stat-aseados">
+            <h3>Aseados</h3>
+            <p id="statAseados">0</p>
+        </div>
+        <div class="stat-card stat-pendientes">
+            <h3>Aseo Pendiente</h3>
+            <p id="statPendientes">0</p>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="../../js/auth-utils.js"></script>
-    <script src="../../js/scripts-admin/revision-espacios.js"></script>
+    <div class="espacios-wrapper">
+        <!-- Botón para agregar nuevo espacio -->
+        <div class="actions-header">
+            <button class="btn-add" onclick="abrirModalNuevo()">
+                + Nuevo Espacio
+            </button>
+        </div>
+
+        <!-- Indicador de carga -->
+        <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+            <p>Cargando espacios...</p>
+        </div>
+
+        <!-- Mensaje de error -->
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <!-- Tabla de espacios -->
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID Sitio</th>
+                    <th>Nombre del Sitio</th>
+                    <th>Ubicación</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="espaciosBody">
+                <!-- Los datos se cargarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mensaje cuando no hay datos -->
+        <div id="noDataMessage" class="no-data-message" style="display: none;">
+            <p>No hay espacios disponibles</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear/editar espacio -->
+<div id="modalEspacio" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Nuevo Espacio</h2>
+            <span class="close" onclick="cerrarModal()">&times;</span>
+        </div>
+        <form id="formEspacio" onsubmit="guardarEspacio(event)">
+            <input type="hidden" id="espacioId">
+
+            <div class="form-group">
+                <label for="name">Nombre del Sitio:</label>
+                <input type="text" id="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Ubicación:</label>
+                <input type="text" id="location" required>
+            </div>
+
+            <div class="form-group">
+                <label for="state">Estado:</label>
+                <select id="state" required>
+                    <option value="">Seleccione un estado</option>
+                    <option value="1">OCUPADO</option>
+                    <option value="2">DISPONIBLE</option>
+                    <option value="3">ASEADO</option>
+                    <option value="4">ASEO PENDIENTE</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn-save">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="../../js/auth-utils.js"></script>
+<script src="../../js/scripts-admin/revision-espacios.js"></script>
 </body>
 </html>
