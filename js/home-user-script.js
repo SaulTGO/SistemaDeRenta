@@ -65,8 +65,8 @@ function createReservationCard(reservation) {
     
     // Agregar evento click
     card.addEventListener('click', async () => {
-        const codigo = await authGet(`/api/posts/codigo?p1=${reservation.id}`);
-        alert(`Codigo de acceso reservación #${reservation.id}: ${codigo}`);
+        const codigo = await authGet(`/api/posts/codigo?p1=${reservation.documentId}`);
+        alert(`Codigo de acceso reservación #${reservation.documentId}: ${codigo.data.codigo}`);
         // Aquí podrías redirigir a una página de detalles
         // window.location.href = `detalles-reservacion.html?id=${reservation.id}`;
     });
