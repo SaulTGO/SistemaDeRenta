@@ -21,3 +21,68 @@ Para cualquier página protegida
     displayUserInfo('#username'); // Opcional
 </script>
 <script src="../../js/tu-script.js"></script
+
+ENDPOINTS
+/Admin
+	Endpoints reservaciones
+
+javascript// Crear nueva reservación
+authPost('/api/reservations', datos)
+
+// Actualizar reservación existente
+authPut(`/api/reservations/${id}`, datos)
+
+// Eliminar reservación
+authDelete(`/api/reservations/${id}`)
+
+// Obtener todas las reservaciones
+authGet('/api/reservations?populate=*')
+
+	Enpoints revision-espacios
+
+// Crear nuevo espacio
+authPost('/api/sites', datos)
+
+// Actualizar espacio existente
+authPut(`/api/sites/${id}`, datos)
+
+// Eliminar espacio
+authDelete(`/api/sites/${id}`)
+
+// Obtener todos los espacios
+authGet('/api/sites?populate=*')
+
+	Enpoints revision-personal
+
+// Crear nuevo personal
+authPost('/api/users', datos)
+
+// Actualizar personal existente
+authPut(`/api/users/${id}`, datos)
+
+// Eliminar personal
+authDelete(`/api/users/${id}`)
+
+// Obtener personal con rol "Personal"
+authGet('/api/users?filters[role][name][$eq]=Personal&populate=role')
+
+	/god-admin
+	Endpoints admninistradores
+
+// Obtener administradores con rol "Admin"
+authGet('/api/users?filters[role][name][$eq]=Admin&populate=role')
+
+// Crear nuevo administrador
+authPost('/api/users', datos)
+
+// Actualizar administrador existente
+authPut(`/api/users/${id}`, datos)
+
+// Eliminar administrador
+authDelete(`/api/users/${id}`)
+
+	Endpoints usuarios
+DELETE /api/users/{id}
+PUT /api/users/{id}
+POST /api/users
+GET /api/users?filters[role][name][$eq]=User&populate=role
