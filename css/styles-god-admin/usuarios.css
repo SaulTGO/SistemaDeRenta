@@ -118,7 +118,7 @@ header {
     margin-bottom: 20px;
 }
 
-.btn-add, .btn-reload, .btn-export {
+.btn-add, .btn-reload {
     padding: 10px 20px;
     color: white;
     border: none;
@@ -147,16 +147,6 @@ header {
     background-color: #138496;
     transform: translateY(-2px);
     box-shadow: 0 3px 10px rgba(23, 162, 184, 0.3);
-}
-
-.btn-export {
-    background-color: #6c757d;
-}
-
-.btn-export:hover {
-    background-color: #5a6268;
-    transform: translateY(-2px);
-    box-shadow: 0 3px 10px rgba(108, 117, 125, 0.3);
 }
 
 /* Mensajes */
@@ -454,7 +444,7 @@ form {
         flex-direction: column;
     }
 
-    .btn-add, .btn-reload, .btn-export {
+    .btn-add, .btn-reload {
         width: 100%;
     }
 

@@ -4,120 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usuarios - SiRABi</title>
-    <link rel="stylesheet" href="../../css/styles-god-admin/cuentas.css">
+    <link rel="stylesheet" href="../../css/styles-god-admin/usuarios.css">
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <h1>SiRABi</h1>
-                </div>
-                <button class="btn-cerrar-sesion" id="btnCerrarSesion" onclick="logout()">Cerrar Sesión</button>
-            </div>
-        </div>
-    </header>
-
+<!-- Header -->
+<header>
     <div class="container">
-        <div class="content-wrapper">
-            <h2 class="page-title">Usuarios</h2>
-            
-            <div class="table-container">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>ID Personal</th>
-                            <th>Nombre</th>
-                            <th>Apellido(s)</th>
-                            <th>Correo</th>
-                            <th>Teléfono</th>
-                            <th>Contraseña</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>USR-001</td>
-                            <td>Elena</td>
-                            <td>García Pérez</td>
-                            <td>elena.garcia@email.com</td>
-                            <td>555-2001</td>
-                            <td>********</td>
-                        </tr>
-                        <tr>
-                            <td>USR-002</td>
-                            <td>Fernando</td>
-                            <td>López Sánchez</td>
-                            <td>fernando.lopez@email.com</td>
-                            <td>555-2002</td>
-                            <td>********</td>
-                        </tr>
-                        <tr>
-                            <td>USR-003</td>
-                            <td>Carmen</td>
-                            <td>Martín Ruiz</td>
-                            <td>carmen.martin@email.com</td>
-                            <td>555-2003</td>
-                            <td>********</td>
-                        </tr>
-                        <tr>
-                            <td>USR-004</td>
-                            <td>Diego</td>
-                            <td>Hernández Castro</td>
-                            <td>diego.hernandez@email.com</td>
-                            <td>555-2004</td>
-                            <td>********</td>
-                        </tr>
-                        <tr>
-                            <td>USR-005</td>
-                            <td>Laura</td>
-                            <td>Jiménez Moreno</td>
-                            <td>laura.jimenez@email.com</td>
-                            <td>555-2005</td>
-                            <td>********</td>
-                        </tr>
-                        <tr>
-                            <td>USR-006</td>
-                            <td>Antonio</td>
-                            <td>Navarro Gil</td>
-                            <td>antonio.navarro@email.com</td>
-                            <td>555-2006</td>
-                            <td>********</td>
-                        </tr>
-                        <tr>
-                            <td>USR-007</td>
-                            <td>Isabel</td>
-                            <td>Romero Vargas</td>
-                            <td>isabel.romero@email.com</td>
-                            <td>555-2007</td>
-                            <td>********</td>
-                        </tr>
-                        <tr>
-                            <td>USR-008</td>
-                            <td>Javier</td>
-                            <td>Torres Muñoz</td>
-                            <td>javier.torres@email.com</td>
-                            <td>555-2008</td>
-                            <td>********</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="header-content">
+            <div class="logo">
+                <h1>SiRABi</h1>
             </div>
-
-            <div class="actions-container">
-                <button class="btn-volver" onclick="window.location.href='home_god_admin.html'">Volver al Panel</button>
-            </div>
+            <button class="btn-cerrar-sesion" id="btnCerrarSesion" onclick="logout()">Cerrar Sesión</button>
         </div>
     </div>
+</header>
 
-    <script>
-        function logout() {
-            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-                window.location.href = '../../index.html';
-            }
-        }
-    </script>
-    <script src="../../js/scripts-god-admin/usuarios.js"></script>
-    <script src="../../js/auth-utils.js"></script>
+<div class="container">
+    <div class="content-wrapper">
+        <h2 class="page-title">Usuarios</h2>
+
+        <!-- Botón para agregar nuevo usuario -->
+        <div class="actions-header">
+            <button class="btn-add" onclick="abrirModalNuevo()">
+                + Nuevo Usuario
+            </button>
+            <button class="btn-reload" onclick="recargarUsuarios()">
+                🔄 Recargar
+            </button>
+        </div>
+
+        <!-- Indicador de carga -->
+        <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+            <p>Cargando usuarios...</p>
+        </div>
+
+        <!-- Mensaje de error -->
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <!-- Panel de estadísticas -->
+        <div id="estadisticasPanel" class="estadisticas-panel" style="display: none;">
+            <div class="stat-card">
+                <h3>Total Usuarios</h3>
+                <p id="statTotal">0</p>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>ID Usuario</th>
+                    <th>Nombre</th>
+                    <th>Apellido(s)</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Contraseña</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="usuariosBody">
+                <!-- Los datos se cargarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mensaje cuando no hay datos -->
+        <div id="noDataMessage" class="no-data-message" style="display: none;">
+            <p>No hay usuarios disponibles</p>
+        </div>
+
+        <div class="actions-container">
+            <button class="btn-volver" onclick="window.location.href='home_god_admin.html'">Volver al Panel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear/editar usuario -->
+<div id="modalUsuario" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Nuevo Usuario</h2>
+            <span class="close" onclick="cerrarModal()">&times;</span>
+        </div>
+        <form id="formUsuario" onsubmit="guardarUsuario(event)">
+            <input type="hidden" id="usuarioId">
+
+            <div class="form-group">
+                <label for="username">Nombre:</label>
+                <input type="text" id="username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="lastname">Apellido(s):</label>
+                <input type="text" id="lastname" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Correo Electrónico:</label>
+                <input type="email" id="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Teléfono:</label>
+                <input type="tel" id="phone" required>
+            </div>
+
+            <div class="form-group" id="passwordGroup">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" minlength="6">
+                <small class="form-hint">Mínimo 6 caracteres. Dejar vacío para mantener la contraseña actual al editar.</small>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn-save">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="../../js/scripts-god-admin/usuarios.js"></script>
+<script src="../../js/auth-utils.js"></script>
 </body>
 </html>

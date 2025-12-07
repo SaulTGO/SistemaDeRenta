@@ -4,73 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cuentas del Personal - SiRABi</title>
-    <link rel="stylesheet" href="../../css/styles-god-admin/cuentas.css">
+    <link rel="stylesheet" href="../../css/styles-god-admin/cuentas-personal.css">
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <h1>SiRABi</h1>
-                </div>
-                <button class="btn-cerrar-sesion" id="btnCerrarSesion" onclick="logout()">Cerrar Sesión</button>
-            </div>
-        </div>
-    </header>
-
+<!-- Header -->
+<header>
     <div class="container">
-        <div class="content-wrapper">
-            <h2 class="page-title">Cuentas del personal</h2>
-            
-            <div class="table-container">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>ID Personal</th>
-                            <th>Nombre</th>
-                            <th>Apellido(s)</th>
-                            <th>Correo</th>
-                            <th>Teléfono</th>
-                            <th>Contraseña</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>001</td>
-                            <td>Juan</td>
-                            <td>Pérez García</td>
-                            <td>juan.perez@sirabi.com</td>
-                            <td>555-0123</td>
-                            <td>********</td>
-                        </tr>
-                        <tr>
-                            <td>002</td>
-                            <td>María</td>
-                            <td>López Martínez</td>
-                            <td>maria.lopez@sirabi.com</td>
-                            <td>555-0456</td>
-                            <td>********</td>
-                        </tr>
-                        <tr>
-                            <td>003</td>
-                            <td>Carlos</td>
-                            <td>Sánchez Ruiz</td>
-                            <td>carlos.sanchez@sirabi.com</td>
-                            <td>555-0789</td>
-                            <td>********</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="header-content">
+            <div class="logo">
+                <h1>SiRABi</h1>
             </div>
-
-            <div class="actions-container">
-                <button class="btn-volver" onclick="window.location.href='home_god_admin.html'">Volver al Panel</button>
-            </div>
+            <button class="btn-cerrar-sesion" id="btnCerrarSesion" onclick="logout()">Cerrar Sesión</button>
         </div>
     </div>
+</header>
 
-    <script src="../../js/scripts-god-admin/cuentas-personal.js"></script>
-    <script src="../../js/auth-utils.js"></script>
+<div class="container">
+    <div class="content-wrapper">
+        <h2 class="page-title">Cuentas del personal</h2>
+
+        <!-- Botón para agregar nuevo personal -->
+        <div class="actions-header">
+            <button class="btn-add" onclick="abrirModalNuevo()">
+                + Nuevo Personal
+            </button>
+            <button class="btn-reload" onclick="recargarPersonal()">
+                🔄 Recargar
+            </button>
+        </div>
+
+        <!-- Indicador de carga -->
+        <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+            <p>Cargando personal...</p>
+        </div>
+
+        <!-- Mensaje de error -->
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <!-- Panel de estadísticas -->
+        <div id="estadisticasPanel" class="estadisticas-panel" style="display: none;">
+            <div class="stat-card">
+                <h3>Total Personal</h3>
+                <p id="statTotal">0</p>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>ID Personal</th>
+                    <th>Nombre</th>
+                    <th>Apellido(s)</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Contraseña</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="personalBody">
+                <!-- Los datos se cargarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mensaje cuando no hay datos -->
+        <div id="noDataMessage" class="no-data-message" style="display: none;">
+            <p>No hay personal disponible</p>
+        </div>
+
+        <div class="actions-container">
+            <button class="btn-volver" onclick="window.location.href='home_god_admin.html'">Volver al Panel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear/editar personal -->
+<div id="modalPersonal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Nuevo Personal</h2>
+            <span class="close" onclick="cerrarModal()">&times;</span>
+        </div>
+        <form id="formPersonal" onsubmit="guardarPersonal(event)">
+            <input type="hidden" id="personalId">
+
+            <div class="form-group">
+                <label for="username">Nombre:</label>
+                <input type="text" id="username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="lastname">Apellido(s):</label>
+                <input type="text" id="lastname" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Correo Electrónico:</label>
+                <input type="email" id="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Teléfono:</label>
+                <input type="tel" id="phone" required>
+            </div>
+
+            <div class="form-group" id="passwordGroup">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" minlength="6">
+                <small class="form-hint">Mínimo 6 caracteres. Dejar vacío para mantener la contraseña actual al editar.</small>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn-save">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="../../js/scripts-god-admin/cuentas-personal.js"></script>
+<script src="../../js/auth-utils.js"></script>
 </body>
 </html>

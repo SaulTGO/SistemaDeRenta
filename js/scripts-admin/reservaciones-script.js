@@ -304,14 +304,6 @@ function mostrarTodas() {
 // FUNCIÓN DE CIERRE DE SESIÓN
 // ============================================
 
-/**
- * Cierra la sesión del usuario
- */
-function cerrarSesion() {
-    if (confirm('¿Está seguro que desea cerrar sesión?')) {
-        logout('../../index.html');
-    }
-}
 
 // ============================================
 // FUNCIONES DE ACTUALIZACIÓN MANUAL
