@@ -11,6 +11,8 @@ TO DO
 - Revisar despliegue de datos en las tablas del admin y superadmin (No se si actualemente funciona)
 - Recuperar el valor de la checkbox y de las observaciones en la tabla del home-personal, para que se guarden en la BD
 
+- Cuando un super admin inicia sesion, las paginas asociadas al admin deben retornar al super admin en vez de al admin.
+
 
 MODIFICACIONES A CONSIDERAR
 - En las tablas del admin, operaciones completas del CRUD. Por simplicidad, ahorita solo seria editar los valores o agregar alguno nuevo a la tabla
