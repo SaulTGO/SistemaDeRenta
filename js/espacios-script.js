@@ -443,6 +443,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.querySelectorAll('.space-card').forEach(c => c.classList.remove('selected'));
                 this.classList.add('selected');
                 espacioSeleccionado = espacio;
+                localStorage.setItem("siteId",espacio.id);
                 actualizarResumen();
             });
             

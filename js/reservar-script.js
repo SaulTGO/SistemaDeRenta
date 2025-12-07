@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const firstName = document.getElementById('firstName').value.trim();
         const lastName = document.getElementById('lastName').value.trim();
         const email = document.getElementById('email').value.trim();
-        const phone = phoneInput.value.trim();
+        const phone = parseInt(phoneInput.value.trim().replace(/[^0-9]/g, ''),10);
         const password = document.getElementById('registerPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
 
