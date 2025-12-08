@@ -80,8 +80,8 @@ function renderizarReservaciones(reservaciones) {
             <td>${fechaSalida}</td>
             <td>
                 <div class="action-buttons">
-                    <button class="btn-edit" onclick="editarReservacion(${id})">Editar</button>
-                    <button class="btn-delete" onclick="eliminarReservacion(${id})">Eliminar</button>
+                    <button class="btn-edit" onclick="editarReservacion('\'' + ${id} + '\'')">Editar</button>
+                    <button class="btn-delete" onclick="eliminarReservacion('\'' + ${id} + '\'')">Eliminar</button>
                 </div>
             </td>
         `;

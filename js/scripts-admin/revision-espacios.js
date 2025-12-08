@@ -109,8 +109,8 @@ function renderizarEspacios(espacios) {
             <td class="${estadoInfo.clase}">${estadoInfo.texto}</td>
             <td>
                 <div class="action-buttons">
-                    <button class="btn-edit" onclick="editarEspacio(${idSitio})">Editar</button>
-                    <button class="btn-delete" onclick="eliminarEspacio(${idSitio})">Eliminar</button>
+                    <button class="btn-edit" onclick="editarEspacio('\'' + ${idSitio} + '\'')">Editar</button>
+                    <button class="btn-delete" onclick="eliminarEspacio('\'' + ${idSitio} + '\'')">Eliminar</button>
                 </div>
             </td>
         `;

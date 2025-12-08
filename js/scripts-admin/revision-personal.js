@@ -99,8 +99,8 @@ function renderizarPersonal(personal) {
             <td>${telefono}</td>
             <td>
                 <div class="action-buttons">
-                    <button class="btn-edit" onclick="editarPersonal(${idPersonal})">Editar</button>
-                    <button class="btn-delete" onclick="eliminarPersonal(${idPersonal})">Eliminar</button>
+                    <button class="btn-edit" onclick="editarPersonal('\'' + ${idPersonal} + '\'')">Editar</button>
+                    <button class="btn-delete" onclick="eliminarPersonal('\'' + ${idPersonal} + '\'')">Eliminar</button>
                 </div>
             </td>
         `;
