@@ -31,7 +31,6 @@ async function cargarAsignaciones() {
 
         // Limpiar tabla
         tbody.innerHTML = '';
-        console.log(reservas.data.assignments)
         console.log(reservas.assignments)
         if (!reservas || !reservas.assignments || reservas.assignments.length === 0) {
             tbody.innerHTML = '<tr><td colspan="3" style="text-align: center;">No tienes asignaciones pendientes</td></tr>';
