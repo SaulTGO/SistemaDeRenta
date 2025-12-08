@@ -65,7 +65,7 @@ function renderizarReservaciones(reservaciones) {
         const row = tbody.insertRow();
 
         // Extraer datos según la estructura del JSON proporcionado
-        const id = reservacion.id || 'N/A';
+        const id = reservacion.documentId || 'N/A';
         const nombreUsuario = reservacion.user?.username || 'N/A';
         const nombreSitio = reservacion.site?.name || 'N/A';
         const fechaLlegada = formatearFecha(reservacion.arriveDate);
@@ -151,14 +151,14 @@ function abrirModalNuevo() {
 
 /**
  * Abre el modal para editar una reservación existente
- * @param {number} id - ID de la reservación a editar
+ * @param {number} documentId - ID de la reservación a editar
  */
-async function editarReservacion(id) {
+async function editarReservacion(documentId) {
     modoEdicion = true;
 
     try {
         // Buscar la reservación en los datos cargados
-        const reservacion = reservacionesData.find(r => r.id === id);
+        const reservacion = reservacionesData.find(r => r.documentId === documentId);
 
         if (!reservacion) {
             alert('Reservación no encontrada');
@@ -169,9 +169,9 @@ async function editarReservacion(id) {
 
         // Llenar el formulario con los datos
         document.getElementById('modalTitle').textContent = 'Editar Reservación';
-        document.getElementById('reservacionId').value = reservacion.id;
-        document.getElementById('userId').value = reservacion.user?.id || '';
-        document.getElementById('siteId').value = reservacion.site?.id || '';
+        document.getElementById('reservacionId').value = reservacion.documentId;
+        document.getElementById('userId').value = reservacion.user?.documentId || '';
+        document.getElementById('siteId').value = reservacion.site?.documentId || '';
         document.getElementById('arriveDate').value = convertirFechaParaInput(reservacion.arriveDate);
         document.getElementById('departureDate').value = convertirFechaParaInput(reservacion.departureDate);
 
@@ -247,15 +247,15 @@ async function guardarReservacion(event) {
 
 /**
  * Elimina una reservación
- * @param {number} id - ID de la reservación a eliminar
+ * @param {number} documentId - ID de la reservación a eliminar
  */
-async function eliminarReservacion(id) {
+async function eliminarReservacion(documentId) {
     if (!confirm('¿Está seguro que desea eliminar esta reservación?')) {
         return;
     }
 
     try {
-        await authDelete(`/api/reservations/${id}`);
+        await authDelete(`/api/reservations/${documentId}`);
         alert('Reservación eliminada exitosamente');
         await cargarReservaciones();
 
@@ -327,7 +327,7 @@ function exportarACSV() {
 
     const headers = ['ID', 'Nombre Usuario', 'Sitio', 'Fecha Llegada', 'Fecha Salida'];
     const rows = reservacionesData.map(r => [
-        r.id,
+        r.documentId,
         r.user?.username || '',
         r.site?.name || '',
         r.arriveDate || '',

@@ -93,7 +93,7 @@ function renderizarEspacios(espacios) {
         const row = tbody.insertRow();
 
         // Extraer datos según la estructura del JSON
-        const idSitio = espacio.id || 'N/A';
+        const idSitio = espacio.documentId || 'N/A';
         const nombreSitio = espacio.name || 'N/A';
         const ubicacion = espacio.location || 'N/A';
         const codigoEstado = espacio.state || 0;
@@ -182,14 +182,14 @@ function abrirModalNuevo() {
 
 /**
  * Abre el modal para editar un espacio existente
- * @param {number} id - ID del espacio a editar
+ * @param {number} documentId - ID del espacio a editar
  */
-async function editarEspacio(id) {
+async function editarEspacio(documentId) {
     modoEdicion = true;
 
     try {
         // Buscar el espacio en los datos cargados
-        const espacio = espaciosData.find(e => e.id === id);
+        const espacio = espaciosData.find(e => e.documentId === documentId);
 
         if (!espacio) {
             alert('Espacio no encontrado');
@@ -200,7 +200,7 @@ async function editarEspacio(id) {
 
         // Llenar el formulario con los datos
         document.getElementById('modalTitle').textContent = 'Editar Espacio';
-        document.getElementById('espacioId').value = espacio.id;
+        document.getElementById('espacioId').value = espacio.documentId;
         document.getElementById('name').value = espacio.name || '';
         document.getElementById('location').value = espacio.location || '';
         document.getElementById('state').value = espacio.state || '';
@@ -269,15 +269,15 @@ async function guardarEspacio(event) {
 
 /**
  * Elimina un espacio
- * @param {number} id - ID del espacio a eliminar
+ * @param {number} documentId - ID del espacio a eliminar
  */
-async function eliminarEspacio(id) {
+async function eliminarEspacio(documentId) {
     if (!confirm('¿Está seguro que desea eliminar este espacio?')) {
         return;
     }
 
     try {
-        await authDelete(`/api/sites/${id}`);
+        await authDelete(`/api/sites/${documentId}`);
         alert('Espacio eliminado exitosamente');
         await cargarEspacios();
 
@@ -365,7 +365,7 @@ function exportarACSV() {
         const estadoInfo = obtenerEstado(codigoEstado);
 
         return [
-            e.id,
+            e.documentId,
             e.name,
             e.location,
             estadoInfo.texto

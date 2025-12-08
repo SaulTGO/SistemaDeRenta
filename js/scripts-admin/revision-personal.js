@@ -150,14 +150,14 @@ function abrirModalNuevo() {
 
 /**
  * Abre el modal para editar personal existente
- * @param {number} id - ID del personal a editar
+ * @param {number} documentId - ID del personal a editar
  */
-async function editarPersonal(id) {
+async function editarPersonal(documentId) {
     modoEdicion = true;
 
     try {
         // Buscar el personal en los datos cargados
-        const persona = personalData.find(p => p.id === id);
+        const persona = personalData.find(p => p.documentId === documentId);
 
         if (!persona) {
             alert('Personal no encontrado');
@@ -168,7 +168,7 @@ async function editarPersonal(id) {
 
         // Llenar el formulario con los datos
         document.getElementById('modalTitle').textContent = 'Editar Personal';
-        document.getElementById('personalId').value = persona.id;
+        document.getElementById('personalId').value = persona.documentId;
         document.getElementById('username').value = persona.username || '';
         document.getElementById('lastname').value = persona.lastname || '';
         document.getElementById('email').value = persona.email || '';
@@ -265,15 +265,15 @@ async function guardarPersonal(event) {
 
 /**
  * Elimina un personal
- * @param {number} id - ID del personal a eliminar
+ * @param {number} documentId - ID del personal a eliminar
  */
-async function eliminarPersonal(id) {
+async function eliminarPersonal(documentId) {
     if (!confirm('¿Está seguro que desea eliminar este personal?')) {
         return;
     }
 
     try {
-        await authDelete(`/api/users/${id}`);
+        await authDelete(`/api/users/${documentId}`);
         alert('Personal eliminado exitosamente');
         await cargarPersonal();
 
