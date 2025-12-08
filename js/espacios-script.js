@@ -1,175 +1,106 @@
-// Función para crear fechas de reservación cercanas al día de hoy
-function crearReservaciones() {
-    const hoy = new Date();
-    const reservaciones = [];
-    
-    // Reservación 1: Del 15 al 20 de noviembre (5 días)
-    const reserva1Inicio = new Date(2025, 10, 15); // Noviembre 15
-    const reserva1Fin = new Date(2025, 10, 20);    // Noviembre 20
-    
-    // Reservación 2: Del 22 al 28 de noviembre (6 días)
-    const reserva2Inicio = new Date(2025, 10, 22); // Noviembre 22
-    const reserva2Fin = new Date(2025, 10, 28);    // Noviembre 28
-    
-    // Reservación 3: Del 5 al 10 de diciembre (5 días)
-    const reserva3Inicio = new Date(2025, 11, 5);  // Diciembre 5
-    const reserva3Fin = new Date(2025, 11, 10);    // Diciembre 10
-    
-    // Reservación 4: Del 18 al 25 de diciembre (7 días - temporada navideña)
-    const reserva4Inicio = new Date(2025, 11, 18); // Diciembre 18
-    const reserva4Fin = new Date(2025, 11, 25);    // Diciembre 25
-    
-    // Reservación 5: Del 28 de diciembre al 3 de enero (6 días - fin de año)
-    const reserva5Inicio = new Date(2025, 11, 28); // Diciembre 28
-    const reserva5Fin = new Date(2026, 0, 3);      // Enero 3
-    
-    return [
-        { inicio: reserva1Inicio.toISOString().split('T')[0], fin: reserva1Fin.toISOString().split('T')[0] },
-        { inicio: reserva2Inicio.toISOString().split('T')[0], fin: reserva2Fin.toISOString().split('T')[0] },
-        { inicio: reserva3Inicio.toISOString().split('T')[0], fin: reserva3Fin.toISOString().split('T')[0] },
-        { inicio: reserva4Inicio.toISOString().split('T')[0], fin: reserva4Fin.toISOString().split('T')[0] },
-        { inicio: reserva5Inicio.toISOString().split('T')[0], fin: reserva5Fin.toISOString().split('T')[0] }
-    ];
-}
-
-// Datos de espacios con algunas reservaciones
-const espaciosData = [
-    {
-        id: 1,
-        nombre: "Casa Paseo Arboleda",
-        ubicacion: "Calle Paseo Arboleda No 102, San Mateo Otzacatipan, Toluca",
-        imagen: "https://img10.naventcdn.com/avisos/resize/18/00/90/64/49/08/1200x1200/1101471274.jpg?isFirstImage=true",
-        precio: 800.00,
-        maxHuespedes: 7,
-        reservaciones: [crearReservaciones()[0], crearReservaciones()[3]] // 15-20 nov y 18-25 dic
-    },
-    {
-        id: 2,
-        nombre: "Casa Misiones",
-        ubicacion: "Convento de Murcia #31 Fracc: Misiones, Misiones de Santa Esperanza, Toluca",
-        imagen: "https://img10.naventcdn.com/avisos/resize/18/01/47/69/99/59/1200x1200/1562397463.jpg?isFirstImage=true",
-        precio: 950.00,
-        maxHuespedes: 5,
-        reservaciones: [] // Sin reservaciones
-    },
-    {
-        id: 3,
-        nombre: "Casa Los Sauces",
-        ubicacion: "Chopos Mz 9 Lt 78C - 102, Conjunto Urbano Sauces I, Toluca Estado de México, Los Sauces, Toluca",
-        imagen: "https://img10.naventcdn.com/avisos/resize/18/01/47/34/94/62/1200x1200/1554140613.jpg?isFirstImage=true",
-        precio: 800.00,
-        maxHuespedes: 7,
-        reservaciones: [crearReservaciones()[1]] // 22-28 nov
-    },
-    {
-        id: 4,
-        nombre: "Departamento San Lorenzo",
-        ubicacion: "Sn Lorenzo T, San Lorenzo Tepaltitlán Centro, Toluca",
-        imagen: "https://img10.naventcdn.com/avisos/18/01/47/19/38/55/360x266/1550400757.jpg?isFirstImage=true",
-        precio: 600.00,
-        maxHuespedes: 2,
-        reservaciones: [crearReservaciones()[2], crearReservaciones()[4]] // 5-10 dic y 28 dic-3 ene
-    },
-    {
-        id: 5,
-        nombre: "Casa Celanese",
-        ubicacion: "Poliester, Celanese, Toluca",
-        imagen: "https://img10.naventcdn.com/avisos/resize/18/00/65/91/08/77/1200x1200/355187742.jpg?isFirstImage=true",
-        precio: 700.00,
-        maxHuespedes: 4,
-        reservaciones: [] // Sin reservaciones
-    },
-    {
-        id: 6,
-        nombre: "Casa Valle Don Camilo",
-        ubicacion: "Sierra Tarahumara 324, Valle Don Camilo, Toluca",
-        imagen: "https://img10.naventcdn.com/avisos/resize/18/01/43/27/87/65/1200x1200/1454336106.jpg?isFirstImage=true",
-        precio: 700.00,
-        maxHuespedes: 4,
-        reservaciones: [crearReservaciones()[0]] // 15-20 nov
-    },
-    {
-        id: 7,
-        nombre: "Casa Ex Hacienda San José",
-        ubicacion: "Rinconadas Casa Grande 28, Ex. Hacienda San José, Toluca",
-        imagen: "https://propiedadescom.s3.amazonaws.com/files/1200x507/bosques-de-cantabria-toluca-mexico-30457133-foto-01.jpeg",
-        precio: 1100.00,
-        maxHuespedes: 8,
-        recamaras: 4,
-        banos: 3,
-        m2Construccion: 220,
-        reservaciones: [crearReservaciones()[3], crearReservaciones()[4]] // 18-25 dic y 28 dic-3 ene
-    },
-    {
-        id: 8,
-        nombre: "Casa Moderna Colonia Morelos",
-        ubicacion: "Felipe Villanueva 602-A, Colonia Morelos Primera Sección, Toluca",
-        imagen: "https://img10.naventcdn.com/avisos/resize/18/01/46/80/72/27/1200x1200/1541024286.jpg?isFirstImage=true",
-        precio: 750.00,
-        maxHuespedes: 5,
-        recamaras: 2,
-        banos: 2,
-        m2Construccion: 135,
-        reservaciones: [] // Sin reservaciones
-    },
-    {
-        id: 9,
-        nombre: "Residencia Las Palmas",
-        ubicacion: "Colonia Del Parque, Las Palmas, Toluca",
-        imagen: "https://img10.naventcdn.com/avisos/resize/18/01/48/12/01/67/1200x1200/1570738443.jpg?isFirstImage=true",
-        precio: 1300.00,
-        maxHuespedes: 10,
-        recamaras: 4,
-        banos: 3,
-        m2Construccion: 300,
-        reservaciones: [crearReservaciones()[1], crearReservaciones()[2]] // 22-28 nov y 5-10 dic
-    },
-    {
-        id: 10,
-        nombre: "Casa Familiar Barrio de la Merced",
-        ubicacion: "Av. Sebastián Lerdo de Tejada Pte. 432, Barrio de la Merced, Toluca",
-        imagen: "https://img10.naventcdn.com/avisos/resize/18/01/44/16/95/98/1200x1200/1476816640.jpg?isFirstImage=true",
-        precio: 700.00,
-        maxHuespedes: 6,
-        recamaras: 3,
-        banos: 2,
-        m2Construccion: 160,
-        reservaciones: [] // Sin reservaciones
-    },
-    {
-        id: 11,
-        nombre: "Casa Amplia Ciprés Colón",
-        ubicacion: "Colonia Ciprés, Toluca",
-        imagen: "https://img10.naventcdn.com/avisos/resize/18/01/45/46/05/79/1200x1200/1504816619.jpg?isFirstImage=true",
-        precio: 1500.00,
-        maxHuespedes: 12,
-        recamaras: 6,
-        banos: 4,
-        m2Construccion: 530,
-        reservaciones: [crearReservaciones()[4]] // 28 dic-3 ene
-    },
-    {
-        id: 12,
-        nombre: "Casa Acogedora Vicente Guerrero",
-        ubicacion: "Colonia Vicente Guerrero, Toluca",
-        imagen: "https://img10.naventcdn.com/avisos/resize/18/01/45/28/68/91/1200x1200/1528505819.jpg?isFirstImage=true",
-        precio: 850.00,
-        maxHuespedes: 7,
-        recamaras: 3,
-        banos: 3,
-        m2Construccion: 185,
-        reservaciones: [crearReservaciones()[0], crearReservaciones()[2]] // 15-20 nov y 5-10 dic
-    }
-];
-
 // Funcionalidad de los calendarios
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     let fechaLlegada = null;
     let fechaSalida = null;
     let numHuespedes = 5;
     let espacioSeleccionado = null;
+    let espaciosData = []; // Se llenará desde la API
 
-    // Configuración de calendarios
+    // ============================================
+    // CARGAR DATOS DESDE LA API
+    // ============================================
+    
+    async function cargarEspaciosDesdeAPI() {
+        try {
+            // Cargar sitios
+            const sitios = await authGet('/api/sites?populate=*');
+            
+            if (!sitios || !sitios.data) {
+                console.error('No se pudieron cargar los sitios');
+                return [];
+            }
+
+            // Procesar cada sitio
+            const espaciosProcesados = await Promise.all(sitios.data.map(async (sitio) => {
+                const atributos = sitio.attributes || sitio;
+                
+                // Obtener URL de la imagen
+                let imagenUrl = 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop'; // Imagen por defecto
+                
+                if (atributos.image?.data) {
+                    const imageData = atributos.image.data;
+                    if (Array.isArray(imageData) && imageData.length > 0) {
+                        // Si es un array, tomar la primera imagen
+                        imagenUrl = `${API_BASE_URL}${imageData[0].attributes.url}`;
+                    } else if (imageData.attributes) {
+                        // Si es un objeto único
+                        imagenUrl = `${API_BASE_URL}${imageData.attributes.url}`;
+                    }
+                }
+
+                // Obtener IDs de reservaciones asociadas
+                let reservacionesIds = [];
+                if (atributos.reservations?.data) {
+                    reservacionesIds = atributos.reservations.data.map(r => r.id);
+                }
+
+                // Cargar detalles de las reservaciones
+                let reservaciones = [];
+                if (reservacionesIds.length > 0) {
+                    reservaciones = await Promise.all(
+                        reservacionesIds.map(async (resId) => {
+                            try {
+                                const reservacion = await authGet(`/api/reservations/${resId}`);
+                                if (reservacion && reservacion.data) {
+                                    const resAttr = reservacion.data.attributes || reservacion.data;
+                                    return {
+                                        inicio: resAttr.arriveDate,
+                                        fin: resAttr.departureDate
+                                    };
+                                }
+                                return null;
+                            } catch (error) {
+                                console.warn(`Error al cargar reservación ${resId}:`, error);
+                                return null;
+                            }
+                        })
+                    );
+                    // Filtrar reservaciones nulas
+                    reservaciones = reservaciones.filter(r => r !== null);
+                }
+
+                return {
+                    id: sitio.id,
+                    nombre: atributos.name || 'Sin nombre',
+                    ubicacion: atributos.address || 'Ubicación no disponible',
+                    imagen: imagenUrl,
+                    precio: parseFloat(atributos.price) || 500,
+                    maxHuespedes: parseInt(atributos.capacity) || 5,
+                    reservaciones: reservaciones
+                };
+            }));
+
+            return espaciosProcesados;
+        } catch (error) {
+            console.error('Error al cargar espacios desde la API:', error);
+            return [];
+        }
+    }
+
+    // Cargar espacios al iniciar
+    const loadingMessage = document.getElementById('spacesGrid');
+    loadingMessage.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;"><p style="font-size: 1.2rem;">Cargando espacios disponibles...</p></div>';
+    
+    espaciosData = await cargarEspaciosDesdeAPI();
+    
+    if (espaciosData.length === 0) {
+        loadingMessage.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;"><p style="font-size: 1.2rem;">No hay espacios disponibles en este momento.</p></div>';
+    }
+
+    // ============================================
+    // CONFIGURACIÓN DE CALENDARIOS
+    // ============================================
+
     const mesesNombres = [
         'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
         'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
@@ -177,10 +108,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const diasNombres = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá', 'Do'];
 
-    let calendario1Mes = 10; // Noviembre (0-indexado)
-    let calendario1Año = 2025;
-    let calendario2Mes = 10;
-    let calendario2Año = 2025;
+    let calendario1Mes = new Date().getMonth();
+    let calendario1Año = new Date().getFullYear();
+    let calendario2Mes = new Date().getMonth();
+    let calendario2Año = new Date().getFullYear();
 
     // Generar calendario
     function generarCalendario(mes, año, calendarGridId) {
@@ -279,10 +210,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     if (isLlegada) {
                         fechaLlegada = fechaSeleccionada;
-                        localStorage.setItem("arriveDate",fechaLlegada);
+                        localStorage.setItem("arriveDate", fechaLlegada);
                     } else {
                         fechaSalida = fechaSeleccionada;
-                        localStorage.setItem("departureDate",fechaSalida);
+                        localStorage.setItem("departureDate", fechaSalida);
                     }
                     
                     // Validar fechas antes de filtrar
@@ -380,10 +311,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const reservaFin = new Date(reservacion.fin);
             
             // Verificar si hay solapamiento entre las fechas
-            // Hay conflicto si:
-            // - La llegada está dentro del período reservado
-            // - La salida está dentro del período reservado
-            // - La reserva está completamente dentro del período seleccionado
             if (
                 (fechaLlegadaDate >= reservaInicio && fechaLlegadaDate < reservaFin) ||
                 (fechaSalidaDate > reservaInicio && fechaSalidaDate <= reservaFin) ||
@@ -436,17 +363,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="space-info">
                     <p><strong>Nombre:</strong> ${espacio.nombre}</p>
                     <p><strong>Ubicación:</strong> ${espacio.ubicacion}</p>
-                    <p><strong>Precio:</strong> ${espacio.precio.toFixed(2)}/noche</p>
+                    <p><strong>Precio:</strong> $${espacio.precio.toFixed(2)}/noche</p>
                     <p><strong>Capacidad:</strong> Máx ${espacio.maxHuespedes} huéspedes</p>
                 </div>
             `;
             
             card.addEventListener('click', function() {
-                localStorage.setItem("siteId",espacio.id);
+                localStorage.setItem("siteId", espacio.id);
                 document.querySelectorAll('.space-card').forEach(c => c.classList.remove('selected'));
                 this.classList.add('selected');
                 espacioSeleccionado = espacio;
-                localStorage.setItem("siteId",espacio.id);
+                localStorage.setItem("siteId", espacio.id);
                 actualizarResumen();
             });
             
@@ -509,6 +436,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Inicializar calendarios
+    document.getElementById('currentMonth1').textContent = `${mesesNombres[calendario1Mes]} ${calendario1Año}`;
+    document.getElementById('currentMonth2').textContent = `${mesesNombres[calendario2Mes]} ${calendario2Año}`;
+    
     generarCalendario(calendario1Mes, calendario1Año, 'calendarGrid1');
     generarCalendario(calendario2Mes, calendario2Año, 'calendarGrid2');
     
