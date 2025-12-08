@@ -60,22 +60,7 @@
         </div>
     </div>
 
-    <script>
-        function logout() {
-            // Lógica para cerrar sesión
-            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-                // Aquí irían las llamadas a auth-utils.js o lógica de cierre de sesión
-                window.location.href = '../../index.html';
-            }
-        }
+    <script src="../../js/auth-utils.js"></script>
 
-        // Agregar efecto visual al hacer clic en los botones
-        document.querySelectorAll('.menu-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                // Aquí puedes agregar lógica adicional si es necesario
-                console.log('Navegando a:', this.getAttribute('href'));
-            });
-        });
-    </script>
 </body>
 </html>
