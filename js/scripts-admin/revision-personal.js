@@ -99,8 +99,8 @@ function renderizarPersonal(personal) {
             <td>${telefono}</td>
             <td>
                 <div class="action-buttons">
-                    <button class="btn-edit" onclick="editarPersonal('${idPersonal}')">Editar</button>
-                    <button class="btn-delete" onclick="eliminarPersonal('${idPersonal}')">Eliminar</button>
+                    <button class="btn-edit" onclick="editarPersonal(${idPersonal})">Editar</button>
+                    <button class="btn-delete" onclick="eliminarPersonal(${idPersonal})">Eliminar</button>
                 </div>
             </td>
         `;
@@ -150,14 +150,14 @@ function abrirModalNuevo() {
 
 /**
  * Abre el modal para editar personal existente
- * @param {number} documentId - ID del personal a editar
+ * @param {number} id - ID del personal a editar
  */
-async function editarPersonal(documentId) {
+async function editarPersonal(id) {
     modoEdicion = true;
 
     try {
         // Buscar el personal en los datos cargados
-        const persona = personalData.find(p => p.documentId === documentId);
+        const persona = personalData.find(p => p.id === id);
 
         if (!persona) {
             alert('Personal no encontrado');
@@ -168,7 +168,7 @@ async function editarPersonal(documentId) {
 
         // Llenar el formulario con los datos
         document.getElementById('modalTitle').textContent = 'Editar Personal';
-        document.getElementById('personalId').value = persona.documentId;
+        document.getElementById('personalId').value = persona.id;
         document.getElementById('username').value = persona.username || '';
         document.getElementById('lastname').value = persona.lastname || '';
         document.getElementById('email').value = persona.email || '';

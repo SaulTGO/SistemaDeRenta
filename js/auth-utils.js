@@ -156,7 +156,9 @@ async function authenticatedFetch(endpoint, options = {}) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.error?.message || `Error ${response.status}`);
         }
-        
+        if(response.status === 204){
+            return {};
+        }
         return await response.json();
     } catch (error) {
         console.error('Error en petición autenticada:', error);
