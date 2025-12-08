@@ -39,7 +39,8 @@ async function cargarAsignaciones() {
 
         // Llenar tabla con las asignaciones
         for (const reserva of reservas.assignments) {
-            const assign = await authGet(`/api/assignments/${reserva.documentId}?populate=*`)
+            const a = await authGet(`/api/assignments/${reserva.documentId}?populate=*`)
+            const assign = a.data;
             const row = tbody.insertRow();
             const completado = assign.finished === true;
 
