@@ -32,8 +32,7 @@ async function cargarDomicilios() {
         tbody.innerHTML = '';
 
         // Realizar petición a la API
-        // Ajusta el endpoint según tu API - aquí asumo que existe un endpoint /api/assigned-homes
-        const response = await authGet(`/api/assignments?populate=*`);
+        const response = await authGet(`/api/assigned-homes?populate=*`);
 
         // Verificar si hay datos
         if (response.data && response.data.length > 0) {
@@ -65,71 +64,34 @@ function renderizarDomicilios(domicilios) {
     domicilios.forEach(domicilio => {
         const row = tbody.insertRow();
 
-        // Extraer datos según la estructura de tu API
-        const id = domicilio.documentId || domicilio.id || 'N/A';
+        // Extraer datos según la estructura de la API
+        const assignmentId = domicilio.documentId || domicilio.id || 'N/A';
         const userId = domicilio.user?.id || 'N/A';
         const nombreUsuario = domicilio.user?.username || 'N/A';
         const siteId = domicilio.site?.documentId || domicilio.site?.id || 'N/A';
-        const ubicacionSitio = domicilio.site?.location || domicilio.site?.address || domicilio.site?.name || 'N/A';
+        const nombreSitio = domicilio.site?.name || 'N/A';
+        const ubicacionSitio = domicilio.site?.location || 'N/A';
+        const finished = domicilio.finished ? 'Sí' : 'No';
 
         // Crear celdas
         row.innerHTML = `
-            <td>${id}</td>
+            <td>${assignmentId}</td>
             <td>${userId}</td>
             <td>${nombreUsuario}</td>
             <td>${siteId}</td>
-            <td>${ubicacionSitio}</td>
+            <td>
+                <strong>${nombreSitio}</strong><br>
+                <small>${ubicacionSitio}</small>
+            </td>
+            <td style="text-align: center;">${finished}</td>
             <td>
                 <div class="action-buttons">
-                    <button class="btn-edit" onclick="editarDomicilio('${id}')">Editar</button>
-                    <button class="btn-delete" onclick="eliminarDomicilio('${id}')">Eliminar</button>
+                    <button class="btn-edit" onclick="editarDomicilio('${assignmentId}')">Editar</button>
+                    <button class="btn-delete" onclick="eliminarDomicilio('${assignmentId}')">Eliminar</button>
                 </div>
             </td>
         `;
     });
-}
-
-/**
- * Formatea una fecha ISO a formato legible
- * @param {string} fecha - Fecha en formato ISO o YYYY-MM-DD
- * @returns {string} Fecha formateada
- */
-function formatearFecha(fecha) {
-    if (!fecha) return 'N/A';
-
-    try {
-        const fechaObj = new Date(fecha);
-        const opciones = {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit'
-        };
-        return fechaObj.toLocaleDateString('es-MX', opciones);
-    } catch (error) {
-        return fecha;
-    }
-}
-
-/**
- * Convierte fecha de formato dd/mm/yyyy a yyyy-mm-dd para input date
- * @param {string} fecha - Fecha en formato dd/mm/yyyy o ISO
- * @returns {string} Fecha en formato yyyy-mm-dd
- */
-function convertirFechaParaInput(fecha) {
-    if (!fecha || fecha === 'N/A') return '';
-
-    // Si la fecha ya está en formato ISO (YYYY-MM-DD), retornarla directamente
-    if (fecha.match(/^\d{4}-\d{2}-\d{2}/)) {
-        return fecha.split('T')[0];
-    }
-
-    // Si está en formato dd/mm/yyyy, convertir
-    const partes = fecha.split('/');
-    if (partes.length === 3) {
-        return `${partes[2]}-${partes[1]}-${partes[0]}`;
-    }
-
-    return '';
 }
 
 // ============================================
@@ -146,8 +108,7 @@ function abrirModalNuevo() {
     document.getElementById('modalTitle').textContent = 'Asignar Nuevo Domicilio';
     document.getElementById('formDomicilio').reset();
     document.getElementById('domicilioId').value = '';
-
-    // Establecer fecha actual por defecto
+    document.getElementById('finished').checked = false;
 
     document.getElementById('modalDomicilio').style.display = 'block';
 }
@@ -177,6 +138,7 @@ async function editarDomicilio(documentId) {
         document.getElementById('domicilioId').value = domicilio.documentId || domicilio.id;
         document.getElementById('userId').value = domicilio.user?.id || '';
         document.getElementById('siteId').value = domicilio.site?.documentId || domicilio.site?.id || '';
+        document.getElementById('finished').checked = domicilio.finished || false;
 
         document.getElementById('modalDomicilio').style.display = 'block';
 
@@ -209,11 +171,13 @@ async function guardarDomicilio(event) {
 
     const userId = document.getElementById('userId').value;
     const siteId = document.getElementById('siteId').value;
+    const finished = document.getElementById('finished').checked;
 
     const datos = {
         data: {
             user: userId,
             site: siteId,
+            finished: finished
         }
     };
 
@@ -280,9 +244,24 @@ function filtrarPorUsuario(termino) {
  */
 function filtrarPorUbicacion(termino) {
     const filtradas = domiciliosData.filter(domicilio => {
-        const ubicacion = (domicilio.site?.location || domicilio.site?.address || '').toLowerCase();
-        return ubicacion.includes(termino.toLowerCase());
+        const ubicacion = (domicilio.site?.location || '').toLowerCase();
+        const nombre = (domicilio.site?.name || '').toLowerCase();
+        return ubicacion.includes(termino.toLowerCase()) || nombre.includes(termino.toLowerCase());
     });
+    renderizarDomicilios(filtradas);
+}
+
+/**
+ * Filtra domicilios por estado de finalización
+ * @param {boolean|null} finished - Estado de finalización (true, false, null para todos)
+ */
+function filtrarPorEstado(finished) {
+    if (finished === null) {
+        renderizarDomicilios(domiciliosData);
+        return;
+    }
+
+    const filtradas = domiciliosData.filter(domicilio => domicilio.finished === finished);
     renderizarDomicilios(filtradas);
 }
 
@@ -349,18 +328,21 @@ function exportarACSV() {
         return;
     }
 
-    const headers = ['ID', 'Usuario ID', 'Nombre Usuario', 'Sitio ID', 'Ubicación'];
+    const headers = ['ID Asignación', 'Usuario ID', 'Nombre Usuario', 'Email Usuario', 'Sitio ID', 'Nombre Sitio', 'Ubicación', 'Finalizado'];
     const rows = domiciliosData.map(d => [
         d.documentId || d.id || '',
         d.user?.id || '',
         d.user?.username || '',
+        d.user?.email || '',
         d.site?.documentId || d.site?.id || '',
-        d.site?.location || d.site?.address || d.site?.name || '',
+        d.site?.name || '',
+        d.site?.location || '',
+        d.finished ? 'Sí' : 'No'
     ]);
 
     let csvContent = headers.join(',') + '\n';
     rows.forEach(row => {
-        csvContent += row.join(',') + '\n';
+        csvContent += row.map(cell => `"${cell}"`).join(',') + '\n';
     });
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
