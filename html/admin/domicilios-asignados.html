@@ -52,7 +52,8 @@
                     <th>Usuario ID</th>
                     <th>Nombre de Usuario</th>
                     <th>Sitio ID</th>
-                    <th>Ubicación del Sitio</th>
+                    <th>Nombre y Ubicación del Sitio</th>
+                    <th>Finalizado</th>
                     <th>Acciones</th>
                 </tr>
                 </thead>
@@ -89,6 +90,14 @@
                 <label for="siteId">Sitio ID:</label>
                 <input type="text" id="siteId" required>
                 <small>Ingrese el ID del sitio a asignar</small>
+            </div>
+
+            <div class="form-group">
+                <label for="finished">
+                    <input type="checkbox" id="finished">
+                    Marcar como finalizado
+                </label>
+                <small>Indica si la asignación ha sido completada</small>
             </div>
 
             <div class="modal-actions">
