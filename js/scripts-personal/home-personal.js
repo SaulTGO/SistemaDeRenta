@@ -57,14 +57,14 @@ async function cargarAsignaciones() {
                 <td class="estado-cell">
                     <input type="checkbox" 
                            class="estado-check" 
-                           data-reserva-id="${reserva.id}"
+                           data-reserva-id="${reserva.documentId}"
                            ${completado ? 'checked disabled' : 'onclick="toggleEstado(this)"'}>
                 </td>
                 <td>${ubicacion}</td>
                 <td class="observaciones-cell">
                     <input type="text" 
                            class="observaciones-input" 
-                           data-reserva-id="${reserva.id}"
+                           data-reserva-id="${reserva.documentId}"
                            value="${observaciones}"
                            placeholder="Agregar observaciones..."
                            ${completado ? 'disabled' : 'onblur="guardarObservaciones(this)"'}>
