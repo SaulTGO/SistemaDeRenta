@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Registrando usuario...');
 
         // Registrar usuario
-        const response = await unAuthPost('/api/auth/local/register', {
+        const data = await unAuthPost('/api/auth/local/register', {
                 username: firstName,
                 email: email,
                 password: password,
@@ -139,21 +139,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
         );
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error?.message || "Error al registrar usuario");
-        }
-
         // Asignar rol de usuario
-        const response2 = await fetch(`${API_BASE_URL}/api/posts/asignRole?p1=${data.user.id}&p2=Usuario`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response2.ok) {
+        const response2 = await unAuthGet(`/api/posts/asignRole?p1=${data.user.id}&p2=Usuario`);
+        if (!response2) {
             console.warn('No se pudo asignar el rol, pero el usuario fue creado');
         }
 

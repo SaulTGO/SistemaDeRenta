@@ -69,7 +69,9 @@ document.addEventListener('DOMContentLoaded', function() {
             );
             console.log(data)
             const response2 = await unAuthGet(`/api/posts/asignRole?p1=${data.user.id}&p2=Usuario`);
-
+            if (!response2) {
+                console.warn('No se pudo asignar el rol, pero el usuario fue creado');
+            }
             if (data.jwt) {
                 window.location.href = '../html/login.html';
             } else {
