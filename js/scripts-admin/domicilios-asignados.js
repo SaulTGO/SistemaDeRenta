@@ -319,9 +319,6 @@ async function regresarHome() {
             case 'Administrador':
                 window.location.href = '../admin/home-admin.html';
                 break;
-            case 'Personal':
-                window.location.href = '../personal/home-personal.html';
-                break;
             default:
                 window.location.href = '../admin/home-admin.html';
         }
