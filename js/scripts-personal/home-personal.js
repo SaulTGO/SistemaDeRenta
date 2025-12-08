@@ -38,39 +38,40 @@ async function cargarAsignaciones() {
         }
 
         // Llenar tabla con las asignaciones
-        reservas.assignments.forEach(reserva => {
+        for (const reserva of reservas.assignments) {
+            const assign = await authGet(`/api/assignments/${reserva.documentId}?populate=*`)
             const row = tbody.insertRow();
-            const completado = reserva.finished === true;
-            
+            const completado = assign.finished === true;
+
             if (completado) {
                 row.classList.add('completado');
             }
 
             // Obtener ubicación del sitio
-            const sitio = reserva.site?.data;
+            const sitio = assign.site?.data;
             const ubicacion = sitio ? sitio.location : 'Ubicación no disponible';
-            
+
             // Obtener observaciones si existen
-            const observaciones = reserva.report || '';
+            const observaciones = assign.report || '';
 
             row.innerHTML = `
                 <td class="estado-cell">
                     <input type="checkbox" 
                            class="estado-check" 
-                           data-reserva-id="${reserva.documentId}"
+                           data-reserva-id="${assign.documentId}"
                            ${completado ? 'checked disabled' : 'onclick="toggleEstado(this)"'}>
                 </td>
                 <td>${ubicacion}</td>
                 <td class="observaciones-cell">
                     <input type="text" 
                            class="observaciones-input" 
-                           data-reserva-id="${reserva.documentId}"
+                           data-reserva-id="${assign.documentId}"
                            value="${observaciones}"
                            placeholder="Agregar observaciones..."
                            ${completado ? 'disabled' : 'onblur="guardarObservaciones(this)"'}>
                 </td>
             `;
-        });
+        }
 
         // Mostrar estadísticas en consola
         const stats = obtenerEstadisticas();
