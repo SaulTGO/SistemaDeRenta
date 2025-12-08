@@ -70,7 +70,8 @@ function createReservationCard(reservation) {
 
         const resp = await unAuthPost('/api/posts/registrarHuella',{data:{
                     "comando": "asignarReservacion",
-                    "reservacionId":`${reservation.documentId}`
+                    "reservacionId":`${reservation.documentId}`,
+                    "reservacionName": `${reservation.name}`
                 }})
     });
     
