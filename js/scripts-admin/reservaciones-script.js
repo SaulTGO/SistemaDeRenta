@@ -80,8 +80,8 @@ function renderizarReservaciones(reservaciones) {
             <td>${fechaSalida}</td>
             <td>
                 <div class="action-buttons">
-                    <button class="btn-edit" onclick="editarReservacion(${id})">Editar</button>
-                    <button class="btn-delete" onclick="eliminarReservacion(${id})">Eliminar</button>
+                    <button class="btn-edit" onclick="editarReservacion('${id}')">Editar</button>
+                    <button class="btn-delete" onclick="eliminarReservacion('${id}')">Eliminar</button>
                 </div>
             </td>
         `;
@@ -170,7 +170,7 @@ async function editarReservacion(documentId) {
         // Llenar el formulario con los datos
         document.getElementById('modalTitle').textContent = 'Editar Reservación';
         document.getElementById('reservacionId').value = reservacion.documentId;
-        document.getElementById('userId').value = reservacion.user?.documentId || '';
+        document.getElementById('userId').value = reservacion.user?.id || '';
         document.getElementById('siteId').value = reservacion.site?.documentId || '';
         document.getElementById('arriveDate').value = convertirFechaParaInput(reservacion.arriveDate);
         document.getElementById('departureDate').value = convertirFechaParaInput(reservacion.departureDate);
