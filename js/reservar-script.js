@@ -130,35 +130,18 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Registrando usuario...');
 
         // Registrar usuario
-        const response = await fetch(`${API_BASE_URL}/api/auth/local/register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
+        const data = await unAuthPost('/api/auth/local/register', {
                 username: firstName,
                 email: email,
                 password: password,
                 phone: phone,
                 lastName: lastName
-            })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error?.message || "Error al registrar usuario");
-        }
+                }
+        );
 
         // Asignar rol de usuario
-        const response2 = await fetch(`${API_BASE_URL}/api/posts/asignRole?p1=${data.user.id}&p2=Usuario`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response2.ok) {
+        const response2 = await unAuthGet(`/api/posts/asignRole?p1=${data.user.id}&p2=Usuario`);
+        if (!response2) {
             console.warn('No se pudo asignar el rol, pero el usuario fue creado');
         }
 
@@ -191,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Obtener detalles del sitio
-        const sitio = await authGet(`/api/sites/${siteId}`);
+        const sitio = await unAuthGet(`/api/sites/${siteId}`);
 
         if (!sitio) {
             throw new Error('No se pudo obtener la información del sitio');
@@ -213,23 +196,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const codigo = Math.floor(10000000 + Math.random() * 90000000);
 
         // Crear la reserva
-        const response = await authPost(`/api/reservations`, {
+        const response = await authPost(`/api/reservations`, {data:{
             arriveDate: `${year1}-${month1}-${day1}`,
             departureDate: `${year2}-${month2}-${day2}`,
             user: getUser().id,
             site: siteId,
             codigo: codigo
-        });
+        }});
 
         if (!response) {
             throw new Error('Error al crear la reserva');
-        }
-
-        // Actualizar código en el backend
-        const r = await authGet(`/api/posts/cambiarCodigo?p1=${codigo}`);
-
-        if (!r) {
-            console.warn('No se pudo actualizar el código, pero la reserva fue creada');
         }
 
         return codigo;
@@ -292,6 +268,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Limpiar localStorage
             localStorage.removeItem('siteId');
+            localStorage.removeItem("arriveDate");
+            localStorage.removeItem("departureDate");
 
             // Redirigir después de un pequeño delay
             setTimeout(function () {
@@ -321,7 +299,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            const sitio = await authGet(`/api/sites/${siteId}`);
+            const sitio = await unAuthGet(`/api/sites/${siteId}`);
             if (sitio) {
                 // Actualizar fechas usando parseo sin zona horaria
                 const arriveDate = parseFechaSinZonaHoraria(localStorage.getItem("arriveDate"));
@@ -334,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const checkOutEl = document.getElementById('checkOutDate');
                 const totalEl = document.getElementById('totalAmount');
                 if(espacio1){
-                    espacio1.src = sitio.image;
+                    espacio1.src = sitio.data.image;
                 }
                 if(siteName){
                     siteName.textContent = sitio.data.name;

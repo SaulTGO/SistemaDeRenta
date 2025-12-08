@@ -248,3 +248,52 @@ if (typeof module !== 'undefined' && module.exports) {
         displayUserInfo
     };
 }
+
+// =========================================
+// PETICIONES A LA API SIN AUTENTICACION
+// =========================================
+async function unAuthenticatedFetch(endpoint, options = {}) {
+    // Configurar headers por defecto
+    const defaultHeaders = {};
+
+    if (options.method && options.method !== 'GET') {
+        defaultHeaders['Content-Type'] = 'application/json';
+    }
+
+    // Combinar headers personalizados con los por defecto
+    const headers = {
+        ...defaultHeaders,
+        ...options.headers
+    };
+
+    try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            ...options,
+            headers
+        });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error?.message || `Error ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error en petición inautenticada:', error);
+        throw error;
+    }
+}
+async function unAuthGet(endpoint) {
+    return unAuthenticatedFetch(endpoint, { method: 'GET' });
+}
+async function unAuthPut(endpoint, data) {
+    return unAuthenticatedFetch(endpoint, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+    });
+}
+async function unAuthPost(endpoint, data) {
+    return unAuthenticatedFetch(endpoint, {
+        method: 'POST',
+        body: JSON.stringify(data)
+    });
+}

@@ -59,32 +59,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             // ✅ MODIFICADO: Usar API_BASE_URL de auth-utils.js
-            const response = await fetch(`${API_BASE_URL}/api/auth/local/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
+            const data = await unAuthPost('/api/auth/local/register', {
                     username: firstName,
                     email: email,
                     password: password,
                     phone: phone,
                     lastName: lastName
-                })
-            });
-
-            const data = await response.json();
-            console.log(data)
-            if (!response.ok) throw "Error inesperado";
-            const response2 = await fetch(`${API_BASE_URL}/api/posts/asignRole?p1=${data.user.id}&p2=Usuario`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
                 }
-            });
-
-
-            if (response.ok && response2.ok && data.jwt) {
+            );
+            console.log(data)
+            const response2 = await unAuthGet(`/api/posts/asignRole?p1=${data.user.id}&p2=Usuario`);
+            if (!response2) {
+                console.warn('No se pudo asignar el rol, pero el usuario fue creado');
+            }
+            if (data.jwt) {
                 window.location.href = '../html/login.html';
             } else {
                 // Manejar error de autenticación
