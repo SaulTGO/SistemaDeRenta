@@ -198,8 +198,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Formatear fechas SIN zona horaria
-        const fecha = parseFechaSinZonaHoraria(sitio.arriveDate);
-        const fecha2 = parseFechaSinZonaHoraria(sitio.departureDate);
+        const fecha = parseFechaSinZonaHoraria(localStorage.getItem("arriveDate"));
+        const fecha2 = parseFechaSinZonaHoraria(localStorage.getItem("departureDate"));
 
         const year1 = fecha.getFullYear();
         const month1 = String(fecha.getMonth() + 1).padStart(2, '0');

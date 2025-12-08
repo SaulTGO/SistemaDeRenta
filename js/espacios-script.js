@@ -279,8 +279,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     if (isLlegada) {
                         fechaLlegada = fechaSeleccionada;
+                        localStorage.setItem("arriveDate",fechaLlegada);
                     } else {
                         fechaSalida = fechaSeleccionada;
+                        localStorage.setItem("departureDate",fechaSalida);
                     }
                     
                     // Validar fechas antes de filtrar
