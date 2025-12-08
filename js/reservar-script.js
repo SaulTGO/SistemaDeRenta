@@ -130,19 +130,14 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Registrando usuario...');
 
         // Registrar usuario
-        const response = await fetch(`${API_BASE_URL}/api/auth/local/register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
+        const response = await unAuthPost('/api/auth/local/register', {
                 username: firstName,
                 email: email,
                 password: password,
                 phone: phone,
                 lastName: lastName
-            })
-        });
+                }
+        );
 
         const data = await response.json();
 
@@ -191,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Obtener detalles del sitio
-        const sitio = await authGet(`/api/sites/${siteId}`);
+        const sitio = await unAuthGet(`/api/sites/${siteId}`);
 
         if (!sitio) {
             throw new Error('No se pudo obtener la información del sitio');
