@@ -261,7 +261,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     async function cargarEspaciosDesdeAPI() {
         try {
             // Cargar sitios
-            const sitios = await fetch(API_BASE_URL+'/api/sites?populate=*');
+            const sitios = await fetch(`${API_BASE_URL}/api/sites?populate=*`, {
+                    method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
             
             if (!sitios || !sitios.data) {
                 console.error('No se pudieron cargar los sitios');
