@@ -33,7 +33,7 @@ async function cargarDomicilios() {
 
         // Realizar petición a la API
         // Ajusta el endpoint según tu API - aquí asumo que existe un endpoint /api/assigned-homes
-        const response = await authGet(`/api/assigned-homes?populate=*`);
+        const response = await authGet(`/api/assignments?populate=*`);
 
         // Verificar si hay datos
         if (response.data && response.data.length > 0) {

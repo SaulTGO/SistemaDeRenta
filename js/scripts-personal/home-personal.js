@@ -41,6 +41,7 @@ async function cargarAsignaciones() {
         for (const reserva of reservas.assignments) {
             const a = await authGet(`/api/assignments/${reserva.documentId}?populate=*`)
             const assign = a.data;
+
             const row = tbody.insertRow();
             const completado = assign.finished === true;
 
@@ -49,7 +50,7 @@ async function cargarAsignaciones() {
             }
 
             // Obtener ubicación del sitio
-            const sitio = assign.site?.data;
+            const sitio = assign.site;
             const ubicacion = sitio ? sitio.location : 'Ubicación no disponible';
 
             // Obtener observaciones si existen
@@ -99,10 +100,9 @@ async function toggleEstado(checkbox) {
         
         try {
             // Actualizar estado en la API
-            const response = await authPut(`/api/reservations/${reservaId}`, {
+            const response = await authPut(`/api/assignments/${reservaId}`, {
                 data: {
-                    estado: 'completado',
-                    completed: true
+                    finished: true
                 }
             });
 
@@ -146,9 +146,9 @@ async function guardarObservaciones(input) {
     
     try {
         // Actualizar observaciones en la API
-        await authPut(`/api/reservations/${reservaId}`, {
+        await authPut(`/api/assignments/${reservaId}`, {
             data: {
-                observaciones: observaciones
+                report: observaciones
             }
         });
         
