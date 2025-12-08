@@ -38,7 +38,7 @@ async function cargarAsignaciones() {
         }
 
         // Llenar tabla con las asignaciones
-        reservas.assignments.forEach(reserva => {
+        reservas.data.assignments.forEach(reserva => {
             const row = tbody.insertRow();
             const completado = reserva.attributes.estado === 'completado' || reserva.attributes.completed || false;
             
