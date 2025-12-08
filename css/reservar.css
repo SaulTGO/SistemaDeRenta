@@ -70,25 +70,31 @@ header {
     border-radius: 5px;
 }
 
-/* Imágenes de la reservación */
+/* ✅ MODIFICADO: Imagen única de la reservación - más grande y destacada */
 .reservation-images {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    width: 100%;
     margin-bottom: 25px;
 }
 
 .reservation-image {
-    height: 150px;
-    border-radius: 8px;
+    width: 100%;
+    height: 280px;
+    border-radius: 12px;
     overflow: hidden;
     background-color: #2a3f6b;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+.reservation-image:hover {
+    transform: scale(1.02);
 }
 
 .reservation-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 
 /* Detalles de la reservación */
@@ -252,16 +258,19 @@ header {
     margin-bottom: 8px;
 }
 
-.form-group input {
+.form-group input,
+.form-group textarea {
     width: 100%;
     padding: 12px;
     border: 2px solid #d0d0d0;
     border-radius: 5px;
     font-size: 0.95rem;
     transition: all 0.3s ease;
+    font-family: inherit;
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group textarea:focus {
     outline: none;
     border-color: #3b558f;
     box-shadow: 0 0 0 3px rgba(59, 85, 143, 0.1);
@@ -327,6 +336,11 @@ header {
     .right-column {
         gap: 20px;
     }
+
+    /* ✅ La imagen se adapta bien en tablets */
+    .reservation-image {
+        height: 250px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -344,8 +358,9 @@ header {
         flex-wrap: wrap;
     }
 
-    .reservation-images {
-        grid-template-columns: 1fr;
+    /* ✅ Imagen más compacta en móviles */
+    .reservation-image {
+        height: 220px;
     }
 
     .right-column {
@@ -370,5 +385,11 @@ header {
 
     .payment-section {
         padding: 15px;
+    }
+
+    /* ✅ Imagen adaptada para pantallas muy pequeñas */
+    .reservation-image {
+        height: 180px;
+        border-radius: 8px;
     }
 }

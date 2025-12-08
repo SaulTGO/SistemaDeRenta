@@ -88,8 +88,8 @@ function renderizarDomicilios(domicilios) {
             <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${report}">${report}</td>
             <td>
                 <div class="action-buttons">
-                    <button class="btn-edit" onclick="editarDomicilio('${assignmentId}')">Editar</button>
-                    <button class="btn-delete" onclick="eliminarDomicilio('${assignmentId}')">Eliminar</button>
+                    <button class="btn-edit" onclick="window.editarDomicilio('${assignmentId}')">Editar</button>
+                    <button class="btn-delete" onclick="window.eliminarDomicilio('${assignmentId}')">Eliminar</button>
                 </div>
             </td>
         `;
@@ -104,16 +104,21 @@ function renderizarDomicilios(domicilios) {
  * Abre el modal para crear una nueva asignación de domicilio
  */
 function abrirModalNuevo() {
+    console.log('Abriendo modal para nueva asignación');
     modoEdicion = false;
     domicilioActual = null;
 
     document.getElementById('modalTitle').textContent = 'Asignar Nuevo Domicilio';
     document.getElementById('formDomicilio').reset();
     document.getElementById('domicilioId').value = '';
+    document.getElementById('userId').value = '';
+    document.getElementById('siteId').value = '';
     document.getElementById('finished').checked = false;
     document.getElementById('report').value = '';
 
-    document.getElementById('modalDomicilio').style.display = 'block';
+    const modal = document.getElementById('modalDomicilio');
+    modal.style.display = 'block';
+    console.log('Modal display:', modal.style.display);
 }
 
 /**
@@ -121,12 +126,13 @@ function abrirModalNuevo() {
  * @param {string|number} documentId - ID del domicilio asignado a editar
  */
 async function editarDomicilio(documentId) {
+    console.log('Editando domicilio:', documentId);
     modoEdicion = true;
 
     try {
         // Buscar el domicilio en los datos cargados
         const domicilio = domiciliosData.find(d => 
-            d.documentId === documentId || d.id === documentId
+            String(d.documentId) === String(documentId) || String(d.id) === String(documentId)
         );
 
         if (!domicilio) {
@@ -156,6 +162,7 @@ async function editarDomicilio(documentId) {
  * Cierra el modal
  */
 function cerrarModal() {
+    console.log('Cerrando modal');
     document.getElementById('modalDomicilio').style.display = 'none';
     document.getElementById('formDomicilio').reset();
     modoEdicion = false;
@@ -172,6 +179,7 @@ function cerrarModal() {
  */
 async function guardarDomicilio(event) {
     event.preventDefault();
+    console.log('Guardando domicilio...');
 
     const userId = document.getElementById('userId').value;
     const siteId = document.getElementById('siteId').value;
@@ -366,6 +374,18 @@ function exportarACSV() {
 }
 
 // ============================================
+// HACER FUNCIONES DISPONIBLES GLOBALMENTE
+// ============================================
+window.abrirModalNuevo = abrirModalNuevo;
+window.editarDomicilio = editarDomicilio;
+window.cerrarModal = cerrarModal;
+window.guardarDomicilio = guardarDomicilio;
+window.eliminarDomicilio = eliminarDomicilio;
+window.regresarHome = regresarHome;
+window.recargarDomicilios = recargarDomicilios;
+window.exportarACSV = exportarACSV;
+
+// ============================================
 // INICIALIZACIÓN
 // ============================================
 
@@ -375,8 +395,17 @@ function exportarACSV() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Página de domicilios asignados cargada');
 
+    // Verificar que los elementos existan
+    const modal = document.getElementById('modalDomicilio');
+    const btnAdd = document.querySelector('.btn-add');
+    
+    console.log('Modal encontrado:', modal !== null);
+    console.log('Botón agregar encontrado:', btnAdd !== null);
+
     // Mostrar información del usuario si es necesario
-    displayUserInfo('.user-name');
+    if (typeof displayUserInfo === 'function') {
+        displayUserInfo('.user-name');
+    }
 
     // Cargar domicilios
     cargarDomicilios();
