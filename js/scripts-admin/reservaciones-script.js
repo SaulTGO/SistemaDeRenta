@@ -66,6 +66,7 @@ function renderizarReservaciones(reservaciones) {
 
         // Extraer datos según la estructura del JSON proporcionado
         const id = reservacion.documentId || 'N/A';
+        const codigo = reservacion.codigo || 'N/A'; 
         const nombreUsuario = reservacion.user?.username || 'N/A';
         const nombreSitio = reservacion.site?.name || 'N/A';
         const fechaLlegada = formatearFecha(reservacion.arriveDate);
@@ -74,6 +75,7 @@ function renderizarReservaciones(reservaciones) {
         // Crear celdas
         row.innerHTML = `
             <td>${id}</td>
+            <td>${codigo}</td>
             <td>${nombreUsuario}</td>
             <td>${nombreSitio}</td>
             <td>${fechaLlegada}</td>
@@ -170,6 +172,7 @@ async function editarReservacion(documentId) {
         // Llenar el formulario con los datos
         document.getElementById('modalTitle').textContent = 'Editar Reservación';
         document.getElementById('reservacionId').value = reservacion.documentId;
+        document.getElementById('codigo').value = reservacion.codigo || ''; 
         document.getElementById('userId').value = reservacion.user?.id || '';
         document.getElementById('siteId').value = reservacion.site?.documentId || '';
         document.getElementById('arriveDate').value = convertirFechaParaInput(reservacion.arriveDate);
@@ -206,6 +209,7 @@ async function guardarReservacion(event) {
 
     const userId = document.getElementById('userId').value;
     const siteId = document.getElementById('siteId').value;
+    const codigo = document.getElementById('codigo').value;
     const arriveDate = document.getElementById('arriveDate').value;
     const departureDate = document.getElementById('departureDate').value;
 
@@ -217,6 +221,7 @@ async function guardarReservacion(event) {
 
     const datos = {
         data: {
+            codigo: codigo,
             user: userId,
             site: siteId,
             arriveDate: arriveDate,
@@ -328,6 +333,7 @@ function exportarACSV() {
     const headers = ['ID', 'Nombre Usuario', 'Sitio', 'Fecha Llegada', 'Fecha Salida'];
     const rows = reservacionesData.map(r => [
         r.documentId,
+        r.codigo || '',
         r.user?.username || '',
         r.site?.name || '',
         r.arriveDate || '',
