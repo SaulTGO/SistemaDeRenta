@@ -284,15 +284,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                     imagenUrl = atributos.imageUrl;
                 }
 
-                // Obtener periodos de reservación (cambio importante)
-                let reservaciones = [];
+                // Obtener periodos de disponibilidad
+                let periodosDisponibilidad = [];
                 if (sitio.periodos && Array.isArray(sitio.periodos)) {
-                    reservaciones = sitio.periodos.map(periodo => ({
+                    periodosDisponibilidad = sitio.periodos.map(periodo => ({
                         inicio: periodo.start,
                         fin: periodo.end
                     }));
                 } else if (atributos.periodos && Array.isArray(atributos.periodos)) {
-                    reservaciones = atributos.periodos.map(periodo => ({
+                    periodosDisponibilidad = atributos.periodos.map(periodo => ({
                         inicio: periodo.start,
                         fin: periodo.end
                     }));
@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     imagen: imagenUrl,
                     precio: parseFloat(sitio.pricePerNight || atributos.pricePerNight || atributos.price) || 500,
                     maxHuespedes: parseInt(sitio.capacity || atributos.capacity) || 5,
-                    reservaciones: reservaciones
+                    reservaciones: periodosDisponibilidad
                 };
             });
 
@@ -317,41 +317,42 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    // Función para verificar si las fechas seleccionadas interfieren con reservaciones existentes
-    function tieneConflictoReservacion(espacio, llegada, salida) {
-        if (!llegada || !salida || !espacio.reservaciones || espacio.reservaciones.length === 0) {
+    // Función para verificar si las fechas seleccionadas están dentro de las ventanas de disponibilidad
+    function estaDisponible(espacio, llegada, salida) {
+        if (!llegada || !salida) {
+            return true; // Si no hay fechas seleccionadas, mostrar el espacio
+        }
+        
+        // Si no hay períodos de disponibilidad definidos, considerar como NO disponible
+        if (!espacio.reservaciones || espacio.reservaciones.length === 0) {
+            console.log(`${espacio.nombre}: Sin períodos de disponibilidad definidos`);
             return false;
         }
         
         const fechaLlegadaDate = new Date(llegada + 'T00:00:00');
         const fechaSalidaDate = new Date(salida + 'T00:00:00');
         
-        for (let reservacion of espacio.reservaciones) {
-            const reservaInicio = new Date(reservacion.inicio + 'T00:00:00');
-            const reservaFin = new Date(reservacion.fin + 'T00:00:00');
+        // Verificar si la reserva completa está dentro de algún período de disponibilidad
+        for (let periodo of espacio.reservaciones) {
+            const periodoInicio = new Date(periodo.inicio + 'T00:00:00');
+            const periodoFin = new Date(periodo.fin + 'T00:00:00');
             
-            console.log(`Verificando conflicto para ${espacio.nombre}:`, {
+            console.log(`Verificando disponibilidad para ${espacio.nombre}:`, {
                 llegada: fechaLlegadaDate.toISOString().split('T')[0],
                 salida: fechaSalidaDate.toISOString().split('T')[0],
-                reservaInicio: reservaInicio.toISOString().split('T')[0],
-                reservaFin: reservaFin.toISOString().split('T')[0]
+                periodoInicio: periodoInicio.toISOString().split('T')[0],
+                periodoFin: periodoFin.toISOString().split('T')[0]
             });
             
-            // Verificar si hay solapamiento entre las fechas
-            // Caso 1: La llegada está dentro del periodo reservado
-            // Caso 2: La salida está dentro del periodo reservado
-            // Caso 3: El periodo reservado está completamente dentro del rango seleccionado
-            if (
-                (fechaLlegadaDate >= reservaInicio && fechaLlegadaDate < reservaFin) ||
-                (fechaSalidaDate > reservaInicio && fechaSalidaDate <= reservaFin) ||
-                (fechaLlegadaDate <= reservaInicio && fechaSalidaDate >= reservaFin)
-            ) {
-                console.log('❌ Conflicto detectado');
+            // La reserva está disponible si TODA la estadía está dentro del período
+            // llegada >= inicio del período Y salida <= fin del período
+            if (fechaLlegadaDate >= periodoInicio && fechaSalidaDate <= periodoFin) {
+                console.log('✅ Disponible - Dentro del período de disponibilidad');
                 return true;
             }
         }
         
-        console.log('✅ Sin conflicto');
+        console.log('❌ No disponible - Fuera de los períodos de disponibilidad');
         return false;
     }
 
@@ -382,9 +383,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                 return false;
             }
             
-            // Verificar si hay conflicto con reservaciones existentes
-            if (fechaLlegada && fechaSalida && tieneConflictoReservacion(espacio, fechaLlegada, fechaSalida)) {
-                console.log(`${espacio.nombre} rechazado por conflicto de fechas`);
+            // Verificar si está dentro de las ventanas de disponibilidad
+            if (fechaLlegada && fechaSalida && !estaDisponible(espacio, fechaLlegada, fechaSalida)) {
+                console.log(`${espacio.nombre} rechazado - fuera de ventanas de disponibilidad`);
                 return false;
             }
             
