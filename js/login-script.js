@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         case 'Administrador':
                             window.location.href = '../html/admin/home-admin.html';
                             break;
-                        case 'GodAdministrador':
+                        case 'AdministradorGod':
                             window.location.href = '../html/god-admin/home-god-admin.html';
                             break;
                         case 'Personal':
