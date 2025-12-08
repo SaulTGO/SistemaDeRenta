@@ -24,6 +24,29 @@ document.addEventListener('DOMContentLoaded', async function() {
     let calendario2Mes = hoy.getMonth();
     let calendario2Año = hoy.getFullYear();
 
+    // ============================================
+    // CONTROL DEL BOTÓN RESERVAR
+    // ============================================
+    function actualizarEstadoBotonReservar() {
+        const btnReservar = document.getElementById('btnReservar');
+        
+        // Verificar que todas las condiciones se cumplan
+        const todasLasCondiciones = fechaLlegada && fechaSalida && espacioSeleccionado && validarFechas();
+        
+        if (todasLasCondiciones) {
+            btnReservar.classList.remove('disabled');
+            btnReservar.style.pointerEvents = 'auto';
+            btnReservar.style.opacity = '1';
+        } else {
+            btnReservar.classList.add('disabled');
+            btnReservar.style.pointerEvents = 'none';
+            btnReservar.style.opacity = '0.5';
+        }
+    }
+
+    // Deshabilitar el botón inicialmente
+    actualizarEstadoBotonReservar();
+
     // Generar calendario
     function generarCalendario(mes, año, calendarGridId) {
         const grid = document.getElementById(calendarGridId);
@@ -111,6 +134,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                         filtrarEspacios();
                         document.getElementById('summarySection').style.display = 'none';
                     }
+                    
+                    // Actualizar estado del botón
+                    actualizarEstadoBotonReservar();
                 });
             }
 
@@ -229,36 +255,61 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     // ============================================
-    // CARGAR DATOS DESDE LA API
+    // CARGAR DATOS DESDE LA API - CORREGIDO
     // ============================================
     
     async function cargarEspaciosDesdeAPI() {
         try {
             // Cargar sitios
             const sitios = await authGet('/api/sites?populate=*');
-
+            
             if (!sitios || !sitios.data) {
                 console.error('No se pudieron cargar los sitios');
                 return [];
             }
+
             // Procesar cada sitio
-            const espaciosProcesados = await Promise.all(sitios.data.map(async (sitio) => {
+            const espaciosProcesados = sitios.data.map((sitio) => {
+                const atributos = sitio.attributes || sitio;
+                
+                // Obtener URL de la imagen
                 let imagenUrl = 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop';
+                
+                // Verificar si hay image directo en el objeto principal
+                if (sitio.image) {
+                    imagenUrl = sitio.image;
+                } else if (atributos.image) {
+                    imagenUrl = atributos.image;
+                } else if (atributos.imageUrl) {
+                    imagenUrl = atributos.imageUrl;
+                }
+
+                // Obtener periodos de reservación (cambio importante)
+                let reservaciones = [];
+                if (sitio.periodos && Array.isArray(sitio.periodos)) {
+                    reservaciones = sitio.periodos.map(periodo => ({
+                        inicio: periodo.start,
+                        fin: periodo.end
+                    }));
+                } else if (atributos.periodos && Array.isArray(atributos.periodos)) {
+                    reservaciones = atributos.periodos.map(periodo => ({
+                        inicio: periodo.start,
+                        fin: periodo.end
+                    }));
+                }
 
                 return {
-                    id: sitio.documentId,
-                    nombre: sitio.name || 'Sin nombre',
-                    ubicacion: sitio.location || 'Ubicación no disponible',
-                    imagen: sitio.image || imagenUrl,
-                    precio: parseFloat(sitio.pricePerNight) || 500,
-                    maxHuespedes: parseInt(sitio.capacity) || 5,
-                    reservaciones: sitio.periodos?.map(r => ({
-                        inicio: r.start,
-                        fin: r.end
-                    })) || []
+                    id: sitio.documentId || sitio.id,
+                    nombre: sitio.name || atributos.name || 'Sin nombre',
+                    ubicacion: sitio.location || atributos.location || atributos.address || 'Ubicación no disponible',
+                    imagen: imagenUrl,
+                    precio: parseFloat(sitio.pricePerNight || atributos.pricePerNight || atributos.price) || 500,
+                    maxHuespedes: parseInt(sitio.capacity || atributos.capacity) || 5,
+                    reservaciones: reservaciones
                 };
-            }));
+            });
 
+            console.log('Espacios procesados:', espaciosProcesados);
             return espaciosProcesados;
         } catch (error) {
             console.error('Error al cargar espacios desde la API:', error);
@@ -272,23 +323,35 @@ document.addEventListener('DOMContentLoaded', async function() {
             return false;
         }
         
-        const fechaLlegadaDate = new Date(llegada);
-        const fechaSalidaDate = new Date(salida);
+        const fechaLlegadaDate = new Date(llegada + 'T00:00:00');
+        const fechaSalidaDate = new Date(salida + 'T00:00:00');
         
         for (let reservacion of espacio.reservaciones) {
-            const reservaInicio = new Date(reservacion.inicio);
-            const reservaFin = new Date(reservacion.fin);
+            const reservaInicio = new Date(reservacion.inicio + 'T00:00:00');
+            const reservaFin = new Date(reservacion.fin + 'T00:00:00');
+            
+            console.log(`Verificando conflicto para ${espacio.nombre}:`, {
+                llegada: fechaLlegadaDate.toISOString().split('T')[0],
+                salida: fechaSalidaDate.toISOString().split('T')[0],
+                reservaInicio: reservaInicio.toISOString().split('T')[0],
+                reservaFin: reservaFin.toISOString().split('T')[0]
+            });
             
             // Verificar si hay solapamiento entre las fechas
+            // Caso 1: La llegada está dentro del periodo reservado
+            // Caso 2: La salida está dentro del periodo reservado
+            // Caso 3: El periodo reservado está completamente dentro del rango seleccionado
             if (
                 (fechaLlegadaDate >= reservaInicio && fechaLlegadaDate < reservaFin) ||
                 (fechaSalidaDate > reservaInicio && fechaSalidaDate <= reservaFin) ||
                 (fechaLlegadaDate <= reservaInicio && fechaSalidaDate >= reservaFin)
             ) {
+                console.log('❌ Conflicto detectado');
                 return true;
             }
         }
         
+        console.log('✅ Sin conflicto');
         return false;
     }
 
@@ -314,13 +377,18 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Filtrar por capacidad de huéspedes y disponibilidad
         let espaciosFiltrados = espaciosData.filter(espacio => {
             // Verificar capacidad
-            if (espacio.maxHuespedes < numHuespedes) return false;
-            
-            // Verificar si hay conflicto con reservaciones existentes
-            if (fechaLlegada && fechaSalida && tieneConflictoReservacion(espacio, fechaLlegada, fechaSalida)) {
+            if (espacio.maxHuespedes < numHuespedes) {
+                console.log(`${espacio.nombre} rechazado por capacidad`);
                 return false;
             }
             
+            // Verificar si hay conflicto con reservaciones existentes
+            if (fechaLlegada && fechaSalida && tieneConflictoReservacion(espacio, fechaLlegada, fechaSalida)) {
+                console.log(`${espacio.nombre} rechazado por conflicto de fechas`);
+                return false;
+            }
+            
+            console.log(`${espacio.nombre} aceptado ✅`);
             return true;
         });
 
@@ -351,6 +419,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 this.classList.add('selected');
                 espacioSeleccionado = espacio;
                 actualizarResumen();
+                actualizarEstadoBotonReservar();
             });
             
             espaciosGrid.appendChild(card);
