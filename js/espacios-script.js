@@ -236,70 +236,27 @@ document.addEventListener('DOMContentLoaded', async function() {
         try {
             // Cargar sitios
             const sitios = await authGet('/api/sites?populate=*');
-            
+
             if (!sitios || !sitios.data) {
                 console.error('No se pudieron cargar los sitios');
                 return [];
             }
-
+            const json = sitios.json();
             // Procesar cada sitio
-            const espaciosProcesados = await Promise.all(sitios.data.map(async (sitio) => {
-                const atributos = sitio.attributes || sitio;
-                
-                // Obtener URL de la imagen
+            const espaciosProcesados = await Promise.all(json.data.map(async (sitio) => {
                 let imagenUrl = 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop';
-                
-                // Primero verificar si hay imageUrl directo
-                if (atributos.imageUrl) {
-                    imagenUrl = atributos.imageUrl;
-                } else if (atributos.image?.data) {
-                    const imageData = atributos.image.data;
-                    if (Array.isArray(imageData) && imageData.length > 0) {
-                        imagenUrl = `${API_BASE_URL}${imageData[0].attributes.url}`;
-                    } else if (imageData.attributes) {
-                        imagenUrl = `${API_BASE_URL}${imageData.attributes.url}`;
-                    }
-                }
-
-                // Obtener IDs de reservaciones asociadas
-                let reservacionesIds = [];
-                if (atributos.reservations?.data) {
-                    reservacionesIds = atributos.reservations.data.map(r => r.id);
-                }
-
-                // Cargar detalles de las reservaciones
-                let reservaciones = [];
-                if (reservacionesIds.length > 0) {
-                    reservaciones = await Promise.all(
-                        reservacionesIds.map(async (resId) => {
-                            try {
-                                const reservacion = await authGet(`/api/reservations/${resId}`);
-                                if (reservacion && reservacion.data) {
-                                    const resAttr = reservacion.data.attributes || reservacion.data;
-                                    return {
-                                        inicio: resAttr.arriveDate,
-                                        fin: resAttr.departureDate
-                                    };
-                                }
-                                return null;
-                            } catch (error) {
-                                console.warn(`Error al cargar reservación ${resId}:`, error);
-                                return null;
-                            }
-                        })
-                    );
-                    // Filtrar reservaciones nulas
-                    reservaciones = reservaciones.filter(r => r !== null);
-                }
 
                 return {
-                    id: sitio.id,
-                    nombre: atributos.name || 'Sin nombre',
-                    ubicacion: atributos.address || atributos.location || 'Ubicación no disponible',
-                    imagen: imagenUrl,
-                    precio: parseFloat(atributos.price) || 500,
-                    maxHuespedes: parseInt(atributos.capacity) || 5,
-                    reservaciones: reservaciones
+                    id: sitio.documentId,
+                    nombre: sitio.name || 'Sin nombre',
+                    ubicacion: sitio.location || 'Ubicación no disponible',
+                    imagen: sitio.image || imagenUrl,
+                    precio: parseFloat(sitio.pricePerNight) || 500,
+                    maxHuespedes: parseInt(sitio.capacity) || 5,
+                    reservaciones: sitio.periodos?.map(r => ({
+                        inicio: r.start,
+                        fin: r.end
+                    })) || []
                 };
             }));
 
