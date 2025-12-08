@@ -57,7 +57,8 @@
                     <h2>Crear Cuenta</h2>
                     <p class="subtitle">Completa el formulario para registrarte</p>
 
-                    <form id="registerForm">
+                    <!-- ✅ MODIFICADO: Eliminado el formulario y botón de registrarse -->
+                    <div id="registerFields">
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="firstName">Nombre</label>
@@ -88,9 +89,7 @@
                             <label for="confirmPassword">Confirmar Contraseña</label>
                             <input type="password" id="confirmPassword" placeholder="Repite tu contraseña" required>
                         </div>
-
-                        <button type="submit" class="btn-confirm">Registrarse</button>
-                    </form>
+                    </div>
                 </div>
             </div>
 
@@ -136,6 +135,7 @@
                         </div>
                     </div>
 
+                    <!-- ✅ MODIFICADO: Este botón ahora maneja REGISTRO + PAGO + RESERVA -->
                     <button type="submit" class="btn-confirm">Confirmar Reserva</button>
                 </form>
             </div>

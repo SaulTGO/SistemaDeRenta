@@ -442,6 +442,7 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             
             card.addEventListener('click', function() {
+                localStorage.setItem("siteId",espacio.id);
                 document.querySelectorAll('.space-card').forEach(c => c.classList.remove('selected'));
                 this.classList.add('selected');
                 espacioSeleccionado = espacio;
