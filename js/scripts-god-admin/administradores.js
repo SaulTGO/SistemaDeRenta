@@ -38,7 +38,7 @@ async function cargarAdministradores() {
         tbody.innerHTML = '';
 
         // Realizar petición a la API filtrando por rol Admin
-        const response = await authGet('/api/users?filters[role][name][$eq]=Admin&populate=role');
+        const response = await authGet('/api/users?filters[role][name][$eq]=Administrador&populate=role');
 
         console.log('Respuesta de la API:', response);
 
@@ -243,6 +243,7 @@ async function guardarAdministrador(event) {
     }
 
     try {
+        datos.role = 3;
         if (modoEdicion) {
             // Actualizar administrador existente
             const id = document.getElementById('adminId').value;

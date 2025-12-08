@@ -38,7 +38,7 @@ async function cargarUsuarios() {
         tbody.innerHTML = '';
 
         // Realizar petición a la API filtrando por rol User
-        const response = await authGet('/api/users?filters[role][name][$eq]=User&populate=role');
+        const response = await authGet('/api/users?filters[role][name][$eq]=Usuario&populate=role');
 
         console.log('Respuesta de la API:', response);
 
@@ -247,6 +247,7 @@ async function guardarUsuario(event) {
     }
 
     try {
+        datos.role = 4;
         if (modoEdicion) {
             // Actualizar usuario existente
             const id = document.getElementById('usuarioId').value;

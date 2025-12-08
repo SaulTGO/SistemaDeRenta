@@ -247,6 +247,7 @@ async function guardarPersonal(event) {
     }
 
     try {
+        datos.role = 5;
         if (modoEdicion) {
             // Actualizar personal existente
             const id = document.getElementById('personalId').value;
