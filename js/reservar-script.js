@@ -327,17 +327,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 const arriveDate = parseFechaSinZonaHoraria(localStorage.getItem("arriveDate"));
                 const departureDate = parseFechaSinZonaHoraria(localStorage.getItem("departureDate"));
 
+                const espacio1 = document.getElementById("espacio1");
                 const siteName = document.getElementById('siteName');
                 const location = document.getElementById('location');
                 const checkInEl = document.getElementById('checkInDate');
                 const checkOutEl = document.getElementById('checkOutDate');
                 const totalEl = document.getElementById('totalAmount');
-
+                if(espacio1){
+                    espacio1.src = sitio.image;
+                }
                 if(siteName){
-                    siteName.textContent = site.data.name;
+                    siteName.textContent = sitio.data.name;
                 }
                 if(location){
-                    location.textContent = site.data.location;
+                    location.textContent = sitio.data.location;
                 }
                 if (checkInEl) {
                     checkInEl.textContent = arriveDate.toLocaleDateString('es-ES', {
