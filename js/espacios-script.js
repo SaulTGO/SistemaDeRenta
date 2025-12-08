@@ -1,509 +1,464 @@
-// ============================================
-// MAPEO DE ESTADOS
-// ============================================
+// Funcionalidad de los calendarios
+document.addEventListener('DOMContentLoaded', async function() {
+    let fechaLlegada = null;
+    let fechaSalida = null;
+    let numHuespedes = 5;
+    let espacioSeleccionado = null;
+    let espaciosData = []; // Se llenará desde la API
 
-/**
- * Mapeo de códigos numéricos a estados
- */
-const ESTADOS = {
-    1: { texto: 'OCUPADO', clase: 'estado-ocupado' },
-    2: { texto: 'DISPONIBLE', clase: 'estado-disponible' },
-    3: { texto: 'ASEADO', clase: 'estado-aseado' },
-    4: { texto: 'ASEO PENDIENTE', clase: 'estado-pendiente-aseo' }
-};
-
-/**
- * Obtiene la información del estado según el código
- * @param {number|string} codigo - Código numérico del estado
- * @returns {object} Objeto con texto y clase CSS del estado
- */
-function obtenerEstado(codigo) {
-    const codigoNum = parseInt(codigo);
-    return ESTADOS[codigoNum] || { texto: 'DESCONOCIDO', clase: 'estado-desconocido' };
-}
-
-// ============================================
-// PROTECCIÓN DE PÁGINA
-// ============================================
-// Verificar autenticación al cargar la página
-// requireAuth();
-
-// ============================================
-// VARIABLES GLOBALES
-// ============================================
-let espaciosData = [];
-let modoEdicion = false;
-let espacioActual = null;
-
-// ============================================
-// FUNCIONES DE CARGA DE DATOS
-// ============================================
-
-/**
- * Carga los espacios desde la API
- */
-async function cargarEspacios() {
-    const loadingIndicator = document.getElementById('loadingIndicator');
-    const errorMessage = document.getElementById('errorMessage');
-    const noDataMessage = document.getElementById('noDataMessage');
-    const tbody = document.getElementById('espaciosBody');
-    const estadisticasPanel = document.getElementById('estadisticasPanel');
-
-    try {
-        // Mostrar indicador de carga
-        loadingIndicator.style.display = 'block';
-        errorMessage.style.display = 'none';
-        noDataMessage.style.display = 'none';
-        estadisticasPanel.style.display = 'none';
-        tbody.innerHTML = '';
-
-        // Realizar petición a la API
-        const response = await authGet('/api/sites?populate=*');
-
-        // Verificar si hay datos
-        if (response.data && response.data.length > 0) {
-            espaciosData = response.data;
-            renderizarEspacios(espaciosData);
-            actualizarEstadisticas();
-            estadisticasPanel.style.display = 'grid';
-        } else {
-            // No hay datos
-            noDataMessage.style.display = 'block';
-        }
-
-    } catch (error) {
-        console.error('Error al cargar espacios:', error);
-        errorMessage.textContent = 'Error al cargar los espacios. Por favor, intente nuevamente.';
-        errorMessage.style.display = 'block';
-    } finally {
-        // Ocultar indicador de carga
-        loadingIndicator.style.display = 'none';
-    }
-}
-
-/**
- * Obtiene la URL de la imagen desde los datos del espacio
- * @param {object} espacio - Objeto con datos del espacio
- * @returns {string} URL de la imagen o imagen por defecto
- */
-function obtenerImagenUrl(espacio) {
-    const imagenPorDefecto = 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=100&h=100&fit=crop';
+    // ============================================
+    // CARGAR DATOS DESDE LA API
+    // ============================================
     
-    // Verificar si hay una URL de imagen directa
-    if (espacio.imageUrl) {
-        return espacio.imageUrl;
-    }
-    
-    // Verificar estructura de Strapi para imágenes
-    if (espacio.image?.data) {
-        const imageData = espacio.image.data;
-        if (Array.isArray(imageData) && imageData.length > 0) {
-            return `${API_BASE_URL}${imageData[0].attributes.url}`;
-        } else if (imageData.attributes) {
-            return `${API_BASE_URL}${imageData.attributes.url}`;
+    async function cargarEspaciosDesdeAPI() {
+        try {
+            // Cargar sitios
+            const sitios = await authGet('/api/sites?populate=*');
+            
+            if (!sitios || !sitios.data) {
+                console.error('No se pudieron cargar los sitios');
+                return [];
+            }
+
+            // Procesar cada sitio
+            const espaciosProcesados = await Promise.all(sitios.data.map(async (sitio) => {
+                const atributos = sitio.attributes || sitio;
+                
+                // Obtener URL de la imagen
+                let imagenUrl = 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop';
+                
+                // Primero verificar si hay imageUrl directo
+                if (atributos.imageUrl) {
+                    imagenUrl = atributos.imageUrl;
+                } else if (atributos.image?.data) {
+                    const imageData = atributos.image.data;
+                    if (Array.isArray(imageData) && imageData.length > 0) {
+                        imagenUrl = `${API_BASE_URL}${imageData[0].attributes.url}`;
+                    } else if (imageData.attributes) {
+                        imagenUrl = `${API_BASE_URL}${imageData.attributes.url}`;
+                    }
+                }
+
+                // Obtener IDs de reservaciones asociadas
+                let reservacionesIds = [];
+                if (atributos.reservations?.data) {
+                    reservacionesIds = atributos.reservations.data.map(r => r.id);
+                }
+
+                // Cargar detalles de las reservaciones
+                let reservaciones = [];
+                if (reservacionesIds.length > 0) {
+                    reservaciones = await Promise.all(
+                        reservacionesIds.map(async (resId) => {
+                            try {
+                                const reservacion = await authGet(`/api/reservations/${resId}`);
+                                if (reservacion && reservacion.data) {
+                                    const resAttr = reservacion.data.attributes || reservacion.data;
+                                    return {
+                                        inicio: resAttr.arriveDate,
+                                        fin: resAttr.departureDate
+                                    };
+                                }
+                                return null;
+                            } catch (error) {
+                                console.warn(`Error al cargar reservación ${resId}:`, error);
+                                return null;
+                            }
+                        })
+                    );
+                    // Filtrar reservaciones nulas
+                    reservaciones = reservaciones.filter(r => r !== null);
+                }
+
+                return {
+                    id: sitio.id,
+                    nombre: atributos.name || 'Sin nombre',
+                    ubicacion: atributos.address || atributos.location || 'Ubicación no disponible',
+                    imagen: imagenUrl,
+                    precio: parseFloat(atributos.price) || 500,
+                    maxHuespedes: parseInt(atributos.capacity) || 5,
+                    reservaciones: reservaciones
+                };
+            }));
+
+            return espaciosProcesados;
+        } catch (error) {
+            console.error('Error al cargar espacios desde la API:', error);
+            return [];
         }
     }
+
+    // Cargar espacios al iniciar
+    const loadingMessage = document.getElementById('spacesGrid');
+    loadingMessage.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;"><p style="font-size: 1.2rem;">⏳ Cargando espacios disponibles...</p></div>';
     
-    return imagenPorDefecto;
-}
+    espaciosData = await cargarEspaciosDesdeAPI();
+    
+    if (espaciosData.length === 0) {
+        loadingMessage.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;"><p style="font-size: 1.2rem;">❌ No hay espacios disponibles en este momento.</p><p style="margin-top: 10px;">Por favor, intente más tarde o contacte al administrador.</p></div>';
+        return; // Detener ejecución si no hay espacios
+    }
 
-/**
- * Renderiza los espacios en la tabla
- * @param {Array} espacios - Array de objetos con datos de espacios
- */
-function renderizarEspacios(espacios) {
-    const tbody = document.getElementById('espaciosBody');
-    tbody.innerHTML = '';
+    // ============================================
+    // CONFIGURACIÓN DE CALENDARIOS
+    // ============================================
 
-    espacios.forEach(espacio => {
-        const row = tbody.insertRow();
+    const mesesNombres = [
+        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
 
-        // Extraer datos según la estructura del JSON
-        const idSitio = espacio.id || 'N/A';
-        const nombreSitio = espacio.name || 'N/A';
-        const ubicacion = espacio.location || 'N/A';
-        const codigoEstado = espacio.state || 0;
-        const imagenUrl = obtenerImagenUrl(espacio);
+    const diasNombres = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá', 'Do'];
 
-        // Obtener información del estado
-        const estadoInfo = obtenerEstado(codigoEstado);
+    // Inicializar con el mes actual
+    const hoy = new Date();
+    let calendario1Mes = hoy.getMonth();
+    let calendario1Año = hoy.getFullYear();
+    let calendario2Mes = hoy.getMonth();
+    let calendario2Año = hoy.getFullYear();
 
-        // Crear celdas
-        row.innerHTML = `
-            <td>${idSitio}</td>
-            <td>
-                <img src="${imagenUrl}" 
-                     alt="${nombreSitio}" 
-                     style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;"
-                     onerror="this.src='https://images.unsplash.com/photo-1497366216548-37526070297c?w=100&h=100&fit=crop'">
-            </td>
-            <td>${nombreSitio}</td>
-            <td>${ubicacion}</td>
-            <td class="${estadoInfo.clase}">${estadoInfo.texto}</td>
-            <td>
-                <div class="action-buttons">
-                    <button class="btn-edit" onclick="editarEspacio(${idSitio})">Editar</button>
-                    <button class="btn-delete" onclick="eliminarEspacio(${idSitio})">Eliminar</button>
-                </div>
-            </td>
-        `;
-    });
-}
-
-// ============================================
-// FUNCIONES DE ESTADÍSTICAS
-// ============================================
-
-/**
- * Calcula y actualiza las estadísticas de espacios
- */
-function actualizarEstadisticas() {
-    const stats = {
-        total: espaciosData.length,
-        ocupados: 0,         // Estado 1
-        disponibles: 0,      // Estado 2
-        aseados: 0,          // Estado 3
-        pendientes: 0        // Estado 4
-    };
-
-    espaciosData.forEach(espacio => {
-        const codigoEstado = parseInt(espacio.state || 0);
-
-        switch(codigoEstado) {
-            case 1:
-                stats.ocupados++;
-                break;
-            case 2:
-                stats.disponibles++;
-                break;
-            case 3:
-                stats.aseados++;
-                break;
-            case 4:
-                stats.pendientes++;
-                break;
-        }
-    });
-
-    // Actualizar el DOM
-    document.getElementById('statTotal').textContent = stats.total;
-    document.getElementById('statDisponibles').textContent = stats.disponibles;
-    document.getElementById('statPendientes').textContent = stats.pendientes;
-    document.getElementById('statOcupados').textContent = stats.ocupados;
-    document.getElementById('statAseados').textContent = stats.aseados;
-
-    return stats;
-}
-
-// ============================================
-// FUNCIONES DE MODAL
-// ============================================
-
-/**
- * Abre el modal para crear un nuevo espacio
- */
-function abrirModalNuevo() {
-    modoEdicion = false;
-    espacioActual = null;
-
-    document.getElementById('modalTitle').textContent = 'Nuevo Espacio';
-    document.getElementById('formEspacio').reset();
-    document.getElementById('espacioId').value = '';
-    document.getElementById('imagePreviewContainer').style.display = 'none';
-
-    document.getElementById('modalEspacio').style.display = 'block';
-}
-
-/**
- * Abre el modal para editar un espacio existente
- * @param {number} id - ID del espacio a editar
- */
-async function editarEspacio(id) {
-    modoEdicion = true;
-
-    try {
-        // Buscar el espacio en los datos cargados
-        const espacio = espaciosData.find(e => e.id === id);
-
-        if (!espacio) {
-            alert('Espacio no encontrado');
+    // Generar calendario
+    function generarCalendario(mes, año, calendarGridId) {
+        const grid = document.getElementById(calendarGridId);
+        if (!grid) {
+            console.error(`No se encontró el elemento: ${calendarGridId}`);
             return;
         }
-
-        espacioActual = espacio;
-
-        // Llenar el formulario con los datos
-        document.getElementById('modalTitle').textContent = 'Editar Espacio';
-        document.getElementById('espacioId').value = espacio.id;
-        document.getElementById('name').value = espacio.name || '';
-        document.getElementById('location').value = espacio.location || '';
-        document.getElementById('imageUrl').value = espacio.imageUrl || '';
-        document.getElementById('state').value = espacio.state || '';
-
-        // Mostrar vista previa si hay imagen
-        if (espacio.imageUrl) {
-            mostrarVistaPrevia(espacio.imageUrl);
-        } else {
-            document.getElementById('imagePreviewContainer').style.display = 'none';
-        }
-
-        document.getElementById('modalEspacio').style.display = 'block';
-
-    } catch (error) {
-        console.error('Error al cargar datos para editar:', error);
-        alert('Error al cargar los datos del espacio');
-    }
-}
-
-/**
- * Cierra el modal
- */
-function cerrarModal() {
-    document.getElementById('modalEspacio').style.display = 'none';
-    document.getElementById('formEspacio').reset();
-    document.getElementById('imagePreviewContainer').style.display = 'none';
-    modoEdicion = false;
-    espacioActual = null;
-}
-
-/**
- * Muestra la vista previa de la imagen
- * @param {string} url - URL de la imagen
- */
-function mostrarVistaPrevia(url) {
-    if (url && url.trim() !== '') {
-        const imgPreview = document.getElementById('imagePreview');
-        const container = document.getElementById('imagePreviewContainer');
         
-        imgPreview.src = url;
-        container.style.display = 'block';
+        grid.innerHTML = '';
+
+        // Agregar nombres de días
+        diasNombres.forEach(dia => {
+            const dayName = document.createElement('div');
+            dayName.className = 'day-name';
+            dayName.textContent = dia;
+            grid.appendChild(dayName);
+        });
+
+        // Obtener primer día del mes y total de días
+        const primerDia = new Date(año, mes, 1).getDay();
+        const diasEnMes = new Date(año, mes + 1, 0).getDate();
         
-        // Manejar error de carga de imagen
-        imgPreview.onerror = function() {
-            container.style.display = 'none';
-            alert('No se pudo cargar la imagen desde la URL proporcionada');
-        };
-    } else {
-        document.getElementById('imagePreviewContainer').style.display = 'none';
-    }
-}
+        // Ajustar para que Lunes sea el primer día (0)
+        const ajustePrimerDia = primerDia === 0 ? 6 : primerDia - 1;
 
-// ============================================
-// FUNCIONES CRUD
-// ============================================
-
-/**
- * Guarda un espacio (crear o actualizar)
- * @param {Event} event - Evento del formulario
- */
-async function guardarEspacio(event) {
-    event.preventDefault();
-
-    const name = document.getElementById('name').value;
-    const location = document.getElementById('location').value;
-    const imageUrl = document.getElementById('imageUrl').value.trim();
-    const state = parseInt(document.getElementById('state').value);
-
-    const datos = {
-        data: {
-            name: name,
-            location: location,
-            state: state
-        }
-    };
-
-    // Agregar imageUrl solo si se proporcionó una URL
-    if (imageUrl) {
-        datos.data.imageUrl = imageUrl;
-    }
-
-    try {
-        if (modoEdicion) {
-            // Actualizar espacio existente
-            const id = document.getElementById('espacioId').value;
-            await authPut(`/api/sites/${id}`, datos);
-            alert('Espacio actualizado exitosamente');
-        } else {
-            // Crear nuevo espacio
-            await authPost('/api/sites', datos);
-            alert('Espacio creado exitosamente');
+        // Agregar espacios vacíos antes del primer día
+        for (let i = 0; i < ajustePrimerDia; i++) {
+            const emptyDay = document.createElement('div');
+            emptyDay.className = 'day';
+            grid.appendChild(emptyDay);
         }
 
-        cerrarModal();
-        await cargarEspacios();
+        // Agregar días del mes
+        const hoyFecha = new Date();
+        hoyFecha.setHours(0, 0, 0, 0);
 
-    } catch (error) {
-        console.error('Error al guardar espacio:', error);
-        alert('Error al guardar el espacio. Verifique los datos e intente nuevamente.');
-    }
-}
+        // Calcular fecha máxima (6 meses desde hoy)
+        const fechaMaxima = new Date();
+        fechaMaxima.setMonth(fechaMaxima.getMonth() + 6);
+        fechaMaxima.setHours(0, 0, 0, 0);
 
-/**
- * Elimina un espacio
- * @param {number} id - ID del espacio a eliminar
- */
-async function eliminarEspacio(id) {
-    if (!confirm('¿Está seguro que desea eliminar este espacio?')) {
-        return;
-    }
+        for (let dia = 1; dia <= diasEnMes; dia++) {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'day';
+            dayElement.textContent = dia;
+            
+            const fechaActual = new Date(año, mes, dia);
+            fechaActual.setHours(0, 0, 0, 0);
+            
+            const fechaStr = `${año}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+            dayElement.setAttribute('data-date', fechaStr);
 
-    try {
-        await authDelete(`/api/sites/${id}`);
-        alert('Espacio eliminado exitosamente');
-        await cargarEspacios();
+            // Deshabilitar fechas pasadas o más allá de 6 meses
+            if (fechaActual < hoyFecha || fechaActual > fechaMaxima) {
+                dayElement.classList.add('disabled');
+            }
 
-    } catch (error) {
-        console.error('Error al eliminar espacio:', error);
-        alert('Error al eliminar el espacio. Por favor, intente nuevamente.');
-    }
-}
-
-// ============================================
-// FUNCIONES DE BÚSQUEDA Y FILTRADO
-// ============================================
-
-/**
- * Filtra espacios por nombre o ubicación
- * @param {string} termino - Término de búsqueda
- */
-function buscarEspacios(termino) {
-    const filtrados = espaciosData.filter(espacio => {
-        const nombreSitio = (espacio.name || '').toLowerCase();
-        const ubicacion = (espacio.location || '').toLowerCase();
-
-        return nombreSitio.includes(termino.toLowerCase()) ||
-            ubicacion.includes(termino.toLowerCase());
-    });
-
-    renderizarEspacios(filtrados);
-}
-
-/**
- * Filtra espacios por estado
- * @param {number} codigoEstado - Código del estado a filtrar
- */
-function filtrarPorEstado(codigoEstado) {
-    const filtrados = espaciosData.filter(espacio => {
-        return parseInt(espacio.state) === parseInt(codigoEstado);
-    });
-
-    renderizarEspacios(filtrados);
-}
-
-/**
- * Restablece la vista mostrando todos los espacios
- */
-function mostrarTodos() {
-    renderizarEspacios(espaciosData);
-}
-
-// ============================================
-// FUNCIÓN DE CIERRE DE SESIÓN
-// ============================================
-
-/**
- * Cierra la sesión del usuario
- */
-function cerrarSesion() {
-    if (confirm('¿Está seguro que desea cerrar sesión?')) {
-        logout('../../index.html');
-    }
-}
-
-// ============================================
-// FUNCIONES DE ACTUALIZACIÓN
-// ============================================
-
-/**
- * Recarga los espacios desde la API
- */
-async function recargarEspacios() {
-    await cargarEspacios();
-}
-
-/**
- * Exporta los espacios a CSV
- */
-function exportarACSV() {
-    if (espaciosData.length === 0) {
-        alert('No hay datos para exportar');
-        return;
-    }
-
-    const headers = ['ID Sitio', 'Nombre del Sitio', 'Ubicación', 'URL Imagen', 'Estado'];
-    const rows = espaciosData.map(e => {
-        const codigoEstado = e.state;
-        const estadoInfo = obtenerEstado(codigoEstado);
-
-        return [
-            e.id,
-            e.name,
-            e.location,
-            e.imageUrl || '',
-            estadoInfo.texto
-        ];
-    });
-
-    let csvContent = headers.join(',') + '\n';
-    rows.forEach(row => {
-        csvContent += row.map(cell => `"${cell}"`).join(',') + '\n';
-    });
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-
-    link.setAttribute('href', url);
-    link.setAttribute('download', `espacios_${new Date().getTime()}.csv`);
-    link.style.visibility = 'hidden';
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
-// ============================================
-// INICIALIZACIÓN
-// ============================================
-
-/**
- * Inicializa la página al cargar el DOM
- */
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Página de revisión de espacios cargada');
-    console.log('Mapeo de estados:', ESTADOS);
-
-    // Mostrar información del usuario si es necesario
-    displayUserInfo('.user-name');
-
-    // Cargar espacios
-    cargarEspacios();
-
-    // Cerrar modal al hacer clic fuera de él
-    window.onclick = function(event) {
-        const modal = document.getElementById('modalEspacio');
-        if (event.target === modal) {
-            cerrarModal();
+            grid.appendChild(dayElement);
         }
-    };
 
-    // ✅ NUEVO: Event listener para vista previa de imagen en tiempo real
-    const imageUrlInput = document.getElementById('imageUrl');
-    if (imageUrlInput) {
-        let timeoutId;
-        imageUrlInput.addEventListener('input', function(e) {
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => {
-                const url = e.target.value.trim();
-                if (url) {
-                    mostrarVistaPrevia(url);
-                } else {
-                    document.getElementById('imagePreviewContainer').style.display = 'none';
-                }
-            }, 500); // Esperar 500ms después de que el usuario deje de escribir
+        actualizarEventosDias();
+    }
+
+    // Validar fechas
+    function validarFechas() {
+        const dateAlert = document.getElementById('dateAlert');
+        
+        if (fechaLlegada && fechaSalida) {
+            const llegada = new Date(fechaLlegada);
+            const salida = new Date(fechaSalida);
+            
+            if (salida <= llegada) {
+                dateAlert.classList.add('show');
+                return false;
+            } else {
+                dateAlert.classList.remove('show');
+                return true;
+            }
+        }
+        
+        dateAlert.classList.remove('show');
+        return true;
+    }
+
+    // Actualizar eventos de días
+    function actualizarEventosDias() {
+        const allDays = document.querySelectorAll('.day');
+        
+        allDays.forEach(day => {
+            if (!day.classList.contains('disabled') && day.textContent.trim() !== '') {
+                // Remover listeners anteriores clonando el elemento
+                const newDay = day.cloneNode(true);
+                day.parentNode.replaceChild(newDay, day);
+                
+                newDay.addEventListener('click', function() {
+                    const calendar = this.closest('.calendar');
+                    const daysInCalendar = calendar.querySelectorAll('.day');
+                    daysInCalendar.forEach(d => d.classList.remove('selected'));
+                    
+                    this.classList.add('selected');
+                    
+                    const isLlegada = calendar.id === 'calendar-llegada';
+                    const fechaSeleccionada = this.getAttribute('data-date');
+                    
+                    if (isLlegada) {
+                        fechaLlegada = fechaSeleccionada;
+                        localStorage.setItem("arriveDate", fechaLlegada);
+                    } else {
+                        fechaSalida = fechaSeleccionada;
+                        localStorage.setItem("departureDate", fechaSalida);
+                    }
+                    
+                    // Validar fechas antes de filtrar
+                    if (validarFechas()) {
+                        filtrarEspacios();
+                        actualizarResumen();
+                    } else {
+                        // Limpiar espacios y resumen si las fechas no son válidas
+                        espacioSeleccionado = null;
+                        filtrarEspacios();
+                        document.getElementById('summarySection').style.display = 'none';
+                    }
+                });
+            }
         });
     }
 
-    // Configurar actualización automática cada 5 minutos (opcional)
-    // setInterval(cargarEspacios, 300000);
+    // Navegación de calendarios
+    document.getElementById('prevMonth1').addEventListener('click', function() {
+        calendario1Mes--;
+        if (calendario1Mes < 0) {
+            calendario1Mes = 11;
+            calendario1Año--;
+        }
+        document.getElementById('currentMonth1').textContent = `${mesesNombres[calendario1Mes]} ${calendario1Año}`;
+        generarCalendario(calendario1Mes, calendario1Año, 'calendarGrid1');
+    });
+
+    document.getElementById('nextMonth1').addEventListener('click', function() {
+        calendario1Mes++;
+        if (calendario1Mes > 11) {
+            calendario1Mes = 0;
+            calendario1Año++;
+        }
+        document.getElementById('currentMonth1').textContent = `${mesesNombres[calendario1Mes]} ${calendario1Año}`;
+        generarCalendario(calendario1Mes, calendario1Año, 'calendarGrid1');
+    });
+
+    document.getElementById('prevMonth2').addEventListener('click', function() {
+        calendario2Mes--;
+        if (calendario2Mes < 0) {
+            calendario2Mes = 11;
+            calendario2Año--;
+        }
+        document.getElementById('currentMonth2').textContent = `${mesesNombres[calendario2Mes]} ${calendario2Año}`;
+        generarCalendario(calendario2Mes, calendario2Año, 'calendarGrid2');
+    });
+
+    document.getElementById('nextMonth2').addEventListener('click', function() {
+        calendario2Mes++;
+        if (calendario2Mes > 11) {
+            calendario2Mes = 0;
+            calendario2Año++;
+        }
+        document.getElementById('currentMonth2').textContent = `${mesesNombres[calendario2Mes]} ${calendario2Año}`;
+        generarCalendario(calendario2Mes, calendario2Año, 'calendarGrid2');
+    });
+
+    // Control de huéspedes
+    const guestsInput = document.getElementById('guests');
+    const decreaseBtn = document.getElementById('decreaseGuests');
+    const increaseBtn = document.getElementById('increaseGuests');
+
+    decreaseBtn.addEventListener('click', function() {
+        let currentValue = parseInt(guestsInput.value);
+        if (currentValue > 1) {
+            guestsInput.value = currentValue - 1;
+            numHuespedes = currentValue - 1;
+            filtrarEspacios();
+            actualizarResumen();
+        }
+    });
+
+    increaseBtn.addEventListener('click', function() {
+        let currentValue = parseInt(guestsInput.value);
+        if (currentValue < 20) {
+            guestsInput.value = currentValue + 1;
+            numHuespedes = currentValue + 1;
+            filtrarEspacios();
+            actualizarResumen();
+        }
+    });
+
+    // Función para verificar si las fechas seleccionadas interfieren con reservaciones existentes
+    function tieneConflictoReservacion(espacio, llegada, salida) {
+        if (!llegada || !salida || !espacio.reservaciones || espacio.reservaciones.length === 0) {
+            return false;
+        }
+        
+        const fechaLlegadaDate = new Date(llegada);
+        const fechaSalidaDate = new Date(salida);
+        
+        for (let reservacion of espacio.reservaciones) {
+            const reservaInicio = new Date(reservacion.inicio);
+            const reservaFin = new Date(reservacion.fin);
+            
+            // Verificar si hay solapamiento entre las fechas
+            if (
+                (fechaLlegadaDate >= reservaInicio && fechaLlegadaDate < reservaFin) ||
+                (fechaSalidaDate > reservaInicio && fechaSalidaDate <= reservaFin) ||
+                (fechaLlegadaDate <= reservaInicio && fechaSalidaDate >= reservaFin)
+            ) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    // Función para filtrar y mostrar espacios
+    function filtrarEspacios() {
+        const espaciosGrid = document.getElementById('spacesGrid');
+        espaciosGrid.innerHTML = '';
+        
+        // No filtrar si las fechas no son válidas
+        if (!validarFechas() && fechaLlegada && fechaSalida) {
+            espaciosGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;"><p style="font-size: 1.2rem;">⚠️ Por favor, selecciona fechas válidas.</p><p style="margin-top: 10px;">La fecha de salida debe ser posterior a la fecha de llegada.</p></div>';
+            return;
+        }
+        
+        // Filtrar por capacidad de huéspedes y disponibilidad
+        let espaciosFiltrados = espaciosData.filter(espacio => {
+            // Verificar capacidad
+            if (espacio.maxHuespedes < numHuespedes) return false;
+            
+            // Verificar si hay conflicto con reservaciones existentes
+            if (fechaLlegada && fechaSalida && tieneConflictoReservacion(espacio, fechaLlegada, fechaSalida)) {
+                return false;
+            }
+            
+            return true;
+        });
+
+        if (espaciosFiltrados.length === 0) {
+            espaciosGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;"><p style="font-size: 1.2rem;">😔 No hay espacios disponibles para los criterios seleccionados.</p><p style="margin-top: 10px;">Intenta con otras fechas o menos huéspedes.</p></div>';
+            return;
+        }
+
+        espaciosFiltrados.forEach(espacio => {
+            const card = document.createElement('div');
+            card.className = 'space-card';
+            card.setAttribute('data-space-id', espacio.id);
+            card.innerHTML = `
+                <div class="space-image">
+                    <img src="${espacio.imagen}" alt="${espacio.nombre}" onerror="this.src='https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop'">
+                </div>
+                <div class="space-info">
+                    <p><strong>Nombre:</strong> ${espacio.nombre}</p>
+                    <p><strong>Ubicación:</strong> ${espacio.ubicacion}</p>
+                    <p><strong>Precio:</strong> $${espacio.precio.toFixed(2)}/noche</p>
+                    <p><strong>Capacidad:</strong> Máx ${espacio.maxHuespedes} huéspedes</p>
+                </div>
+            `;
+            
+            card.addEventListener('click', function() {
+                localStorage.setItem("siteId", espacio.id);
+                document.querySelectorAll('.space-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                espacioSeleccionado = espacio;
+                localStorage.setItem("siteId", espacio.id);
+                actualizarResumen();
+            });
+            
+            espaciosGrid.appendChild(card);
+        });
+    }
+
+    // Función para formatear fecha
+    function formatearFecha(fechaStr) {
+        if (!fechaStr) return '-';
+        const fecha = new Date(fechaStr + 'T00:00:00');
+        const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
+        return fecha.toLocaleDateString('es-MX', opciones);
+    }
+
+    // Función para calcular noches
+    function calcularNoches(llegada, salida) {
+        if (!llegada || !salida) return 0;
+        const fecha1 = new Date(llegada);
+        const fecha2 = new Date(salida);
+        const diferencia = fecha2 - fecha1;
+        return Math.ceil(diferencia / (1000 * 60 * 60 * 24));
+    }
+
+    // Función para actualizar resumen
+    function actualizarResumen() {
+        const summarySection = document.getElementById('summarySection');
+        
+        if (fechaLlegada && fechaSalida && espacioSeleccionado && validarFechas()) {
+            summarySection.style.display = 'block';
+            
+            const noches = calcularNoches(fechaLlegada, fechaSalida);
+            const total = noches * espacioSeleccionado.precio;
+            
+            document.getElementById('summaryLlegada').textContent = formatearFecha(fechaLlegada);
+            document.getElementById('summarySalida').textContent = formatearFecha(fechaSalida);
+            document.getElementById('summaryNoches').textContent = `${noches} ${noches === 1 ? 'noche' : 'noches'}`;
+            document.getElementById('summaryHuespedes').textContent = `${numHuespedes} ${numHuespedes === 1 ? 'huésped' : 'huéspedes'}`;
+            
+            document.getElementById('summaryNombre').textContent = espacioSeleccionado.nombre;
+            document.getElementById('summaryUbicacion').textContent = espacioSeleccionado.ubicacion;
+            document.getElementById('summaryPrecio').textContent = `$${espacioSeleccionado.precio.toFixed(2)}`;
+            document.getElementById('summaryCapacidad').textContent = `Máx ${espacioSeleccionado.maxHuespedes} huéspedes`;
+            
+            document.getElementById('totalAmount').textContent = `$${total.toFixed(2)}`;
+
+            sessionStorage.setItem('fechaLlegada', formatearFecha(fechaLlegada));
+            sessionStorage.setItem('fechaSalida', formatearFecha(fechaSalida));
+            sessionStorage.setItem('numHuespedes', `${numHuespedes} ${numHuespedes === 1 ? 'huésped' : 'huéspedes'}`);
+            sessionStorage.setItem('numNoches', `${noches} ${noches === 1 ? 'noche' : 'noches'}`);
+            sessionStorage.setItem('nombre', espacioSeleccionado.nombre);
+            sessionStorage.setItem('ubicacion', espacioSeleccionado.ubicacion);
+            sessionStorage.setItem('precio', `$${espacioSeleccionado.precio.toFixed(2)}`);
+            sessionStorage.setItem('capacidad', `Máx ${espacioSeleccionado.maxHuespedes} huéspedes`);
+            sessionStorage.setItem('totalAmount', `$${total.toFixed(2)}`);
+            
+        } else {
+            summarySection.style.display = 'none';
+        }
+    }
+
+    // Inicializar calendarios con mes actual
+    console.log('Inicializando calendarios...');
+    document.getElementById('currentMonth1').textContent = `${mesesNombres[calendario1Mes]} ${calendario1Año}`;
+    document.getElementById('currentMonth2').textContent = `${mesesNombres[calendario2Mes]} ${calendario2Año}`;
+    
+    generarCalendario(calendario1Mes, calendario1Año, 'calendarGrid1');
+    generarCalendario(calendario2Mes, calendario2Año, 'calendarGrid2');
+    
+    // Mostrar todos los espacios al cargar
+    filtrarEspacios();
+    
+    console.log('✅ Página cargada correctamente');
+    console.log('📊 Espacios cargados:', espaciosData.length);
 });
