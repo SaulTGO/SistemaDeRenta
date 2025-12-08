@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            const sitio = await authGet(`/api/sites/${siteId}`);
+            const sitio = await unAuthGet(`/api/sites/${siteId}`);
             if (sitio) {
                 // Actualizar fechas usando parseo sin zona horaria
                 const arriveDate = parseFechaSinZonaHoraria(localStorage.getItem("arriveDate"));
