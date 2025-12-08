@@ -241,9 +241,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                 console.error('No se pudieron cargar los sitios');
                 return [];
             }
-            const json = await sitios.json();
             // Procesar cada sitio
-            const espaciosProcesados = await Promise.all(json.data.map(async (sitio) => {
+            const espaciosProcesados = await Promise.all(sitios.data.map(async (sitio) => {
                 let imagenUrl = 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop';
 
                 return {
