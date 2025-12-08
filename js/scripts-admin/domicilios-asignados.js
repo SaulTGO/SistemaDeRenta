@@ -32,7 +32,7 @@ async function cargarDomicilios() {
         tbody.innerHTML = '';
 
         // Realizar petición a la API
-        const response = await authGet(`/api/assigned-homes?populate=*`);
+        const response = await authGet(`/api/assignments?populate=*`);
 
         // Verificar si hay datos
         if (response.data && response.data.length > 0) {
@@ -185,11 +185,11 @@ async function guardarDomicilio(event) {
         if (modoEdicion) {
             // Actualizar domicilio existente
             const id = document.getElementById('domicilioId').value;
-            await authPut(`/api/assigned-homes/${id}`, datos);
+            await authPut(`/api/assignments/${id}`, datos);
             alert('Domicilio asignado actualizado exitosamente');
         } else {
             // Crear nueva asignación
-            await authPost('/api/assigned-homes', datos);
+            await authPost('/api/assignments', datos);
             alert('Domicilio asignado creado exitosamente');
         }
 
@@ -212,7 +212,7 @@ async function eliminarDomicilio(documentId) {
     }
 
     try {
-        await authDelete(`/api/assigned-homes/${documentId}`);
+        await authDelete(`/api/assignments/${documentId}`);
         alert('Domicilio asignado eliminado exitosamente');
         await cargarDomicilios();
 
