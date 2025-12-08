@@ -32,7 +32,7 @@ async function cargarAsignaciones() {
         // Limpiar tabla
         tbody.innerHTML = '';
 
-        if (!reservas || !reservas.data || reservas.data.length === 0) {
+        if (!reservas || !reservas.assignments || reservas.assignments.length === 0) {
             tbody.innerHTML = '<tr><td colspan="3" style="text-align: center;">No tienes asignaciones pendientes</td></tr>';
             return;
         }
