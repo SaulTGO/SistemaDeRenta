@@ -27,7 +27,7 @@ async function cargarAsignaciones() {
 
         // Obtener reservas asignadas al personal
         // Ajusta el endpoint según tu API - este es un ejemplo basado en el patrón de reservar.js
-        const reservas = await authGet(`/api/reservations?filters[personal][id][$eq]=${user.id}&populate=*`);
+        const reservas = await authGet(`/api/assignments?filters[user][id][$eq]=${user.id}&populate=*`);
 
         // Limpiar tabla
         tbody.innerHTML = '';
