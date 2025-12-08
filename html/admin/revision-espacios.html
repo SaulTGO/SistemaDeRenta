@@ -73,8 +73,10 @@
                 <tr>
                     <th>ID Sitio</th>
                     <th>Imagen</th>
-                    <th>Nombre del Sitio</th>
+                    <th>Nombre</th>
                     <th>Ubicación</th>
+                    <th>Precio/Noche</th>
+                    <th>Capacidad</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
@@ -112,7 +114,17 @@
                 <input type="text" id="location" required>
             </div>
 
-            <!-- ✅ NUEVO CAMPO: Dirección de la imagen -->
+            <div class="form-group">
+                <label for="pricePerNight">Precio por Noche:</label>
+                <input type="number" id="pricePerNight" step="0.01" min="0" required>
+            </div>
+
+            <div class="form-group">
+                <label for="capacity">Capacidad:</label>
+                <input type="number" id="capacity" min="1" required>
+            </div>
+
+            <!-- Campo de URL de imagen -->
             <div class="form-group">
                 <label for="imageUrl">Dirección de la imagen (URL):</label>
                 <input type="url" id="imageUrl" placeholder="https://ejemplo.com/imagen.jpg">
@@ -121,7 +133,7 @@
                 </small>
             </div>
 
-            <!-- ✅ VISTA PREVIA DE LA IMAGEN -->
+            <!-- Vista previa de la imagen -->
             <div class="form-group" id="imagePreviewContainer" style="display: none;">
                 <label>Vista previa:</label>
                 <div style="margin-top: 10px; text-align: center;">

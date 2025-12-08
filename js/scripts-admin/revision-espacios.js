@@ -96,21 +96,32 @@ function renderizarEspacios(espacios) {
         const idSitio = espacio.documentId || 'N/A';
         const nombreSitio = espacio.name || 'N/A';
         const ubicacion = espacio.location || 'N/A';
+        const precio = espacio.pricePerNight !== undefined ? `$${espacio.pricePerNight}` : 'N/A';
+        const capacidad = espacio.capacity || 'N/A';
         const codigoEstado = espacio.state || 0;
+        const imagenUrl = espacio.image || '';
 
         // Obtener información del estado
         const estadoInfo = obtenerEstado(codigoEstado);
 
+        // Crear HTML para la imagen
+        const imagenHTML = imagenUrl 
+            ? `<img src="${imagenUrl}" alt="${nombreSitio}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">` 
+            : `<div style="width: 60px; height: 60px; background-color: #e0e0e0; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #666;">Sin imagen</div>`;
+
         // Crear celdas
         row.innerHTML = `
             <td>${idSitio}</td>
+            <td>${imagenHTML}</td>
             <td>${nombreSitio}</td>
             <td>${ubicacion}</td>
+            <td>${precio}</td>
+            <td>${capacidad}</td>
             <td class="${estadoInfo.clase}">${estadoInfo.texto}</td>
             <td>
                 <div class="action-buttons">
-                    <button class="btn-edit" onclick="editarEspacio(${idSitio})">Editar</button>
-                    <button class="btn-delete" onclick="eliminarEspacio(${idSitio})">Eliminar</button>
+                    <button class="btn-edit" onclick="editarEspacio('${idSitio}')">Editar</button>
+                    <button class="btn-delete" onclick="eliminarEspacio('${idSitio}')">Eliminar</button>
                 </div>
             </td>
         `;
@@ -176,13 +187,14 @@ function abrirModalNuevo() {
     document.getElementById('modalTitle').textContent = 'Nuevo Espacio';
     document.getElementById('formEspacio').reset();
     document.getElementById('espacioId').value = '';
+    document.getElementById('imagePreviewContainer').style.display = 'none';
 
     document.getElementById('modalEspacio').style.display = 'block';
 }
 
 /**
  * Abre el modal para editar un espacio existente
- * @param {number} documentId - ID del espacio a editar
+ * @param {string} documentId - ID del espacio a editar
  */
 async function editarEspacio(documentId) {
     modoEdicion = true;
@@ -203,7 +215,15 @@ async function editarEspacio(documentId) {
         document.getElementById('espacioId').value = espacio.documentId;
         document.getElementById('name').value = espacio.name || '';
         document.getElementById('location').value = espacio.location || '';
+        document.getElementById('pricePerNight').value = espacio.pricePerNight || '';
+        document.getElementById('capacity').value = espacio.capacity || '';
+        document.getElementById('imageUrl').value = espacio.image || '';
         document.getElementById('state').value = espacio.state || '';
+
+        // Mostrar vista previa de la imagen si existe
+        if (espacio.image) {
+            mostrarVistaPrevia(espacio.image);
+        }
 
         document.getElementById('modalEspacio').style.display = 'block';
 
@@ -219,8 +239,34 @@ async function editarEspacio(documentId) {
 function cerrarModal() {
     document.getElementById('modalEspacio').style.display = 'none';
     document.getElementById('formEspacio').reset();
+    document.getElementById('imagePreviewContainer').style.display = 'none';
     modoEdicion = false;
     espacioActual = null;
+}
+
+// ============================================
+// FUNCIONES DE VISTA PREVIA DE IMAGEN
+// ============================================
+
+/**
+ * Muestra la vista previa de una imagen
+ * @param {string} url - URL de la imagen
+ */
+function mostrarVistaPrevia(url) {
+    if (url && url.trim() !== '') {
+        const preview = document.getElementById('imagePreview');
+        const container = document.getElementById('imagePreviewContainer');
+        
+        preview.src = url;
+        container.style.display = 'block';
+        
+        // Ocultar vista previa si la imagen no carga
+        preview.onerror = function() {
+            container.style.display = 'none';
+        };
+    } else {
+        document.getElementById('imagePreviewContainer').style.display = 'none';
+    }
 }
 
 // ============================================
@@ -236,12 +282,18 @@ async function guardarEspacio(event) {
 
     const name = document.getElementById('name').value;
     const location = document.getElementById('location').value;
+    const pricePerNight = parseFloat(document.getElementById('pricePerNight').value);
+    const capacity = parseInt(document.getElementById('capacity').value);
+    const imageUrl = document.getElementById('imageUrl').value;
     const state = parseInt(document.getElementById('state').value);
 
     const datos = {
         data: {
             name: name,
             location: location,
+            pricePerNight: pricePerNight,
+            capacity: capacity,
+            image: imageUrl,
             state: state
         }
     };
@@ -269,7 +321,7 @@ async function guardarEspacio(event) {
 
 /**
  * Elimina un espacio
- * @param {number} documentId - ID del espacio a eliminar
+ * @param {string} documentId - ID del espacio a eliminar
  */
 async function eliminarEspacio(documentId) {
     if (!confirm('¿Está seguro que desea eliminar este espacio?')) {
@@ -292,16 +344,18 @@ async function eliminarEspacio(documentId) {
 // ============================================
 
 /**
- * Filtra espacios por nombre o ubicación
+ * Filtra espacios por nombre, ubicación o ID
  * @param {string} termino - Término de búsqueda
  */
 function buscarEspacios(termino) {
     const filtrados = espaciosData.filter(espacio => {
         const nombreSitio = (espacio.name || '').toLowerCase();
         const ubicacion = (espacio.location || '').toLowerCase();
+        const idSitio = (espacio.documentId || '').toString().toLowerCase();
 
         return nombreSitio.includes(termino.toLowerCase()) ||
-            ubicacion.includes(termino.toLowerCase());
+            ubicacion.includes(termino.toLowerCase()) ||
+            idSitio.includes(termino.toLowerCase());
     });
 
     renderizarEspacios(filtrados);
@@ -359,7 +413,7 @@ function exportarACSV() {
         return;
     }
 
-    const headers = ['ID Sitio', 'Nombre del Sitio', 'Ubicación', 'Estado'];
+    const headers = ['ID Sitio', 'Nombre', 'Ubicación', 'Precio/Noche', 'Capacidad', 'Estado', 'URL Imagen'];
     const rows = espaciosData.map(e => {
         const codigoEstado = e.state;
         const estadoInfo = obtenerEstado(codigoEstado);
@@ -368,7 +422,10 @@ function exportarACSV() {
             e.documentId,
             e.name,
             e.location,
-            estadoInfo.texto
+            e.pricePerNight || 0,
+            e.capacity || 0,
+            estadoInfo.texto,
+            e.image || ''
         ];
     });
 
@@ -406,6 +463,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Cargar espacios
     cargarEspacios();
+
+    // Event listener para vista previa de imagen
+    const imageUrlInput = document.getElementById('imageUrl');
+    if (imageUrlInput) {
+        imageUrlInput.addEventListener('input', function(e) {
+            mostrarVistaPrevia(e.target.value);
+        });
+    }
 
     // Cerrar modal al hacer clic fuera de él
     window.onclick = function(event) {
