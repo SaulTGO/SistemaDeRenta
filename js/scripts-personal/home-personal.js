@@ -36,9 +36,17 @@ async function cargarAsignaciones() {
             tbody.innerHTML = '<tr><td colspan="3" style="text-align: center;">No tienes asignaciones pendientes</td></tr>';
             return;
         }
+        const uniqueAssignments = [];
+        const seen = new Set();
 
+        reservas.assignments.forEach(a => {
+            if (!seen.has(a.documentId)) {
+                seen.add(a.documentId);
+                uniqueAssignments.push(a);
+            }
+        });
         // Llenar tabla con las asignaciones
-        for (const reserva of reservas.assignments) {
+        for (const reserva of uniqueAssignments) {
             const a = await authGet(`/api/assignments/${reserva.documentId}?populate=*`)
             const assign = a.data;
 
