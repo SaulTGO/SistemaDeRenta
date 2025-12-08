@@ -261,20 +261,15 @@ document.addEventListener('DOMContentLoaded', async function() {
     async function cargarEspaciosDesdeAPI() {
         try {
             // Cargar sitios
-            const sitios = await fetch(`${API_BASE_URL}/api/sites?populate=*`, {
-                    method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            
-            if (!sitios || !sitios.data) {
+            const sitios = await fetch(`${API_BASE_URL}/api/sites?populate=*`);
+            let json = await sitios.json();
+            if (!json || !json.data) {
                 console.error('No se pudieron cargar los sitios');
                 return [];
             }
 
             // Procesar cada sitio
-            const espaciosProcesados = sitios.data.map((sitio) => {
+            const espaciosProcesados = json.data.map((sitio) => {
                 const atributos = sitio.attributes || sitio;
                 
                 // Obtener URL de la imagen
