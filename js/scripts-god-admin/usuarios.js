@@ -86,7 +86,7 @@ function renderizarUsuarios(usuarios) {
         // Extraer datos
         const id = usuario.id || 'N/A';
         const nombre = usuario.username || 'N/A';
-        const apellidos = usuario.lastname || 'N/A';
+        const apellidos = usuario.lastName || 'N/A';
         const correo = usuario.email || 'N/A';
         const telefono = usuario.phone ? String(usuario.phone) : 'N/A';
 
@@ -174,7 +174,7 @@ async function editarUsuario(id) {
         document.getElementById('modalTitle').textContent = 'Editar Usuario';
         document.getElementById('usuarioId').value = usuario.id;
         document.getElementById('username').value = usuario.username || '';
-        document.getElementById('lastname').value = usuario.lastname || '';
+        document.getElementById('lastname').value = usuario.lastName || '';
         document.getElementById('email').value = usuario.email || '';
         document.getElementById('phone').value = usuario.phone || '';
         document.getElementById('password').value = ''; // Dejar vacío
@@ -214,7 +214,7 @@ async function guardarUsuario(event) {
     event.preventDefault();
 
     const username = document.getElementById('username').value;
-    const lastname = document.getElementById('lastname').value;
+    const lastName = document.getElementById('lastname').value;
     const email = document.getElementById('email').value;
     const phone = document.getElementById('phone').value;
     const password = document.getElementById('password').value;
@@ -227,7 +227,7 @@ async function guardarUsuario(event) {
 
     const datos = {
         username: username,
-        lastname: lastname,
+        lastName: lastName,
         email: email,
         phone: parseInt(phone),
         role: ROLE_USER_ID // Asignar el rol de Usuario
@@ -298,7 +298,7 @@ async function eliminarUsuario(id) {
  */
 function buscarPorNombre(termino) {
     const filtrados = usuariosData.filter(usuario => {
-        const nombreCompleto = `${usuario.username || ''} ${usuario.lastname || ''}`.toLowerCase();
+        const nombreCompleto = `${usuario.username || ''} ${usuario.lastName || ''}`.toLowerCase();
         return nombreCompleto.includes(termino.toLowerCase());
     });
 
