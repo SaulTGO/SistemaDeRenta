@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domicilios Asignados - SiRABi</title>
+    <link rel="stylesheet" href="../../css/styles-admin/domicilios-asignados.css">
+</head>
+<body>
+<!-- Header -->
+<header>
+    <div class="header-content">
+        <div class="logo">
+            <h1>SiRABi</h1>
+        </div>
+        <div class="header-actions">
+            <button class="home-btn" onclick="regresarHome()">
+                <span>Regresar</span>
+            </button>
+            <button class="logout-btn" onclick="logout()">
+                Cerrar Sesión
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Contenido principal -->
+<div class="container">
+    <div class="domicilios-wrapper">
+        <!-- Botón para agregar nuevo domicilio asignado -->
+        <div class="actions-header">
+            <h2>Gestión de Domicilios Asignados</h2>
+            <button class="btn-add" onclick="abrirModalNuevo()">
+                + Asignar Domicilio
+            </button>
+        </div>
+
+        <!-- Indicador de carga -->
+        <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+            <p>Cargando domicilios asignados...</p>
+        </div>
+
+        <!-- Mensaje de error -->
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <!-- Tabla de domicilios asignados -->
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario ID</th>
+                    <th>Nombre de Usuario</th>
+                    <th>Sitio ID</th>
+                    <th>Ubicación del Sitio</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="domiciliosBody">
+                <!-- Los datos se cargarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mensaje cuando no hay datos -->
+        <div id="noDataMessage" class="no-data-message" style="display: none;">
+            <p>No hay domicilios asignados disponibles</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear/editar domicilio asignado -->
+<div id="modalDomicilio" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Asignar Nuevo Domicilio</h2>
+            <span class="close" onclick="cerrarModal()">&times;</span>
+        </div>
+        <form id="formDomicilio" onsubmit="guardarDomicilio(event)">
+            <input type="hidden" id="domicilioId">
+
+            <div class="form-group">
+                <label for="userId">Usuario ID:</label>
+                <input type="number" id="userId" required>
+                <small>Ingrese el ID del usuario al que se asignará el domicilio</small>
+            </div>
+
+            <div class="form-group">
+                <label for="siteId">Sitio ID:</label>
+                <input type="text" id="siteId" required>
+                <small>Ingrese el ID del sitio a asignar</small>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn-save">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="../../js/auth-utils.js"></script>
+<script src="../../js/scripts-admin/domicilios-asignados.js"></script>
+</body>
+</html>
