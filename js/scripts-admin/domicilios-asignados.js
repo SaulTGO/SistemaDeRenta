@@ -72,6 +72,7 @@ function renderizarDomicilios(domicilios) {
         const nombreSitio = domicilio.site?.name || 'N/A';
         const ubicacionSitio = domicilio.site?.location || 'N/A';
         const finished = domicilio.finished ? 'Sí' : 'No';
+        const report = domicilio.report || 'Sin observaciones';
 
         // Crear celdas
         row.innerHTML = `
@@ -84,6 +85,7 @@ function renderizarDomicilios(domicilios) {
                 <small>${ubicacionSitio}</small>
             </td>
             <td style="text-align: center;">${finished}</td>
+            <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${report}">${report}</td>
             <td>
                 <div class="action-buttons">
                     <button class="btn-edit" onclick="editarDomicilio('${assignmentId}')">Editar</button>
@@ -109,6 +111,7 @@ function abrirModalNuevo() {
     document.getElementById('formDomicilio').reset();
     document.getElementById('domicilioId').value = '';
     document.getElementById('finished').checked = false;
+    document.getElementById('report').value = '';
 
     document.getElementById('modalDomicilio').style.display = 'block';
 }
@@ -139,6 +142,7 @@ async function editarDomicilio(documentId) {
         document.getElementById('userId').value = domicilio.user?.id || '';
         document.getElementById('siteId').value = domicilio.site?.documentId || domicilio.site?.id || '';
         document.getElementById('finished').checked = domicilio.finished || false;
+        document.getElementById('report').value = domicilio.report || '';
 
         document.getElementById('modalDomicilio').style.display = 'block';
 
@@ -172,12 +176,14 @@ async function guardarDomicilio(event) {
     const userId = document.getElementById('userId').value;
     const siteId = document.getElementById('siteId').value;
     const finished = document.getElementById('finished').checked;
+    const report = document.getElementById('report').value.trim() || null;
 
     const datos = {
         data: {
             user: userId,
             site: siteId,
-            finished: finished
+            finished: finished,
+            report: report
         }
     };
 
@@ -328,7 +334,7 @@ function exportarACSV() {
         return;
     }
 
-    const headers = ['ID Asignación', 'Usuario ID', 'Nombre Usuario', 'Email Usuario', 'Sitio ID', 'Nombre Sitio', 'Ubicación', 'Finalizado'];
+    const headers = ['ID Asignación', 'Usuario ID', 'Nombre Usuario', 'Email Usuario', 'Sitio ID', 'Nombre Sitio', 'Ubicación', 'Finalizado', 'Observaciones'];
     const rows = domiciliosData.map(d => [
         d.documentId || d.id || '',
         d.user?.id || '',
@@ -337,7 +343,8 @@ function exportarACSV() {
         d.site?.documentId || d.site?.id || '',
         d.site?.name || '',
         d.site?.location || '',
-        d.finished ? 'Sí' : 'No'
+        d.finished ? 'Sí' : 'No',
+        d.report || 'Sin observaciones'
     ]);
 
     let csvContent = headers.join(',') + '\n';
