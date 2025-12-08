@@ -322,16 +322,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             const sitio = await authGet(`/api/sites/${siteId}`);
-
             if (sitio) {
                 // Actualizar fechas usando parseo sin zona horaria
-                const arriveDate = parseFechaSinZonaHoraria(sitio.arriveDate);
-                const departureDate = parseFechaSinZonaHoraria(sitio.departureDate);
+                const arriveDate = parseFechaSinZonaHoraria(localStorage.getItem("arriveDate"));
+                const departureDate = parseFechaSinZonaHoraria(localStorage.getItem("departureDate"));
 
+                const siteName = document.getElementById('siteName');
+                const location = document.getElementById('location');
                 const checkInEl = document.getElementById('checkInDate');
                 const checkOutEl = document.getElementById('checkOutDate');
                 const totalEl = document.getElementById('totalAmount');
 
+                if(siteName){
+                    siteName.textContent = site.data.name;
+                }
+                if(location){
+                    location.textContent = site.data.location;
+                }
                 if (checkInEl) {
                     checkInEl.textContent = arriveDate.toLocaleDateString('es-ES', {
                         day: 'numeric',
@@ -350,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Calcular días y precio total
                 const days = Math.ceil((departureDate - arriveDate) / (1000 * 60 * 60 * 24));
-                const pricePerDay = sitio.price || 500;
+                const pricePerDay = sitio.data.pricePerNight || 500;
                 const total = days * pricePerDay;
 
                 if (totalEl) {
