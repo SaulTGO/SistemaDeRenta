@@ -68,7 +68,7 @@ function createReservationCard(reservation) {
         const codigo = await authGet(`/api/posts/codigo?p1=${reservation.documentId}`);
         alert(`Codigo de acceso reservación en ${reservation.site.name}: ${codigo.data.codigo}`);
 
-        const resp = await unAuthPut('/api/posts/registrarHuella',{data:{
+        const resp = await unAuthPost('/api/posts/registrarHuella',{data:{
                     "comando": "asignarReservacion",
                     "reservacionId":`${reservation.documentId}`
                 }})
