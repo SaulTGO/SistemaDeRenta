@@ -358,6 +358,38 @@ function exportarACSV() {
     document.body.removeChild(link);
 }
 
+/**
+ * Redirige al home correspondiente según el rol del usuario
+ */
+async function regresarHome() {
+    try {
+        const jwt = getJWT();
+        const response = await fetch(`${API_BASE_URL}/api/users/me?populate=role`, {
+            headers: {
+                Authorization: `Bearer ${jwt}`,
+            },
+        });
+        const user = await response.json();
+        
+        const roleName = user.role?.name || 'Usuario';
+        
+        switch (roleName) {
+            case 'AdministradorGod':
+                window.location.href = '../../html/god-admin/home_god_admin.html';
+                break;
+            case 'Administrador':
+                window.location.href = '../../html/admin/home-admin.html';
+                break;
+            default:
+                window.location.href = '../../html/admin/home-admin.html';
+        }
+    } catch (error) {
+        console.error('Error al obtener información del usuario:', error);
+        // Fallback a admin si hay error
+        window.location.href = '../../html/admin/home-admin.html';
+    }
+}
+
 // ============================================
 // INICIALIZACIÓN
 // ============================================
