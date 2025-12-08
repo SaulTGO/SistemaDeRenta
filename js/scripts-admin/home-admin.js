@@ -1,21 +1,5 @@
 // Funcionalidad del panel de administración
 document.addEventListener('DOMContentLoaded', function() {
-    
-    // Botón de cerrar sesión
-    const btnCerrarSesion = document.getElementById('btnCerrarSesion');
-    
-    btnCerrarSesion.addEventListener('click', function() {
-        // Confirmar antes de cerrar sesión
-        if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-            console.log('Cerrando sesión...');
-            
-            // Simular cierre de sesión
-            setTimeout(function() {
-                // Redirigir a la página de inicio de sesión
-                window.location.href = '../../../html/login.html';
-            }, 500);
-        }
-    });
 
     // Animación del título
     const panelTitle = document.querySelector('.panel-title');
