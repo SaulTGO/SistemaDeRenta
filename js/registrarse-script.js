@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const firstName = document.getElementById('firstName').value;
         const lastName = document.getElementById('lastName').value;
         const email = document.getElementById('email').value;
-        const phone = phoneInput.value;
+        const phone = parseInt(phoneInput.value.trim().replace(/[^0-9]/g, ''),10);
         const password = document.getElementById('registerPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
         const terms = document.getElementById('terms').checked;
