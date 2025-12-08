@@ -36,22 +36,23 @@ async function cargarAsignaciones() {
             tbody.innerHTML = '<tr><td colspan="3" style="text-align: center;">No tienes asignaciones pendientes</td></tr>';
             return;
         }
-
+        console.log(reservas.data.assignments)
+        console.log(reservas.assignments)
         // Llenar tabla con las asignaciones
         reservas.data.assignments.forEach(reserva => {
             const row = tbody.insertRow();
-            const completado = reserva.attributes.estado === 'completado' || reserva.attributes.completed || false;
+            const completado = reserva.finished === true;
             
             if (completado) {
                 row.classList.add('completado');
             }
 
             // Obtener ubicación del sitio
-            const sitio = reserva.attributes.site?.data;
-            const ubicacion = sitio ? sitio.attributes.location : 'Ubicación no disponible';
+            const sitio = reserva.site?.data;
+            const ubicacion = sitio ? sitio.location : 'Ubicación no disponible';
             
             // Obtener observaciones si existen
-            const observaciones = reserva.attributes.observaciones || '';
+            const observaciones = reserva.report || '';
 
             row.innerHTML = `
                 <td class="estado-cell">
